@@ -161,6 +161,16 @@ header .savedot.off{background:rgba(214,69,91,.22);color:#F5A0AE}
 .tile.c-amber  .ic{background:var(--amber-soft);color:var(--amber)}
 .tile.c-green  .ic{background:var(--green-soft);color:var(--green)}
 .tile.c-red    .ic{background:var(--red-soft);color:var(--red)}
+/* شريط التبويبات بين الشاشات المترابطة (الرصد/الاختبارات، النتائج…) */
+.hub-tabs{display:flex;gap:4px;padding:4px;margin:0 0 12px;background:var(--surface-3);border:1px solid var(--rule);border-radius:14px;overflow-x:auto}
+.hub-tabs button{flex:1 0 auto;min-height:38px;padding:0 12px;border:0;border-radius:10px;background:transparent;color:var(--ink-soft);font-size:.8rem;font-weight:700;white-space:nowrap}
+.hub-tabs button.on{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+details.sheet>summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:700;font-size:.9rem}
+details.sheet>summary::-webkit-details-marker{display:none}
+details.sheet>summary::after{content:'▾';color:var(--ink-faint);transition:transform .15s}
+details.sheet[open]>summary::after{transform:rotate(180deg)}
+details.sheet[open]>summary{margin-bottom:10px}
+details.sheet .sheet{box-shadow:none;background:var(--surface-2)}
 .home-foot{margin-top:16px;text-align:center;color:var(--ink-faint);font-size:.7rem}
 
 /* ── عناصر الإدخال ── */
@@ -332,7 +342,7 @@ select.inp{appearance:none;-webkit-appearance:none;background-image:linear-gradi
   .tiles{grid-template-columns:repeat(3,1fr)}
   .kpis{grid-template-columns:repeat(4,1fr)}
   .level-grid{grid-template-columns:repeat(4,1fr)}
-  .profile-grid{grid-template-columns:repeat(4,1fr)}
+  .profile-grid{grid-template-columns:repeat(3,1fr)}
   .preset-grid{grid-template-columns:repeat(3,1fr)}
   .status[data-n="4"]{grid-template-columns:repeat(4,1fr)}
   .modal,.more{align-items:center}
@@ -681,39 +691,19 @@ header .brand{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     <p>اختر المهمة مباشرة، وستظهر لك أدواتها فقط.</p>
   </div>
   <div class="tiles">
+    <button class="tile c-violet" data-go="reminders">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/></svg></span>
+      <b>يومي</b><span id="rem-tile-sub">الحصص والتذكيرات</span><span class="tile-badge" id="rem-badge" hidden></span>
+      <span class="arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></span>
+    </button>
     <button class="tile c-teal" data-go="daily">
       <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></span>
-      <b>الرصد</b><span>المشاركة والواجب لكل طالب</span>
+      <b>الرصد</b><span>المشاركة والواجب والاختبارات</span>
       <span class="arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></span>
     </button>
-    <button class="tile c-blue" data-go="exams">
-      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/><path d="M16 15l1.5 1.5L20 14"/></svg></span>
-      <b>رصد الاختبارات</b><span>درجات الاختبارات لكل طالب</span>
-      <span class="arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></span>
-    </button>
-    <button class="tile c-violet" data-go="schedule">
-      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/></svg></span>
-      <b>الجدول</b><span>بدء الحصة وأوقاتها</span>
-      <span class="arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></span>
-    </button>
-    <button class="tile c-red" data-go="reminders">
-      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M5 3L2 6"/><path d="M22 6l-3-3"/></svg></span>
-      <b>تذكيراتي</b><span id="rem-tile-sub">مهامك في يومك الدراسي</span><span class="tile-badge" id="rem-badge" hidden></span>
-      <span class="arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></span>
-    </button>
-    <button class="tile c-violet" data-go="behavior">
+    <button class="tile c-amber" data-go="behavior">
       <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
-      <b>السلوك</b><span>إيجابي ومتابعة</span>
-      <span class="arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></span>
-    </button>
-    <button class="tile c-red" data-go="attendance">
-      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="14.5" y1="14.5" x2="9.5" y2="19.5"/><line x1="9.5" y1="14.5" x2="14.5" y2="19.5"/></svg></span>
-      <b>الغياب</b><span>مؤشر انضباط بلا درجات</span>
-      <span class="arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></span>
-    </button>
-    <button class="tile c-amber" data-go="duties">
-      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 13l2 2 4-4"/></svg></span>
-      <b>المهام</b><span>عريف الفصل والمسؤوليات</span>
+      <b>السلوك والتحفيز</b><span>المواقف والشهادات</span>
       <span class="arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></span>
     </button>
     <button class="tile c-green" data-go="messages">
@@ -721,34 +711,24 @@ header .brand{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
       <b>الرسائل</b><span>قوالب جاهزة ومخصصة</span><span class="tile-badge" id="msg-badge" hidden></span>
       <span class="arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></span>
     </button>
-    <button class="tile c-accent" data-go="students">
-      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></span>
-      <b>الطلاب</b><span>بيانات الطلاب وملفاتهم</span>
-      <span class="arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></span>
-    </button>
-    <button class="tile c-green" data-go="grades">
+    <button class="tile c-accent" data-go="grades">
       <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.6" cy="6.6" r="2.4"/><circle cx="17.4" cy="17.4" r="2.4"/></svg></span>
-      <b>الدرجات</b><span>المشاركة والسلوك من 10</span>
+      <b>النتائج</b><span>الدرجات والمستويات والحضور</span>
       <span class="arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></span>
     </button>
-    <button class="tile c-accent" data-go="levels">
-      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
-      <b>المستويات</b><span>كشف مستوى كل طالب</span>
-      <span class="arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></span>
-    </button>
-    <button class="tile c-amber" data-go="cert">
-      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></span>
-      <b>التحفيز</b><span>إنجازات وشهادات</span>
+    <button class="tile c-red" data-go="duties">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 13l2 2 4-4"/></svg></span>
+      <b>أدوار الطلاب</b><span>عريف الفصل والمسؤوليات</span>
       <span class="arrow"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></span>
     </button>
   </div>
   <div class="home-foot">كل شيء يخص الطالب، في مكان واحد.</div>
-  <div class="hidden-store"><div id="home-sub"></div><div id="home-stats"></div><div id="home-focus"></div><div id="home-student-count"></div><div id="home-students"></div></div>
 </section>
 
 <!-- ══ الرصد ══ -->
 <section class="panel" id="daily">
   <div class="page-head"><div><h1>الرصد</h1><p>سجّل الحالة مباشرة للطلاب.</p></div><button class="back">الرئيسية</button></div>
+  <div class="hub-tabs" role="tablist"><button type="button" role="tab" data-hub="daily" class="on" aria-selected="true">الرصد اليومي</button><button type="button" role="tab" data-hub="exams">الاختبارات</button></div>
   <div class="sheet tinted">
     <div class="section-head"><h3>⚡ رصد سريع لطالب</h3><span class="count">ابحث مرة واحدة</span></div>
     <div class="search"><span class="search-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span><input class="inp" id="quick-search" autocomplete="off" placeholder="اكتب اسم الطالب…"></div>
@@ -795,7 +775,8 @@ header .brand{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 <!-- ══ المستويات ══ -->
 <section class="panel" id="levels">
-  <div class="page-head"><div><h1>المستويات</h1><p>يُشتق من إجابات الطالب الفعلية في الأنشطة — قياس موضوعي لا تقدير يدوي.</p></div><button class="back">الرئيسية</button></div>
+  <div class="page-head"><div><h1>النتائج</h1><p>المستويات: يُشتق من إجابات الطالب الفعلية في الأنشطة — قياس موضوعي لا تقدير يدوي.</p></div><button class="back">الرئيسية</button></div>
+  <div class="hub-tabs" role="tablist"><button type="button" role="tab" data-hub="grades">الدرجات</button><button type="button" role="tab" data-hub="levels" class="on" aria-selected="true">المستويات</button><button type="button" role="tab" data-hub="attendance">الحضور</button></div>
   <div class="sheet">
     <div class="muted" id="level-term" style="margin-bottom:4px"></div>
     <div class="level-grid" id="level-kpis"></div>
@@ -814,18 +795,21 @@ header .brand{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 <!-- ══ الدرجات ══ -->
 <section class="panel" id="grades">
-  <div class="page-head"><div><h1>الدرجات</h1><p>المشاركة والسلوك، كل واحدة من 10 ومستقلة عن الأخرى.</p></div><button class="back">الرئيسية</button></div>
+  <div class="page-head"><div><h1>النتائج</h1><p>المشاركة والسلوك، كل واحدة من 10 ومستقلة عن الأخرى.</p></div><button class="back">الرئيسية</button></div>
+  <div class="hub-tabs" role="tablist"><button type="button" role="tab" data-hub="grades" class="on" aria-selected="true">الدرجات</button><button type="button" role="tab" data-hub="levels">المستويات</button><button type="button" role="tab" data-hub="attendance">الحضور</button></div>
+  <details class="sheet" id="grade-settings"><summary>⚙️ السنة الدراسية والفترة<span class="count" style="margin-inline-start:auto;font-weight:400" id="grade-settings-note"></span></summary>
   <div class="sheet">
-    <div class="section-head"><h3>السنة الدراسية</h3><span class="count" id="academic-status"></span></div>
-    <div class="grid2"><div><label>السنة الدراسية</label><input class="inp" id="academic-year" placeholder="مثال: 1448-1449"></div><div><label>الفصل الدراسي</label><select class="inp" id="academic-semester"><option value="1">الفصل الدراسي الأول</option><option value="2">الفصل الدراسي الثاني</option></select></div></div>
-    <div class="actions" style="margin-top:9px;gap:7px;flex-wrap:wrap"><button class="btn gold" id="period-transition">🔒 إغلاق الفترة الأولى وبدء الفترة الثانية</button><button class="btn" id="semester-lock">🔒 إغلاق الفصل</button></div>
-  </div>
-  <div class="sheet">
-    <div class="section-head"><h3>فترة التقييم</h3><span class="count" id="term-note"></span></div>
-    <div style="margin-bottom:8px"><label>الفترة<select class="inp" id="grade-period"><option value="1">الفترة الأولى</option><option value="2">الفترة الثانية</option></select></label></div>
-    <div class="grid2"><div><label>من</label><input class="inp" type="date" id="term-start"></div><div><label>إلى</label><input class="inp" type="date" id="term-end"></div></div>
-    <div class="actions" style="margin-top:9px"><button class="btn sm" id="term-reset">إعادة للافتراضي</button></div>
-  </div>
+      <div class="section-head"><h3>السنة الدراسية</h3><span class="count" id="academic-status"></span></div>
+      <div class="grid2"><div><label>السنة الدراسية</label><input class="inp" id="academic-year" placeholder="مثال: 1448-1449"></div><div><label>الفصل الدراسي</label><select class="inp" id="academic-semester"><option value="1">الفصل الدراسي الأول</option><option value="2">الفصل الدراسي الثاني</option></select></div></div>
+      <div class="actions" style="margin-top:9px;gap:7px;flex-wrap:wrap"><button class="btn gold" id="period-transition">🔒 إغلاق الفترة الأولى وبدء الفترة الثانية</button><button class="btn" id="semester-lock">🔒 إغلاق الفصل</button></div>
+    </div>
+    <div class="sheet">
+      <div class="section-head"><h3>فترة التقييم</h3><span class="count" id="term-note"></span></div>
+      <div style="margin-bottom:8px"><label>الفترة<select class="inp" id="grade-period"><option value="1">الفترة الأولى</option><option value="2">الفترة الثانية</option></select></label></div>
+      <div class="grid2"><div><label>من</label><input class="inp" type="date" id="term-start"></div><div><label>إلى</label><input class="inp" type="date" id="term-end"></div></div>
+      <div class="actions" style="margin-top:9px"><button class="btn sm" id="term-reset">إعادة للافتراضي</button></div>
+    </div>
+  </details>
   <div class="kpis" id="grade-kpis"></div>
   <div class="sheet">
     <div class="section-head"><h3>درجات الطلاب</h3><span class="count" id="grade-count"></span></div><div class="muted" style="margin:-3px 0 8px">تشمل المشاركة والواجب والسلوك ودرجة الاختبارات المحوّلة من 20.</div>
@@ -838,7 +822,8 @@ header .brand{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 <!-- ══ رصد الاختبارات ══ -->
 <section class="panel" id="exams">
-  <div class="page-head"><div><h1>رصد الاختبارات</h1><p>أضف عدد الاختبارات الذي تريده في الفترة، ويحوّل النظام مجموعها تلقائيًا إلى 20.</p></div><button class="back">الرئيسية</button></div>
+  <div class="page-head"><div><h1>الرصد</h1><p>أضف عدد الاختبارات الذي تريده في الفترة، ويحوّل النظام مجموعها تلقائيًا إلى 20.</p></div><button class="back">الرئيسية</button></div>
+  <div class="hub-tabs" role="tablist"><button type="button" role="tab" data-hub="daily">الرصد اليومي</button><button type="button" role="tab" data-hub="exams" class="on" aria-selected="true">الاختبارات</button></div>
   <div class="sheet">
     <div class="section-head"><h3>إعداد الاختبارات في هذه الفترة</h3><span class="count">مرن من اختبار واحد إلى عدة اختبارات</span></div>
     <div class="exam-period-tools">
@@ -878,15 +863,18 @@ header .brand{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   <div class="sheet"><div class="section-head"><h3>طريقة الاحتساب</h3></div><div class="msg" id="exam-rules"></div></div>
 </section>
 
-<!-- ══ المهام ══ -->
+<!-- ══ يومي: التذكيرات ══ -->
 <section class="panel" id="reminders">
+  <div class="page-head"><div><h1>يومي</h1><p>تذكيرات اليوم، ويصلك إشعار في موعد كل واحد منها.</p></div><button class="back">الرئيسية</button></div>
+  <div class="hub-tabs" role="tablist"><button type="button" role="tab" data-hub="reminders" class="on" aria-selected="true">اليوم</button><button type="button" role="tab" data-hub="schedule">الجدول والإعدادات</button></div>
   <div class="card" id="rem-card"></div>
 </section>
 
+<!-- ══ أدوار الطلاب ══ -->
 <section class="panel" id="duties">
-  <div class="page-head"><div><h1>المهام</h1><p>مسؤوليات تُسند للطلاب — لا تدخل في الدرجات.</p></div><button class="back">الرئيسية</button></div>
+  <div class="page-head"><div><h1>أدوار الطلاب</h1><p>مسؤوليات تُسند للطلاب — لا تدخل في الدرجات.</p></div><button class="back">الرئيسية</button></div>
   <div class="sheet tinted">
-    <div class="section-head"><h3>إسناد مهمة</h3><span class="count" id="duty-cls"></span></div>
+    <div class="section-head"><h3>إسناد دور</h3><span class="count" id="duty-cls"></span></div>
     <div><label>المهمة</label><select class="inp" id="duty-title"></select></div>
     <div id="duty-custom-wrap" style="margin-top:8px;display:none"><label>اسم المهمة</label><input class="inp" id="duty-custom" placeholder="اكتب اسم المهمة"></div>
     <div style="margin-top:8px"><label>الطالب</label>
@@ -908,7 +896,8 @@ header .brand{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 <!-- ══ الغياب ══ -->
 <section class="panel" id="attendance">
-  <div class="page-head"><div><h1>الغياب</h1><p>مؤشر انضباط — لا يدخل في الدرجات إطلاقًا.</p></div><button class="back">الرئيسية</button></div>
+  <div class="page-head"><div><h1>النتائج</h1><p>الحضور: مؤشر انضباط — لا يدخل في الدرجات إطلاقًا.</p></div><button class="back">الرئيسية</button></div>
+  <div class="hub-tabs" role="tablist"><button type="button" role="tab" data-hub="grades">الدرجات</button><button type="button" role="tab" data-hub="levels">المستويات</button><button type="button" role="tab" data-hub="attendance" class="on" aria-selected="true">الحضور</button></div>
   <div class="kpis" id="att-kpis"></div>
   <div id="att-detail"></div>
   <div class="sheet">
@@ -933,7 +922,8 @@ header .brand{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 <!-- ══ السلوك ══ -->
 <section class="panel" id="behavior">
-  <div class="page-head"><div><h1>السلوك</h1><p>سجّل الموقف بسرعة، ثم راجع سجل الطالب عند الحاجة.</p></div><button class="back">الرئيسية</button></div>
+  <div class="page-head"><div><h1>السلوك والتحفيز</h1><p>سجّل الموقف بسرعة، ثم راجع سجل الطالب عند الحاجة.</p></div><button class="back">الرئيسية</button></div>
+  <div class="hub-tabs" role="tablist"><button type="button" role="tab" data-hub="behavior" class="on" aria-selected="true">السلوك</button><button type="button" role="tab" data-hub="cert">الشهادات</button></div>
   <div class="sheet tinted">
     <div class="section-head"><h3>⚡ تسجيل سريع</h3><span class="count">اختر الطالب ثم السلوك</span></div>
     <div class="search"><span class="search-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span><input class="inp" id="b-search" autocomplete="off" placeholder="ابحث عن الطالب…"></div>
@@ -981,7 +971,8 @@ header .brand{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 <!-- ══ التحفيز ══ -->
 <section class="panel" id="cert">
-  <div class="page-head"><div><h1>التحفيز</h1><p>إنجازات وشهادات للطلاب.</p></div><button class="back">الرئيسية</button></div>
+  <div class="page-head"><div><h1>السلوك والتحفيز</h1><p>شهادات تقدير للطلاب — وتصل أيضًا من ملف الطالب.</p></div><button class="back">الرئيسية</button></div>
+  <div class="hub-tabs" role="tablist"><button type="button" role="tab" data-hub="behavior">السلوك</button><button type="button" role="tab" data-hub="cert" class="on" aria-selected="true">الشهادات</button></div>
   <div class="sheet tinted">
     <div class="section-head"><h3>🏅 شهادة تقدير</h3><span class="count">اختر الطالب</span></div>
     <div class="search"><span class="search-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span><input class="inp" id="c-search" autocomplete="off" placeholder="ابحث عن الطالب…"></div>
@@ -991,8 +982,10 @@ header .brand{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   <div class="sheet"><div class="cert"><div style="font-size:.78rem;color:var(--ink-soft)">المملكة العربية السعودية · وزارة التعليم</div><h1>شهادة تقدير</h1><div style="font-size:.85rem">تُمنح للطالب</div><div class="name" id="cname">—</div><div id="creason" style="font-size:.85rem">التميز والمشاركة الفاعلة</div></div></div>
 </section>
 
-<!-- ══ السجلات ══ -->
+<!-- ══ يومي: الجدول والإعدادات ══ -->
 <section class="panel" id="schedule">
+  <div class="page-head"><div><h1>يومي</h1><p>الحصة الآن، وأوقات الحصص، وجدولك الأسبوعي، والتنبيهات.</p></div><button class="back">الرئيسية</button></div>
+  <div class="hub-tabs" role="tablist"><button type="button" role="tab" data-hub="reminders">اليوم</button><button type="button" role="tab" data-hub="schedule" class="on" aria-selected="true">الجدول والإعدادات</button></div>
   <div class="card">
     <div class="sch-switch">
       <div>
@@ -1038,19 +1031,6 @@ header .brand{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   <div class="card">
     <h3>حصص اليوم</h3>
     <div id="sch-log" class="level-table"></div>
-  </div>
-</section>
-
-<section class="panel" id="records">
-  <div class="page-head"><div><h1>السجلات</h1><p>راجع ما تم رصده حسب الفصل والتاريخ.</p></div><button class="back">الرئيسية</button></div>
-  <div class="sheet">
-    <div><label>التاريخ</label><input class="inp" type="date" id="rec-date"></div>
-    <div class="record-tabs">
-      <button class="btn record-tab on" id="rec-part">المشاركة</button>
-      <button class="btn record-tab" id="rec-home">الواجب</button>
-      <button class="btn record-tab" id="rec-beh">السلوك</button>
-    </div>
-    <div id="records-list"></div>
   </div>
 </section>
 
@@ -1103,15 +1083,15 @@ header .brand{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
       </div>
     </div>
     <div class="more-grid">
-      <button data-target="schedule"><span class="ic" style="background:var(--green-soft);color:var(--green)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/></svg></span><b>الجدول</b><small>الحصص والمشاركة</small></button>
-        <button data-target="grades"><span class="ic" style="background:var(--green-soft);color:var(--green)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.6" cy="6.6" r="2.4"/><circle cx="17.4" cy="17.4" r="2.4"/></svg></span><b>الدرجات</b><small>المشاركة والسلوك</small></button>
+      <button data-target="reminders"><span class="ic" style="background:var(--green-soft);color:var(--green)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/></svg></span><b>يومي</b><small>التذكيرات والحصة الآن</small></button>
+      <button data-target="schedule"><span class="ic" style="background:var(--green-soft);color:var(--green)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/></svg></span><b>الجدول والإعدادات</b><small>الأوقات والتنبيهات</small></button>
+      <button data-target="grades"><span class="ic" style="background:var(--green-soft);color:var(--green)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.6" cy="6.6" r="2.4"/><circle cx="17.4" cy="17.4" r="2.4"/></svg></span><b>الدرجات</b><small>النتائج من 10</small></button>
       <button data-target="exams"><span class="ic" style="background:var(--violet-soft);color:var(--violet)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z"/><path d="M7 8h10M7 12h6M7 16h4"/></svg></span><b>رصد الاختبارات</b><small>20 درجة لكل فترة</small></button>
-      <button data-target="duties"><span class="ic" style="background:var(--amber-soft);color:var(--amber)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 13l2 2 4-4"/></svg></span><b>المهام</b><small>عريف الفصل وغيره</small></button>
-      <button data-target="attendance"><span class="ic" style="background:var(--red-soft);color:var(--red)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="3"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="14.5" y1="14.5" x2="9.5" y2="19.5"/><line x1="9.5" y1="14.5" x2="14.5" y2="19.5"/></svg></span><b>الغياب</b><small>مؤشر الانضباط</small></button>
+      <button data-target="duties"><span class="ic" style="background:var(--amber-soft);color:var(--amber)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 13l2 2 4-4"/></svg></span><b>أدوار الطلاب</b><small>عريف الفصل وغيره</small></button>
+      <button data-target="attendance"><span class="ic" style="background:var(--red-soft);color:var(--red)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="3"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="14.5" y1="14.5" x2="9.5" y2="19.5"/><line x1="9.5" y1="14.5" x2="14.5" y2="19.5"/></svg></span><b>الحضور</b><small>مؤشر الانضباط</small></button>
       <button data-target="levels"><span class="ic" style="background:var(--violet-soft);color:var(--violet)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span><b>المستويات</b><small>متابعة مستوى الطلاب</small></button>
       <button data-target="messages"><span class="ic" style="background:var(--green-soft);color:var(--green)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg></span><b>الرسائل</b><small>قوالب ونسخ سريع</small></button>
-      <button data-target="cert"><span class="ic" style="background:var(--red-soft);color:var(--red)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></span><b>التحفيز</b><small>الشهادات والإنجازات</small></button>
-      <button data-target="records"><span class="ic" style="background:var(--accent-soft);color:var(--accent)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg></span><b>السجلات</b><small>مراجعة الرصد</small></button>
+      <button data-target="cert"><span class="ic" style="background:var(--red-soft);color:var(--red)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></span><b>الشهادات</b><small>تقدير الطلاب</small></button>
     </div>
   </div>
 </div>
@@ -1129,9 +1109,9 @@ header .brand{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 <!-- محددات الفصل المخفية: يعتمد عليها منطق التطبيق، والتحكم موحّد من شريحة الترويسة -->
 <div class="hidden-store">
-  <select id="cls"></select><select id="home-class"></select><select id="level-class"></select><select id="students-class"></select><select id="rec-class"></select>
+  <select id="cls"></select><select id="home-class"></select><select id="level-class"></select><select id="students-class"></select>
   <div id="main-tabs">
-    <button class="tab" data-p="home"></button><button class="tab" data-p="daily"></button><button class="tab" data-p="levels"></button><button class="tab" data-p="students"></button><button class="tab" data-p="behavior"></button><button class="tab" data-p="messages"></button><button class="tab" data-p="cert"></button><button class="tab" data-p="schedule"></button><button class="tab" data-p="records"></button><button class="tab" data-p="grades"></button><button class="tab" data-p="exams"></button><button class="tab" data-p="attendance"></button><button class="tab" data-p="duties"></button>
+    <button class="tab" data-p="home"></button><button class="tab" data-p="daily"></button><button class="tab" data-p="levels"></button><button class="tab" data-p="students"></button><button class="tab" data-p="behavior"></button><button class="tab" data-p="messages"></button><button class="tab" data-p="cert"></button><button class="tab" data-p="schedule"></button><button class="tab" data-p="grades"></button><button class="tab" data-p="exams"></button><button class="tab" data-p="attendance"></button><button class="tab" data-p="duties"></button>
   </div>
 </div>
 <script>
@@ -1208,7 +1188,7 @@ const NEG_BEHAVIORS=[['⏰ تأخر','التأخر عن الحصة أو بداي
 /* ── الفصول ── */
 function classes(){return [...new Set(students.map(s=>String(s.cls||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ar'))}
 function list(cls){return students.filter(s=>!cls||s.cls===cls).sort((a,b)=>a.name.localeCompare(b.name,'ar'))}
-const CLASS_SELECTS=['cls','home-class','level-class','students-class','rec-class'];
+const CLASS_SELECTS=['cls','home-class','level-class','students-class'];
 function fillClass(id){const e=$(id);if(!e)return;const cur=e.value;const cs=classes();e.innerHTML=cs.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');if([...e.options].some(o=>o.value===cur))e.value=cur}
 function fillAll(){
   CLASS_SELECTS.forEach(fillClass);
@@ -1233,7 +1213,7 @@ function setCurrentClass(c, opts){
   quickStudentId=''; behaviorStudentId=''; certStudentId=''; messageStudentId='';
   ['quick-search','b-search','c-search','m-search'].forEach(id=>{const e=$(id);if(e)e.value=''});
   ['quick-card','b-selected','c-selected','m-selected','quick-results','b-results','c-results','m-results'].forEach(id=>{const e=$(id);if(e)e.innerHTML=''});
-  renderDaily(); fillMessageSearch(); renderMessages(); renderStudents(); renderLevels(); renderRecords(); renderCert(); renderBeh(); renderGrades(); renderExamGrades(); renderHome();
+  renderDaily(); fillMessageSearch(); renderMessages(); renderStudents(); renderLevels(); renderCert(); renderBeh(); renderGrades(); renderExamGrades(); renderHome();
   if(!opts.quiet) toast(opts.msg||('تم تغيير الفصل إلى '+c));
 }
 
@@ -2070,18 +2050,6 @@ function queueMessage(k){
 function useMessage(k){const s=studentForMessage();if(!s){toast('اختر طالبًا أولًا');return}const t=msg(k,s);$('message-preview').textContent=t;copyText(t).then(()=>toast('تم نسخ الرسالة')).catch(()=>toast('تعذر النسخ'))}
 
 /* ── السجلات ── */
-function selectRecordTab(k){window.__recordTab=k;document.querySelectorAll('.record-tab').forEach(b=>b.classList.remove('on'));$('rec-'+(k==='participation'?'part':k==='homework'?'home':'beh')).classList.add('on');renderRecords()}
-function renderRecords(){
- const cls=$('rec-class')?.value||$('cls')?.value||'',d=$('rec-date')?.value||today(),e=$('records-list');if(!e)return;
- if(window.__recordTab==='behavior'){
-  const L=data.behavior.filter(x=>{if(x?.deleted)return false;const s=students.find(a=>a.id===x.studentId);return s&&(!cls||s.cls===cls)&&(!d||x.date===d)}).slice(0,100);
-  e.innerHTML=L.map(x=>{const s=students.find(a=>a.id===x.studentId);return `<div class="record-row"><span class="pill ${x.type==='positive'?'pos':'neg'}">${x.type==='positive'?'🌟':'⚠️'}</span><div class="grow"><b style="font-size:.86rem">${esc(s?.name||'طالب محذوف')}</b><div class="muted">${esc(x.category||'ملاحظة')} · ${esc(x.note||'')}</div></div><span class="muted">${esc(x.date||'')}</span></div>`}).join('')||'<div class="empty">لا توجد سجلات.</div>';
-  return
- }
- const m=window.__recordTab||'participation',L=list(cls).map(s=>({s,st:rec(m,d,s.id)})).filter(x=>x.st);
- e.innerHTML=L.map(x=>`<div class="record-row"><span class="pill">${m==='participation'?'🗣️':'📚'}</span><div class="grow"><b style="font-size:.86rem">${esc(x.s.name)}</b><div class="muted">${esc(x.s.cls||'')}</div></div><span class="pill">${esc(x.st)}</span></div>`).join('')||'<div class="empty">لا توجد سجلات لهذا اليوم.</div>'
-}
-
 /* ═══ الدرجات — جلب مركزي من الـ Worker ═══
    شاشة الدرجات لا تحسب محليًا. المصدر الوحيد للأرقام هو /grades،
    مع تمرير الفصل والفترة النشطة حتى تبقى بوابة المعلم متزامنة مع لوحة التحكم. */
@@ -2129,6 +2097,7 @@ function renderAcademicControls(){
  if(tr){const ap=activePeriod();tr.textContent=ap===2?'✓ الفترة الثانية نشطة':'🔒 الانتقال للفترة الثانية من لوحة التحكم';tr.classList.toggle('gold',ap!==2);tr.classList.toggle('tick',ap===2);tr.disabled=true;tr.title='إدارة الانتقال بين الفترات تتم من لوحة التحكم';}
  if(lock){lock.textContent=s.status==='closed'?'🔒 الفصل مغلق':'🔒 إدارة إغلاق الفصل من لوحة التحكم';lock.classList.toggle('bad',s.status==='closed');lock.classList.toggle('gold',s.status!=='closed');lock.disabled=true;lock.title='إغلاق الفصل وبدء الفصل التالي يتم من لوحة التحكم';}
  const n=$('academic-status'); if(n)n.textContent=s.status==='closed'?'الفصل مغلق ومحفوظ في الأرشيف. التعديل العادي على درجاته متوقف.':`الفترة الحالية للرصد: ${activePeriod()===1?'الأولى':'الثانية'} · الفصل مفتوح للرصد والتعديل.`;
+ const gs=$('grade-settings-note'); if(gs)gs.textContent=`${gradeSemester===1?'الفصل الأول':'الفصل الثاني'} · ${activePeriod()===2?'الفترة الثانية':'الفترة الأولى'}${s.status==='closed'?' · مغلق':''}`;
 }
 async function loadAcademic(){try{const r=await fetch(`${API}/academic?t=${encodeURIComponent(token)}`);const j=await r.json();if(j.ok&&j.academic){data.academic=j.academic;academicYear=String(data.academic.year||'');gradeSemester=Number(data.academic.currentSemester)===2?2:1;gradePeriod=Number((data.academic.semesters?.[String(gradeSemester)]?.activePeriod))===2?2:1;}}catch(e){}renderAcademicControls();if($('grade-period'))$('grade-period').value=String(gradePeriod);if($('exam-period'))$('exam-period').value=String(gradePeriod)}
 async function saveAcademicMeta(){data.academic=data.academic||{};data.academic.year=String($('academic-year')?.value||'').trim();data.academic.currentSemester=gradeSemester;await save();renderAcademicControls()}
@@ -2512,7 +2481,7 @@ function openLevelStudent(id){openStudentProfile(id)}
 /* ── ملف الطالب ── */
 function openStudentProfile(id){
  const s=students.find(x=>x.id===id);if(!s)return;
- const g=gradeOf(id),ps=g.participation,hs=g.homework,bs=g.behavior,l=g.level||EMPTY_LEVEL;
+ const g=gradeOf(id),ps=g.participation,hs=g.homework,bs=g.behavior,l=g.level||EMPTY_LEVEL,att=g.attendance||EMPTY_ATT;
  $('profile-avatar').textContent=initials(s.name);$('profile-name').textContent=s.name;$('profile-class').textContent=s.cls||'بدون فصل';
  const recent=[];for(const d of Object.keys(data.learning||{}).sort().reverse()){const r=data.learning[d]?.[id];if(r)recent.push({date:d,label:r.status||'غير مقاس'});if(recent.length>=5)break}
  const beh=data.behavior.filter(x=>x.studentId===id&&!x.deleted).slice(0,5);
@@ -2522,6 +2491,8 @@ function openStudentProfile(id){
    <div class="profile-card"><span>الواجب</span><b>${hs.measured?fmt(hs.score)+'/'+GRADE.max:'—'}</b></div>
    <div class="profile-card"><span>السلوك</span><b>${bs.score==null?'—':fmt(bs.score)+'/'+GRADE.max}</b></div>
    <div class="profile-card"><span>المستوى</span><b>${esc(l.label)}</b></div>
+   <div class="profile-card"><span>الحضور</span><b>${att.measured?att.rate+'%':'—'}</b></div>
+   <div class="profile-card"><span>الأدوار</span><b>${esc(String((g.duties||{}).count||0))}</b></div>
   </div>
   <div class="msg" style="margin:10px 0">${!GRADES?'الدرجات قيد الحساب من الخادم…':ps.measured
     ?`المشاركة: شارك ${ps.yes} · لم يشارك ${ps.no}${ps.absent?' · غائب '+ps.absent+' (غير محتسب)':''} ← الصافي ${ps.net} فخُصم ${ps.deduction} من ${GRADE.max}.`
@@ -2531,7 +2502,9 @@ function openStudentProfile(id){
   <div class="profile-actions">
    <button class="btn tick" data-go-daily="${esc(id)}">👥 الرصد</button>
    <button class="btn" data-go-msg="${esc(id)}">💬 رسالة</button>
-   <button class="btn" data-go-beh="${esc(id)}">🧭 متابعة</button>
+   <button class="btn" data-go-beh="${esc(id)}">🧭 سلوك</button>
+   <button class="btn" data-go-cert="${esc(id)}">🏅 شهادة</button>
+   <button class="btn" data-go-att="${esc(id)}">📅 الحضور</button>
   </div>
   <div class="profile-list">
    <b>آخر مستويات التعلم</b>
@@ -2555,16 +2528,8 @@ function renderStudents(){
  }).join('')||'<div class="empty">لا يوجد طلاب مطابقون.</div>';
 }
 
-/* ── الرئيسية (بوابة مهام: لا مؤشرات) ── */
-function renderHome(){
- const cls=$('home-class')?.value||$('cls')?.value||classes()[0]||'',all=list(cls),d=today();
- const p=all.filter(s=>rec('participation',d,s.id)==='شارك').length,h=all.filter(s=>rec('homework',d,s.id)==='أنجز').length;
- if($('home-sub'))$('home-sub').textContent=`الفصل ${cls||'—'} · ${d}`;
- if($('home-student-count'))$('home-student-count').textContent=`${all.length} طالب`;
- if($('home-stats'))$('home-stats').innerHTML=`<div><span>عدد الطلاب</span><b>${all.length}</b></div><div><span>شاركوا اليوم</span><b>${p}</b></div><div><span>أنجزوا الواجب</span><b>${h}</b></div>`;
- const priorities=all.map(s=>({s,l:gradeOf(s.id).level||EMPTY_LEVEL})).filter(x=>x.l.status==='يحتاج دعم'||!x.l.measured).slice(0,5);
- if($('home-focus'))$('home-focus').innerHTML=priorities.map(x=>`<button data-profile="${esc(x.s.id)}"><b>${esc(x.s.name)}</b><small>${esc(x.l.label)}</small></button>`).join('');
-}
+/* ── الرئيسية: بوابة مهام بلا مؤشرات، فلا شيء يُحسب هنا ── */
+function renderHome(){}
 
 /* ── المظهر: تلقائي / نهاري / ليلي ── */
 const THEME_KEY='teacher_theme_v1';
@@ -2705,8 +2670,8 @@ function openTeacherPanel(target){
   document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('on',x.id===target));
   if(target==='behavior'){renderQuick('behavior');renderBehaviorButtons();renderCustomBehaviorTemplates();renderBeh()}
   if(target==='messages'){renderAlerts();renderMessages();fillMessageSearch()}
-  if(['daily','home','records','grades'].includes(target)){ try{ schAutoClose(); }catch(e){} }
-  if(target==='records'){renderRecords()} if(target==='schedule'){schAutoClose();renderSchedule()}
+  if(['daily','home','grades'].includes(target)){ try{ schAutoClose(); }catch(e){} }
+  if(target==='schedule'){schAutoClose();renderSchedule()}
   if(target==='cert'){renderQuick('cert')}
   if(target==='levels'){renderLevels()}
   if(target==='students'){renderStudents()}
@@ -2725,7 +2690,7 @@ function openTeacherPanel(target){
 function wire(){
  // شريحة الفصل الموحّدة
  CLASS_SELECTS.forEach(id=>{const e=$(id);if(e)e.addEventListener('change',()=>setCurrentClass(e.value))});
- $('date').addEventListener('change',()=>{renderDaily();renderQuick('quick');renderRecords()});
+ $('date').addEventListener('change',()=>{renderDaily();renderQuick('quick')});
  $('roster-search').addEventListener('input',renderDaily);
  $('bulk-done').onclick=bulkDone;$('bulk-absent').onclick=bulkAbsent;
  const setMode=m=>{mode=m;$('mode-part').classList.toggle('on',m==='participation');$('mode-home').classList.toggle('on',m==='homework');renderDaily()};
@@ -2735,7 +2700,6 @@ function wire(){
  $('c-search').addEventListener('input',()=>searchPeople('c-search','c-results',certStudentId,'cert'));
  $('m-search').addEventListener('input',fillMessageSearch);
  $('reason').addEventListener('input',renderCert);
- $('rec-date').addEventListener('change',renderRecords);
  $('level-search').addEventListener('input',renderLevels);
  $('students-search').addEventListener('input',renderStudents);
  $('grade-search').addEventListener('input',renderGrades);
@@ -2755,8 +2719,8 @@ function wire(){
   $('exam-period').onchange=()=>{gradePeriod=Number($('exam-period').value)===2?2:1;if(examVrOn)examVrStop();if($('grade-period'))$('grade-period').value=String(gradePeriod);renderExamConfig();loadGrades();renderExamGrades()};
   $('exam-search').addEventListener('input',renderExamGrades);
   $('exam-add-test').onclick=addExamTest;
- $('rec-part').onclick=()=>selectRecordTab('participation');$('rec-home').onclick=()=>selectRecordTab('homework');$('rec-beh').onclick=()=>selectRecordTab('behavior');
  document.querySelectorAll('.back').forEach(b=>b.onclick=()=>openTeacherPanel('home'));
+ document.querySelectorAll('.hub-tabs [data-hub]').forEach(b=>b.onclick=()=>openTeacherPanel(b.dataset.hub));
  document.querySelectorAll('.tile[data-go]').forEach(b=>b.onclick=()=>openTeacherPanel(b.dataset.go));
  document.querySelectorAll('.nav-item').forEach(b=>b.onclick=()=>{b.dataset.p==='more'?openMore():openTeacherPanel(b.dataset.p)});
  document.querySelectorAll('.more-grid button').forEach(b=>b.onclick=e=>{e.preventDefault();closeMore();openTeacherPanel(b.dataset.target)});
@@ -2771,7 +2735,7 @@ function wire(){
    const max=e.target.closest('[data-exam-test-max]');if(max)updateExamTest(max.dataset.examTestMax,'max',max.value);
  });
   document.addEventListener('click',e=>{
-  const t=e.target.closest('[data-duty-pick],[data-duty-end],[data-duty-clear],[data-alert-open],[data-alert-done],[data-att],[data-att-close],[data-exc],[data-profile],[data-set],[data-pick],[data-pickmsg],[data-clear],[data-clearmsg],[data-quick],[data-beh],[data-tpl-use],[data-tpl-del],[data-msg],[data-msgq],[data-level-open],[data-go-level],[data-go-daily],[data-go-msg],[data-go-beh],[data-exam-delete]');
+  const t=e.target.closest('[data-duty-pick],[data-duty-end],[data-duty-clear],[data-alert-open],[data-alert-done],[data-att],[data-att-close],[data-exc],[data-profile],[data-set],[data-pick],[data-pickmsg],[data-clear],[data-clearmsg],[data-quick],[data-beh],[data-tpl-use],[data-tpl-del],[data-msg],[data-msgq],[data-level-open],[data-go-level],[data-go-daily],[data-go-msg],[data-go-beh],[data-go-cert],[data-go-att],[data-exam-delete]');
   if(!t)return;
   const d=t.dataset;
   if(d.examAddTest!==undefined){addExamTest();return}
@@ -2802,6 +2766,8 @@ function wire(){
   if(d.goDaily!==undefined){closeStudentProfile();quickStudentId=d.goDaily;const s=students.find(x=>x.id===d.goDaily);openTeacherPanel('daily');$('quick-search').value=s?.name||'';renderQuick('quick');return}
   if(d.goMsg!==undefined){closeStudentProfile();messageStudentId=d.goMsg;openTeacherPanel('messages');fillMessageSearch();renderMessages();return}
   if(d.goBeh!==undefined){closeStudentProfile();behaviorStudentId=d.goBeh;openTeacherPanel('behavior');renderQuick('behavior');return}
+  if(d.goCert!==undefined){closeStudentProfile();openTeacherPanel('cert');selectSearch('cert',d.goCert);renderCert();return}
+  if(d.goAtt!==undefined){closeStudentProfile();attStudentId=d.goAtt;openTeacherPanel('attendance');return}
  });
 }
 
@@ -2835,12 +2801,10 @@ async function loadAll(){
 
 function boot(){
  ensure();msgqPull();fillAll();
- if($('rec-date'))$('rec-date').value=today();
- window.__recordTab='participation';
  window.__portalBooted=true; try{ schAutoClose(); }catch(e){}
  try{ ctxInit(); }catch(e){}   // السياق من الجدول قبل أول رسم للشاشات
  try{ ppAfterBoot(); }catch(e){}   // 🔔 فتح تنبيه حصة = بدء الحصة تلقائيًا + مزامنة مواعيد التنبيه
- renderDaily();renderRecords();renderBehaviorButtons();renderCustomBehaviorTemplates();renderBeh();renderMessages();fillMessageSearch();renderCert();renderLevels();renderStudents();renderDuties();renderHome();renderAcademicControls();renderExamConfig();renderExamGrades();loadAcademic().then(()=>{renderExamConfig();return loadGrades();});
+ renderDaily();renderBehaviorButtons();renderCustomBehaviorTemplates();renderBeh();renderMessages();fillMessageSearch();renderCert();renderLevels();renderStudents();renderDuties();renderHome();renderAcademicControls();renderExamConfig();renderExamGrades();loadAcademic().then(()=>{renderExamConfig();return loadGrades();});
 }
 
 async function start(){
@@ -3027,8 +2991,7 @@ function schEnd(p, auto, write, dateKey){
 }
 /* بعد الكتابة: كانت تستدعي render() غير الموجودة، فتبقى شاشة الرصد تعرض صفرًا */
 function schRefreshViews(){
-  for(const f of [typeof renderDaily==='function'&&renderDaily, typeof renderHome==='function'&&renderHome,
-                  typeof renderRecords==='function'&&renderRecords]){ if(f){ try{ f(); }catch(e){} } }
+  for(const f of [typeof renderDaily==='function'&&renderDaily, typeof renderHome==='function'&&renderHome]){ if(f){ try{ f(); }catch(e){} } }
 }
 /* الإغلاق التلقائي: لو نسيت الضغط، تُكتب المشاركة عند وقت النهاية المجدول
    وتُوسم «أُغلقت تلقائيًا» كي تعرف أنك نسيت. */
@@ -3658,7 +3621,7 @@ function remBadge(){
   const b = document.getElementById('rem-badge'); if(!b) return;
   const left = remToday().filter(x => !x.done).length;
   b.hidden = !left; b.textContent = left ? String(left) : '';
-  const sub = document.getElementById('rem-tile-sub'); if(sub) sub.textContent = left ? `${left} ${left === 1 ? 'مهمة' : 'مهام'} اليوم` : 'مهامك في يومك الدراسي';
+  const sub = document.getElementById('rem-tile-sub'); if(sub) sub.textContent = left ? `${left} ${left === 1 ? 'تذكير' : 'تذكيرات'} اليوم` : 'الحصص والتذكيرات';
 }
 /* ——— المزامنة: قائمة مواعيد مختصرة للخادم (لا تُرسل إلا إذا تغيّرت) ——— */
 function remItems(){
@@ -3694,8 +3657,8 @@ function renderReminders(){
   const box = $('rem-card'); if(!box) return;
   const d = today(), T = remToday(), now = schNowMin(), all = (data.reminders || []).slice();
   box.innerHTML = `
-    <div class="rem-head"><b>⏰ تذكيراتي</b><small>مهامك في يومك الدراسي — يصلك إشعار في موعد كل مهمة</small></div>
-    ${ppOn() ? '' : `<div class="rem-warn">🔕 الإشعارات غير مفعّلة على هذا الجهاز، فلن يصلك تنبيه.<button class="btn" type="button" onclick="openTeacherPanel('schedule')">فعّلها من «الجدول»</button></div>`}
+    <div class="rem-head"><b>⏰ تذكيراتي</b><small>ما عليك في يومك الدراسي</small></div>
+    ${ppOn() ? '' : `<div class="rem-warn">🔕 الإشعارات غير مفعّلة على هذا الجهاز، فلن يصلك تنبيه.<button class="btn" type="button" onclick="openTeacherPanel('schedule')">فعّلها من «الجدول والإعدادات»</button></div>`}
     <h3 class="rem-h">اليوم · ${REM_DAYS[remDowOf(d)] || ''}</h3>
     ${T.length ? `<div class="rem-list">${T.map(x => `<label class="rem-it${x.done ? ' done' : ''}${!x.done && x.fire <= now ? ' late' : ''}">
         <input type="checkbox" ${x.done ? 'checked' : ''} onchange="remDone('${esc(x.r.id)}')">
@@ -3734,7 +3697,7 @@ function remEdit(id){
 function remEditDuty(){
   const act = (data.roles || []).filter(x => x && x.active && x.title === REM_DUTY);
   const cls = act.length ? act[0].cls : (currentClass || classes()[0] || '');
-  if(!act.length) toast('لا يوجد مسؤول رصد واجبات معيّن — عيّنه من «المهام» ليظهر اسمه في التذكير');
+  if(!act.length) toast('لا يوجد مسؤول رصد واجبات معيّن — عيّنه من «أدوار الطلاب» ليظهر اسمه في التذكير');
   const days = remClassDays(cls);
   remEditing = { id:'', kind:'duty', cls, title:'', repeat:'weekly', days: days.length ? days : [0], date:today(), at:{ t:'class', cls }, lead:0 };
   remForm();
@@ -3747,7 +3710,7 @@ function remForm(){
     <b>${e.id ? 'تعديل التذكير' : e.kind === 'duty' ? '📋 تذكير رصد الواجبات' : 'تذكير جديد'}</b>
     ${e.kind === 'duty'
       ? `<label>الفصل<select class="inp" onchange="remSetDutyCls(this.value)">${cl.map(c => `<option ${c === e.cls ? 'selected' : ''}>${esc(c)}</option>`).join('')}</select></label>
-         <p class="hint" style="margin:0">العنوان: <b>${esc(remTitle(e))}</b> — يتبع المسؤول الحالي في «المهام» تلقائيًا.</p>`
+         <p class="hint" style="margin:0">العنوان: <b>${esc(remTitle(e))}</b> — يتبع المسؤول الحالي في «أدوار الطلاب» تلقائيًا.</p>`
       : `<label>المهمة<input class="inp" id="rem-title" value="${esc(e.title)}" placeholder="مثال: ذكّر الطلاب بإحضار دفتر النشاط" oninput="remEditing.title=this.value"></label>`}
     <div class="rem-seg"><button type="button" class="${e.repeat !== 'once' ? 'on' : ''}" onclick="remEditing.repeat='weekly';remForm()">كل أسبوع</button>
       <button type="button" class="${e.repeat === 'once' ? 'on' : ''}" onclick="remEditing.repeat='once';remForm()">مرة واحدة</button></div>
