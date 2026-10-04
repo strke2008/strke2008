@@ -35,22 +35,6 @@ button,.tab,.btn,[onclick]{touch-action:manipulation;-webkit-tap-highlight-color
 .alerts-more-btn{display:block;width:100%;margin-top:.6rem;padding:.65rem;border:1.5px dashed var(--line,#CBD5E1);border-radius:12px;
   background:transparent;color:var(--ink,#16233A);font:inherit;font-weight:700;font-size:.85rem;cursor:pointer}
 .alerts-more-btn:hover{background:rgba(46,107,184,.06);border-color:#2E6BB8}
-/* قائمة «⋯» في بطاقة النشاط */
-.hw-more{position:relative;display:inline-block}
-.hw-more>summary{list-style:none;cursor:pointer;user-select:none}
-.hw-more>summary::-webkit-details-marker{display:none}
-.hw-more[open]>summary{background:rgba(46,107,184,.1);border-color:#2E6BB8}
-.hw-more-menu{position:absolute;inset-inline-end:0;top:calc(100% + 6px);z-index:30;min-width:230px;padding:.35rem;border-radius:12px;
-  background:var(--paper-2,#fff);border:1px solid var(--line,#D8E0EA);box-shadow:0 12px 32px rgba(15,30,55,.18);display:grid;gap:2px}
-.hw-more-menu button{all:unset;box-sizing:border-box;display:block;width:100%;padding:.6rem .75rem;border-radius:8px;font-size:.86rem;
-  font-weight:600;color:var(--ink,#16233A);cursor:pointer;text-align:start;white-space:nowrap}
-.hw-more-menu button:hover,.hw-more-menu button:focus-visible{background:rgba(46,107,184,.1);outline:none}
-.hw-more-menu button.danger{color:#C2334D}
-.hw-more-menu button.danger:hover{background:rgba(214,69,91,.1)}
-:root[data-ui-theme="dark"] .hw-more-menu{background:#182337;border-color:#2A3A55}
-:root[data-ui-theme="dark"] .hw-more-menu button{color:#EEF2F7}
-.hw-more-menu.flip{inset-inline-end:auto;inset-inline-start:0}
-@media (max-width:700px){.hw-more-menu{min-width:210px;max-width:calc(100vw - 32px)}}
 /* شريط «لم يُنشر» المطويّ */
 .pub-warn-bar{background:rgba(214,69,91,.07);border:1.5px solid var(--pen,#D6455B);border-radius:14px;padding:.6rem .9rem;margin-bottom:.9rem}
 .pub-warn-bar>summary{display:flex;flex-wrap:wrap;align-items:baseline;gap:.25rem .7rem;cursor:pointer;list-style:none}

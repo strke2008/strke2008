@@ -158,20 +158,6 @@
     try{ if(typeof dashboardAlerts==='function' && document.getElementById('dash-alerts')) window.renderDashboardAlerts(dashboardAlerts()); }catch(_){}
   }
 
-  /* 7) قائمة «⋯»: واحدة مفتوحة فقط، وتُغلق بالنقر خارجها أو بـ Esc أو بعد اختيار إجراء */
-  document.addEventListener('click',e=>{
-    const inMenu=e.target.closest('details.hw-more');
-    document.querySelectorAll('details.hw-more[open]').forEach(d=>{ if(d!==inMenu) d.open=false; });
-    if(inMenu && e.target.closest('.hw-more-menu button')) inMenu.open=false;
-  });
-  document.addEventListener('toggle',e=>{
-    const d=e.target; if(!(d instanceof HTMLDetailsElement) || !d.classList.contains('hw-more') || !d.open) return;
-    const m=d.querySelector('.hw-more-menu'); if(!m) return;
-    m.classList.remove('flip');
-    const r=m.getBoundingClientRect();
-    if(r.left<8 || r.right>innerWidth-8) m.classList.add('flip');
-  },true);
-  document.addEventListener('keydown',e=>{ if(e.key==='Escape') document.querySelectorAll('details.hw-more[open]').forEach(d=>{ d.open=false; d.querySelector('summary')?.focus(); }); });
 
   // أظهر التلميح مرة عند فتح تبويب فيه بحث، ثم أخفه
   document.addEventListener('click',e=>{

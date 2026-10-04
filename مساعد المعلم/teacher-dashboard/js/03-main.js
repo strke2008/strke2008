@@ -5116,20 +5116,15 @@ function renderHw() {
         <button class="btn ${(!h.published || h.dirty) ? 'pen' : 'tick'} sm" onclick="openLink('${h.id}')"
           ${!activityReady(h)?`disabled title="${esc(activityEmptyMsg(h))}"`:''}>${
             !h.published ? '📤 انشر' : h.dirty ? '🔄 أعد النشر' : '🔗 الرابط'}</button>
+        ${h.kind==='reading' && (h.qs||[]).length ? `<button class="btn ghost sm hw-icon-btn" onclick="openReadingPrint('${h.id}')" title="طباعة ورقة الفهم القرائي" aria-label="طباعة ورقة الفهم القرائي">🖨️</button>` : ''}
         <button class="btn ghost sm hw-icon-btn" onclick="openReport('${h.id}')" title="تقرير النشاط" aria-label="تقرير النشاط">📊</button>
         <button class="btn ghost sm hw-icon-btn" onclick="pullResults('${h.id}')" title="تحديث النتائج" aria-label="تحديث النتائج">🔄</button>
+        <button class="btn ghost sm" type="button" onclick="openActivityMessage('${h.id}')" title="رسالة جاهزة للإرسال">💬 الرسالة</button>
         ${subs && h.kind==='style' ? `<button class="btn ghost sm" onclick="openStylesReport('${h.id}')" title="تقرير أنماط التعلّم">🧠 التقرير</button>` : ''}
+        ${subs && h.kind!=='style' && h.kind!=='lab' ? `<button class="btn ghost sm hw-icon-btn" onclick="remedialHw('${h.id}')" title="نشاط علاجي من الأخطاء" aria-label="نشاط علاجي من الأخطاء">🩹</button>` : ''}
+        <button class="btn ghost sm hw-icon-btn" onclick="dupHw('${h.id}')" title="نسخ النشاط لفصل آخر" aria-label="نسخ النشاط لفصل آخر">📋</button>
         <button class="btn ghost sm hw-icon-btn" onclick="openHwForm('${h.id}')" title="تعديل النشاط" aria-label="تعديل النشاط">✏️</button>
-        <details class="hw-more">
-          <summary class="btn ghost sm hw-icon-btn" title="إجراءات أخرى" aria-label="إجراءات أخرى">⋯</summary>
-          <div class="hw-more-menu" role="menu">
-            <button type="button" role="menuitem" onclick="openActivityMessage('${h.id}')">💬 رسالة جاهزة للإرسال</button>
-            ${h.kind==='reading' && (h.qs||[]).length ? `<button type="button" role="menuitem" onclick="openReadingPrint('${h.id}')">🖨️ طباعة ورقة الفهم القرائي</button>` : ''}
-            ${subs && h.kind!=='style' && h.kind!=='lab' ? `<button type="button" role="menuitem" onclick="remedialHw('${h.id}')">🩹 نشاط علاجي من الأخطاء</button>` : ''}
-            <button type="button" role="menuitem" onclick="dupHw('${h.id}')">📋 نسخ النشاط لفصل آخر</button>
-            <button type="button" role="menuitem" class="danger" onclick="delHw('${h.id}')">🗑️ حذف النشاط</button>
-          </div>
-        </details>
+        <button class="btn ghost sm hw-icon-btn danger-icon" onclick="delHw('${h.id}')" title="حذف النشاط" aria-label="حذف النشاط">🗑️</button>
       </div>
     </div>`;
   }).join('')
