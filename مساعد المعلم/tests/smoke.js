@@ -148,12 +148,51 @@ async function dashboard(browser, base, viewport, label) {
     await page.waitForTimeout(500);
     const shown = await page.evaluate(() => [...document.querySelectorAll('.panel.on')].map(p => p.id));
     if (shown.length !== 1) fail(`${label} ${t}`, `لوحات ظاهرة: ${shown.join(',') || 'لا شيء'}`);
+    const sw = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
+    if (sw > 1) fail(`${label} ${t}`, `الصفحة أعرض من الشاشة بـ ${sw}px (تمرير أفقي)`);
     await shot(page, `${label}-${t}`);
     flush(errs, `${label} تبويب ${t}`);
   }
   pass(`${tabs.length} تبويبًا`);
 
   if (label === 'desktop') {
+    console.log('\n[3] ميزات التصميم الجديد');
+    // لوحة البحث: Ctrl+K ← اسم طالب ← Enter يفتح ملفه
+    await page.evaluate(() => goTab('dashboard'));
+    await page.keyboard.press('Control+k');
+    await page.waitForTimeout(150);
+    const palOpen = await page.evaluate(() => !document.querySelector('.ds-palette').hidden && document.activeElement === document.querySelector('.ds-palette input'));
+    palOpen ? pass('Ctrl+K يفتح البحث الشامل') : fail('بحث شامل', 'Ctrl+K لم يفتح لوحة البحث');
+    await page.keyboard.type('خالد');
+    await page.waitForTimeout(150);
+    const first = await page.evaluate(() => document.querySelector('.ds-pal-item.on .ds-pal-t b')?.textContent || '');
+    /خالد/.test(first) ? pass(`البحث يجد الطالب («${first}»)`) : fail('بحث شامل', `أول نتيجة «${first}» وليست الطالب`);
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(500);
+    const prof = await page.evaluate(() => document.getElementById('veil')?.classList.contains('on') && /خالد/.test(document.getElementById('modal')?.textContent || ''));
+    prof ? pass('Enter يفتح ملف الطالب') : fail('بحث شامل', 'Enter لم يفتح ملف الطالب');
+    await page.evaluate(() => closeModal());
+    // قائمة «+ جديد»: كل عنصر يستدعي دالة موجودة
+    const menu = await page.evaluate(() => [...document.querySelectorAll('.ds-menu button')].map(b => b.textContent.trim()));
+    menu.length >= 5 ? pass(`قائمة «جديد»: ${menu.length} عناصر`) : fail('قائمة جديد', `عناصر قليلة: ${menu.join('، ')}`);
+    await page.click('.ds-new>button'); await page.waitForTimeout(100);
+    await page.click('.ds-menu button:first-child'); await page.waitForTimeout(400);
+    const formOpen = await page.evaluate(() => !!document.getElementById('h-title'));
+    formOpen ? pass('«جديد ← نشاط جديد» يفتح نموذج النشاط') : fail('قائمة جديد', 'لم يفتح نموذج النشاط');
+    await page.evaluate(() => closeModal());
+    // طيّ القائمة الجانبية وفكّه
+    await page.click('.ds-nav-foot .ds-icon-btn'); await page.waitForTimeout(350);   // حركة العرض 0.2 ث
+    const col = await page.evaluate(() => document.body.classList.contains('ds-nav-collapsed') && document.querySelector('.app-sidebar').getBoundingClientRect().width < 100);
+    await page.click('.ds-nav-foot .ds-icon-btn');
+    const exp = await page.evaluate(() => !document.body.classList.contains('ds-nav-collapsed'));
+    col && exp ? pass('طيّ القائمة الجانبية وفكّها') : fail('القائمة الجانبية', 'الطيّ لا يعمل');
+    // فلاتر الأنشطة السريعة تقود الفلتر الأصلي
+    await page.evaluate(() => goTab('hw')); await page.waitForTimeout(300);
+    await page.click('.ds-chip[data-v="overdue"]'); await page.waitForTimeout(300);
+    const fv = await page.evaluate(() => document.getElementById('hw-filter').value);
+    fv === 'overdue' ? pass('فلتر «منتهٍ» السريع يعمل') : fail('فلاتر الأنشطة', `القيمة ${fv}`);
+    await page.click('.ds-chip[data-v="all"]');
+    flush(errs, 'ميزات التصميم');
     console.log('\n[4ب] التقارير والنوافذ');
     const steps = [
       ['grades', `switchReportView('grades')`], ['analysis', `switchReportView('analysis')`], ['diag', `switchReportView('diag')`],

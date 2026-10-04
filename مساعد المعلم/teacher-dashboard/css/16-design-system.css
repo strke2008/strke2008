@@ -241,7 +241,7 @@ html body .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:.4rem;
   min-height:40px;padding:0 1rem;border-radius:var(--ds-radius-sm);border:1px solid transparent;
   background:var(--ds-primary);color:var(--ds-on-primary);
-  font:700 .87rem/1.2 var(--ds-font);letter-spacing:0;cursor:pointer;white-space:nowrap;
+  font:700 .87rem/1.25 var(--ds-font);letter-spacing:0;cursor:pointer;
   box-shadow:0 1px 2px rgba(15,27,45,.12);transition:background .15s,border-color .15s,box-shadow .15s,transform .05s;
 }
 html body .btn:hover{background:var(--ds-primary-hover)}
@@ -294,6 +294,7 @@ html body .veil .modal,html body #modal{
 html body .veil.on .modal{animation:ds-modal .18s ease-out}
 @keyframes ds-modal{from{opacity:0;transform:translateY(8px) scale(.985)}to{opacity:1;transform:none}}
 html body .modal h2{font-size:1.2rem;font-weight:800}
+html body #modal:focus,html body #modal:focus-visible{outline:none}
 html body .modal-foot{border-top:1px solid var(--ds-border);background:var(--ds-surface) !important;gap:.5rem}
 html body .ask-veil{background:rgba(10,18,32,.46) !important;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
 
@@ -409,6 +410,10 @@ html body #hw-filter.ds-visually-hidden-sm{display:none !important}
 .ds-prog.zero i::after{background:var(--ds-faint)}
 html body #hw-list>.sheet{transition:border-color .15s,box-shadow .15s}
 html body #hw-list>.sheet:hover{border-color:var(--ds-border-strong);box-shadow:var(--ds-shadow-2)}
+
+/* عناصر التحكم المخفية في صفحة الرسائل كانت تأخذ عرض 100% فتوسّع الصفحة أفقيًا على الجوال */
+html body .msg-hidden-control{position:absolute !important;width:1px !important;height:1px !important;min-height:0 !important;max-width:1px !important;
+  padding:0 !important;border:0 !important;margin:0 !important;overflow:hidden !important;clip:rect(0 0 0 0);clip-path:inset(50%);inset-inline-start:0;white-space:nowrap}
 
 /* ── 16) الجوال ── */
 @media (max-width:700px){
