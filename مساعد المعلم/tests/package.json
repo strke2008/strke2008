@@ -1,0 +1,13 @@
+{
+  "name": "teacher-assistant-tests",
+  "private": true,
+  "description": "اختبار دخان للوحة المعلم والبوابات",
+  "scripts": {
+    "test": "node smoke.js",
+    "test:quick": "QUICK=1 node smoke.js",
+    "shots": "SHOTS=shots node smoke.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.56.0"
+  }
+}
