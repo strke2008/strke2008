@@ -1,0 +1,18 @@
+/* ── student-health-style ── */
+.health-box{border:1px solid var(--ui-border,#D5E0EC);border-radius:14px;padding:.75rem .9rem;margin:.7rem 0;background:var(--ui-surface,#F7FAFD);display:grid;gap:.5rem}
+.health-head{display:flex;justify-content:space-between;align-items:baseline;gap:.5rem;flex-wrap:wrap}
+.health-head h4{margin:0;font-size:.95rem}
+.health-private{font-size:.74rem;color:var(--ink-soft)}
+.health-empty{font-size:.85rem;color:var(--ink-soft)}
+.health-chips{display:flex;flex-wrap:wrap;gap:.3rem}
+.health-chip{background:color-mix(in srgb,var(--pen) 10%,transparent);color:var(--pen);border-radius:999px;padding:.15rem .6rem;font-size:.8rem;font-weight:700}
+.health-action{background:color-mix(in srgb,var(--amber,#C88A2E) 12%,transparent);border-radius:10px;padding:.45rem .6rem;font-size:.86rem}
+.health-note{margin:0;font-size:.86rem;line-height:1.7;white-space:pre-wrap}
+.health-foot{display:flex;justify-content:space-between;align-items:center;gap:.5rem;flex-wrap:wrap}
+.health-foot small{color:var(--ink-soft);font-size:.74rem}
+.health-pick{display:flex;flex-wrap:wrap;gap:.3rem}
+.health-opt{border:1px solid var(--ui-border,#D5E0EC);border-radius:999px;padding:.2rem .65rem;font-size:.8rem;cursor:pointer;user-select:none}
+.health-opt input{display:none}.health-opt.on{background:var(--ink);color:var(--paper-2,#F7FAFD);border-color:var(--ink)}
+.health-lbl{font-size:.82rem;font-weight:700;margin-top:.2rem}.health-lbl small{font-weight:400;color:var(--ink-soft)}
+.health-del{color:var(--pen)!important}
+#health-badge{font-size:.9rem;margin-inline-start:.3rem;cursor:help}

@@ -114,7 +114,10 @@ async function dashboard(browser, base, viewport, label) {
 
   if (label === 'desktop') {
     console.log('\n[2] المعالجات والمعرفات');
-    const src = fs.readFileSync(path.join(ROOT, 'teacher-dashboard/index.html'), 'utf8');
+    // الصفحة قد تكون ملفًا واحدًا أو مقسّمة إلى js/ — نجمع المصدر من الاثنين
+    const jsDir = path.join(ROOT, 'teacher-dashboard/js');
+    const src = fs.readFileSync(path.join(ROOT, 'teacher-dashboard/index.html'), 'utf8') +
+      (fs.existsSync(jsDir) ? fs.readdirSync(jsDir).filter(f => f.endsWith('.js')).map(f => fs.readFileSync(path.join(jsDir, f), 'utf8')).join('\n') : '');
     const names = new Set();
     const KW = new Set(['if','for','while','switch','return','function','typeof','catch','alert','confirm','prompt','setTimeout',
       'encodeURIComponent','Number','String','parseInt','event','this','JSON','Math','Date','Array','Object','Boolean','new']);

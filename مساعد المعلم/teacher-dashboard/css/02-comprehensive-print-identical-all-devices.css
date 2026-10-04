@@ -1,0 +1,100 @@
+/* ── comprehensive-print-identical-all-devices ── */
+/* 🖨️ الكشف الشامل: نفس التخطيط الفيزيائي على الجوال والكمبيوتر.
+   هذه القواعد تأتي في آخر الرأس لتتغلب على أي قواعد شاشة سابقة. */
+@media print {
+  @page { size: A4 portrait; margin: 7mm !important; }
+
+  html, body {
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+  }
+
+  body.printing-comprehensive {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* تجاهل أي مقاسات خاصة بالشاشة/الجوال أثناء الطباعة */
+  body.printing-comprehensive #p-comprehensive,
+  body.printing-comprehensive #comp-table,
+  body.printing-comprehensive #comp-table .comp-report,
+  body.printing-comprehensive #comp-table .rep-page,
+  body.printing-comprehensive #comp-table .rep-in,
+  body.printing-comprehensive #comp-table .rep-box {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  body.printing-comprehensive #comp-table {
+    overflow: visible !important;
+    position: static !important;
+    padding: 0 !important;
+  }
+
+  body.printing-comprehensive .comprehensive-table {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    table-layout: fixed !important;
+    font-size: 8.2pt !important;
+  }
+
+  body.printing-comprehensive .comprehensive-table th,
+  body.printing-comprehensive .comprehensive-table td {
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: anywhere !important;
+    padding: 3.5px 3px !important;
+    line-height: 1.22 !important;
+    vertical-align: middle !important;
+  }
+
+  body.printing-comprehensive .comprehensive-table thead {
+    display: table-header-group !important;
+  }
+  body.printing-comprehensive .comprehensive-table tbody {
+    display: table-row-group !important;
+  }
+  body.printing-comprehensive .comprehensive-table tfoot {
+    display: table-footer-group !important;
+  }
+  body.printing-comprehensive .comprehensive-table tbody tr {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* نفس توزيع الأعمدة في كل جهاز */
+  body.printing-comprehensive .comprehensive-table th:nth-child(1),
+  body.printing-comprehensive .comprehensive-table td:nth-child(1) { width: 4% !important; }
+  body.printing-comprehensive .comprehensive-table th:nth-child(2),
+  body.printing-comprehensive .comprehensive-table td:nth-child(2) {
+    width: 28% !important;
+    text-align: right !important;
+  }
+  body.printing-comprehensive .comprehensive-table th:nth-child(n+3),
+  body.printing-comprehensive .comprehensive-table td:nth-child(n+3) { width: 17% !important; }
+
+  /* لا position:sticky ولا zoom في النسخة الورقية */
+  body.printing-comprehensive .comprehensive-table .cnm,
+  body.printing-comprehensive .comprehensive-table .cnum {
+    position: static !important;
+    inset: auto !important;
+    transform: none !important;
+    zoom: 1 !important;
+  }
+
+  body.printing-comprehensive .rep-head,
+  body.printing-comprehensive .rep-band,
+  body.printing-comprehensive .rep-sec,
+  body.printing-comprehensive .rep-info {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+}

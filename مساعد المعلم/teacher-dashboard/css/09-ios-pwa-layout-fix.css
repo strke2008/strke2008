@@ -1,0 +1,94 @@
+/* ── ios-pwa-layout-fix ── */
+/* 📱 overflow-x:hidden على html وbody معًا يحوّل body إلى حاوية تمرير مستقلة:
+   • تنكسر الترويسة الثابتة (sticky) فتختفي مع التمرير
+   • وعلى iPhone ينفصل الشريط السفلي الثابت عن الحافة أثناء ارتداد التمرير
+   clip يقص الفائض الأفقي بلا حاوية تمرير. overflow-y لا نلمسه حتى تبقى أقفال النوافذ المنبثقة تعمل. */
+html,body{overflow-x:clip!important}
+@supports not (overflow:clip){ html{overflow-x:visible!important} body{overflow-x:hidden!important} }
+html{overscroll-behavior-y:none}
+@media (max-width:700px){
+  /* في وضع التطبيق المثبت يمتد المحتوى تحت الساعة والبطارية: الترويسة تحجز مساحتها */
+  .masthead{padding-top:env(safe-area-inset-top,0px)!important}
+  .mobile-nav{-webkit-transform:translateZ(0);transform:translateZ(0)}
+  #dash-recent .fi-sub .fi-when{white-space:nowrap}
+}
+
+/* ── mobile-modal-layer-fix ── */
+/* 📱 النوافذ فوق الترويسة والشريط السفلي: كانت طبقتها 800 تحت الترويسة (1100) والشريط (2000)
+   فيغطيان زر الإغلاق والحفظ. الآن 3000: فوقهما، وتحت التنبيهات (9999) ونوافذ التأكيد. */
+.veil{z-index:3000!important}
+@media (max-width:700px){
+  .veil .modal{padding-top:.6rem!important}
+  /* زر ✕ يبقى ظاهرًا أثناء التمرير داخل النافذة */
+  .modal-mobile-close{position:sticky!important;top:0!important;inset-inline-start:auto!important;
+    margin:0 0 .45rem auto!important;margin-inline-start:0!important;margin-inline-end:auto!important}
+  .veil .modal .modal-foot{box-shadow:0 -10px 14px -10px rgba(22,35,58,.18)}
+  /* لا قوائم قابلة للتمرير داخل نافذة قابلة للتمرير: تمرير واحد فقط */
+  .veil .modal .feature-list[style*="max-height"],
+  .veil .modal .store-purchase-list[style*="max-height"]{max-height:none!important;overflow:visible!important}
+}
+@media (max-width:390px){ .veil .modal{padding-top:.55rem!important} }
+
+/* ── madrasati-view-style ── */
+/* كل تبويب قائمة مستقلة: #mad-list{display:grid} كان يتغلب على [hidden] فتبقى القائمة ظاهرة تحت سجل الرصد */
+#mad-list[hidden],#mad-register[hidden]{display:none!important}
+/* عرض واجبات مدرستي: ورقة لكل واجب، والفصول صفوف — ألوان وخط التطبيق نفسه */
+.madv-tools{display:flex;justify-content:space-between;align-items:center;gap:.6rem;flex-wrap:wrap;margin:.2rem 0 .3rem}
+.madv-chips{display:flex;gap:.35rem;flex-wrap:wrap}
+.madv-chip{display:inline-flex;align-items:center;gap:.45rem;border:1px solid var(--ui-border,#D5E0EC);background:var(--ui-surface,#F7FAFD);color:var(--ink);border-radius:999px;padding:.32rem .8rem;font-weight:700;font-size:.86rem}
+.madv-chip span{font-size:.74rem;color:var(--ink-soft);font-weight:600}
+.madv-chip.on{background:var(--ink);color:var(--paper-2,#F7FAFD);border-color:var(--ink)}.madv-chip.on span{color:inherit;opacity:.75}
+.madv-chip:focus-visible,.madv-row:focus-visible{outline:2px solid var(--tick);outline-offset:2px}
+.madv-cls{width:auto!important;min-width:150px;padding:.35rem .5rem!important}
+.madv-sheet{background:var(--ui-surface,#F7FAFD);border:1px solid var(--ui-border,#D5E0EC);border-radius:16px;overflow:hidden}
+.madv-sheet+.madv-sheet{margin-top:.1rem}
+.madv-head{display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;padding:.95rem 1.1rem .7rem;border-bottom:1px solid var(--ui-border,#D5E0EC)}
+.madv-title{min-width:0;display:grid;gap:.2rem}
+.madv-title h3{margin:0;font-size:1.12rem;line-height:1.35;font-weight:800;color:var(--ink)}
+.madv-due{font-size:.82rem;color:var(--ink-soft)}.madv-due.ended{color:var(--pen);font-weight:700}
+.madv-rate{text-align:end;flex-shrink:0;display:grid;line-height:1.1}
+.madv-rate b{font-size:1.7rem;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums}
+.madv-rate small{font-size:.76rem;color:var(--ink-soft);margin-top:.2rem}
+.madv-rows{display:grid}
+.madv-row{display:grid;grid-template-columns:5.5rem 1fr 3.2rem 3.8rem;align-items:center;gap:.9rem;width:100%;padding:.62rem 1.1rem;text-align:start;font:inherit;color:inherit;background:transparent;border:0;border-bottom:1px solid color-mix(in srgb,var(--ui-border,#D5E0EC) 60%,transparent);cursor:pointer}
+.madv-row:last-child{border-bottom:0}
+.madv-row:hover{background:color-mix(in srgb,var(--tick) 6%,transparent)}
+.madv-colhead{cursor:default;padding-top:.45rem;padding-bottom:.35rem;font-size:.72rem;color:var(--ink-soft);font-weight:600}
+.madv-colhead:hover{background:transparent}
+.madv-colhead span:nth-child(3),.madv-colhead span:nth-child(4){text-align:center}
+.madv-cn{font-weight:800;font-size:.92rem;white-space:nowrap}
+.madv-bar{position:relative;height:.5rem;border-radius:999px;background:var(--ui-border,#D5E0EC);overflow:hidden}
+.madv-bar i{position:absolute;inset-block:0;inset-inline-start:0;background:var(--tick);border-radius:inherit}
+.madv-n{text-align:center;font-weight:800;font-variant-numeric:tabular-nums;font-size:.95rem}
+.madv-n.ok{color:var(--tick)}.madv-n.no{color:var(--pen)}.madv-n.zero{color:var(--ink-soft);font-weight:600}
+.madv-foot{padding:.45rem 1.1rem .6rem;font-size:.74rem;color:var(--ink-soft);border-top:1px solid var(--ui-border,#D5E0EC)}
+.madv-sheet.is-ended .madv-head{background:color-mix(in srgb,var(--pen) 4%,transparent)}
+@media (max-width:560px){
+  .madv-head{padding:.8rem .85rem .6rem}.madv-rate b{font-size:1.4rem}
+  .madv-row{grid-template-columns:1fr auto auto;gap:.35rem .8rem;padding:.6rem .85rem}
+  .madv-row .madv-bar{grid-column:1/-1;grid-row:2}
+  .madv-colhead{display:none}
+  .madv-n.ok::after{content:' حل';font-size:.72rem;font-weight:600}.madv-n.no::after,.madv-n.zero::after{content:' لم يحل';font-size:.72rem;font-weight:600}
+  .madv-cls{min-width:0;flex:1 1 100%}
+}
+/* نافذة الواجب */
+.madm-head{display:grid;gap:.25rem;margin-bottom:.8rem}
+.madm-head h2{margin:0;font-size:1.25rem;line-height:1.35}
+.madm-sub{display:flex;flex-wrap:wrap;gap:.35rem .9rem;font-size:.84rem;color:var(--ink-soft)}
+.madm-sub .cls{font-weight:800;color:var(--ink)}.madm-sub .ended{color:var(--pen);font-weight:700}
+.madm-split{display:grid;gap:.4rem;margin:.2rem 0 1rem}
+.madm-split .nums{display:flex;justify-content:space-between;align-items:baseline}
+.madm-split .nums b{font-size:1.6rem;font-weight:800;font-variant-numeric:tabular-nums}
+.madm-split .nums span{font-size:.8rem;color:var(--ink-soft);margin-inline-start:.3rem}
+.madm-split .ok b{color:var(--tick)}.madm-split .no b{color:var(--pen)}
+.madm-track{display:flex;height:.7rem;border-radius:999px;overflow:hidden;background:var(--ui-border,#D5E0EC)}
+.madm-track i{background:var(--tick)}.madm-track s{background:var(--pen);opacity:.85}
+.madm-sec{display:flex;justify-content:space-between;align-items:baseline;gap:.5rem;margin:.9rem 0 .45rem}
+.madm-sec h3{margin:0;font-size:.98rem}.madm-legend{font-size:.76rem;color:var(--ink-soft)}
+.madm-names{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.3rem}
+.madm-name{display:flex;align-items:center;gap:.45rem;padding:.42rem .6rem;border-radius:10px;background:var(--ui-surface-2,var(--paper-2,#F7FAFD));border:1px solid var(--ui-border,#D5E0EC);font-size:.86rem;min-width:0}
+.madm-name span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.madm-dot{width:.5rem;height:.5rem;border-radius:50%;flex-shrink:0;background:var(--tick)}
+.madm-dot.warn{background:var(--amber,#C88A2E)}
+.madm-done{padding:.8rem;border-radius:12px;background:color-mix(in srgb,var(--tick) 10%,transparent);color:var(--tick);font-weight:700;text-align:center}
+.madm-more summary{cursor:pointer;font-weight:800;font-size:.95rem;margin:.9rem 0 .45rem;list-style-position:inside}
