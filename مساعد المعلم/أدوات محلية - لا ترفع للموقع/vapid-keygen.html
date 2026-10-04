@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>توليد مفاتيح VAPID — لا تُرفع للموقع</title>
+<style>
+body{font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;background:#F4F7FB;color:#16233A;margin:0;padding:1.2rem;line-height:1.8}
+.card{max-width:720px;margin:0 auto;background:#fff;border:1px solid #DCE5F0;border-radius:16px;padding:1.2rem 1.3rem}
+h1{font-size:1.2rem;margin:.2rem 0 .6rem} .warn{background:#FFF4E0;border-radius:12px;padding:.7rem .9rem;font-size:.9rem}
+label{display:block;font-weight:800;margin:1rem 0 .3rem} textarea{width:100%;box-sizing:border-box;direction:ltr;font:13px ui-monospace,Menlo,Consolas,monospace;border:1.5px solid #CBD6E4;border-radius:10px;padding:.6rem;resize:none}
+button{font:inherit;font-weight:800;border:0;border-radius:12px;padding:.65rem 1.1rem;cursor:pointer;background:#16233A;color:#fff}
+button.ghost{background:#EEF2F8;color:#16233A} .row{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.4rem}
+ol{padding-inline-start:1.2rem;font-size:.92rem} code{background:#EEF2F8;border-radius:6px;padding:0 .3rem;direction:ltr;unicode-bidi:embed}
+</style></head><body><div class="card">
+<h1>🔑 توليد مفاتيح VAPID لإشعارات «مساعد المعلم»</h1>
+<div class="warn">تُولَّد المفاتيح داخل متصفحك فقط ولا تُرسل لأي مكان. <b>لا ترفع هذا الملف إلى الموقع</b>، ولا تحفظ المفتاح الخاص في أي ملف أو رسالة. بعد نسخه إلى Cloudflare أغلق الصفحة.</div>
+<div class="row" style="margin-top:1rem"><button id="gen">توليد زوج مفاتيح جديد</button></div>
+<label>VAPID_PUBLIC_KEY — عام (Variable عادي)</label>
+<textarea id="pub" rows="3" readonly></textarea>
+<div class="row"><button class="ghost" data-copy="pub">نسخ المفتاح العام</button></div>
+<label>VAPID_PRIVATE_KEY — سري جدًا (Secret)</label>
+<textarea id="priv" rows="2" readonly></textarea>
+<div class="row"><button class="ghost" data-copy="priv">نسخ المفتاح الخاص</button></div>
+<ol>
+<li>Cloudflare ← Workers ← homework ← Settings ← Variables and Secrets ← Add</li>
+<li><code>VAPID_PUBLIC_KEY</code> نوع <b>Text</b> ← الصق المفتاح العام</li>
+<li><code>VAPID_PRIVATE_KEY</code> نوع <b>Secret</b> ← الصق المفتاح الخاص</li>
+<li><code>VAPID_SUBJECT</code> نوع <b>Secret</b> ← <code>mailto:بريدك@example.com</code></li>
+<li>Deploy، ثم افتح <code>/version</code> وتأكد من <code>"push": true</code></li>
+</ol>
+<p style="font-size:.85rem;color:#5A6B84">تغيير المفاتيح لاحقًا يُبطل اشتراكات الأجهزة، فتحتاج إعادة تفعيل الإشعارات على كل جهاز.</p>
+</div>
+<script>
+const b64u=buf=>btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+document.getElementById('gen').onclick=async()=>{
+  const kp=await crypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},true,['sign','verify']);
+  const pub=await crypto.subtle.exportKey('raw',kp.publicKey);        // 65 بايت غير مضغوط — نفس صيغة web-push
+  const jwk=await crypto.subtle.exportKey('jwk',kp.privateKey);       // d = المفتاح الخاص 32 بايت
+  document.getElementById('pub').value=b64u(pub);
+  document.getElementById('priv').value=jwk.d;
+};
+document.querySelectorAll('[data-copy]').forEach(btn=>btn.onclick=async()=>{
+  const el=document.getElementById(btn.dataset.copy); if(!el.value) return;
+  try{ await navigator.clipboard.writeText(el.value); btn.textContent='✓ نُسخ'; }catch(e){ el.select(); document.execCommand('copy'); btn.textContent='✓ نُسخ'; }
+  setTimeout(()=>btn.textContent=btn.dataset.copy==='pub'?'نسخ المفتاح العام':'نسخ المفتاح الخاص',1500);
+});
+</script></body></html>

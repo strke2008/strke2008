@@ -1,0 +1,2619 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مختبر العلوم الافتراضي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Reem+Kufi:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bench:#E6ECEF; --paper:#F9FBFC; --ink:#13324A; --ink-2:#4F6879; --line:#C8D4DC;
+  --glass:#4FB3C8; --amber:#D98E1F; --amber-soft:#FBEFD9; --ok:#1E8A5C; --ok-soft:#DDF2E7;
+  --bad:#C3473E; --bad-soft:#F8E1DE; --tile:rgba(19,50,74,.05);
+  --display:'Reem Kufi','IBM Plex Sans Arabic',Tahoma,sans-serif;
+  --body:'IBM Plex Sans Arabic',Tahoma,'Segoe UI',sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bench:#0D1D29; --paper:#14293A; --ink:#E3EDF3; --ink-2:#9AB1C1; --line:#284459;
+    --glass:#6CCDE0; --amber:#F0AA45; --amber-soft:#3A2D17; --ok:#4CC28E; --ok-soft:#163528;
+    --bad:#EE6B61; --bad-soft:#3D1D1B; --tile:rgba(227,237,243,.04);
+  }
+}
+:root[data-theme="dark"]{
+  --bench:#0D1D29; --paper:#14293A; --ink:#E3EDF3; --ink-2:#9AB1C1; --line:#284459;
+  --glass:#6CCDE0; --amber:#F0AA45; --amber-soft:#3A2D17; --ok:#4CC28E; --ok-soft:#163528;
+  --bad:#EE6B61; --bad-soft:#3D1D1B; --tile:rgba(227,237,243,.04);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bench);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65;
+  background-image:linear-gradient(var(--tile) 1px,transparent 1px),linear-gradient(90deg,var(--tile) 1px,transparent 1px);
+  background-size:28px 28px}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--glass);outline-offset:2px}
+h1,h2,h3{font-family:var(--display);line-height:1.3;margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding:16px}
+.num{font-variant-numeric:tabular-nums;unicode-bidi:isolate}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--paper);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:12px;padding-block:10px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-size:1.25rem;font-weight:700;background:none;border:0;cursor:pointer;padding:0}
+.brand svg{width:30px;height:30px}
+.nav{margin-inline-start:auto;display:flex;gap:6px;flex-wrap:wrap}
+.nav button{background:none;border:1px solid transparent;border-radius:8px;padding:6px 12px;cursor:pointer;color:var(--ink-2)}
+.nav button:hover,.nav button[aria-current="page"]{border-color:var(--line);color:var(--ink);background:var(--bench)}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:10px;padding:11px 20px;font-weight:600;cursor:pointer;background:var(--ink);color:var(--paper)}
+.btn:hover{filter:brightness(1.12)}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.amber{background:var(--amber);color:#1b1206}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* home */
+.hero{padding:34px 0 10px}
+.hero h1{font-size:clamp(2.2rem,6vw,3.6rem);font-weight:700;letter-spacing:0}
+.hero p{color:var(--ink-2);font-size:1.15rem;margin:6px 0 0;max-width:46ch}
+.rack{margin:26px 0 8px;display:flex;align-items:flex-end;gap:clamp(10px,3vw,26px);padding:0 10px 10px;border-bottom:8px solid var(--ink);flex-wrap:wrap}
+.rack .slot{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:.82rem;color:var(--ink-2)}
+.rack .jar{transform:scale(1.25);transform-origin:bottom center;margin-bottom:8px}
+.namebox{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:22px 0 4px}
+.namebox label{font-weight:600}
+.namebox input{font:inherit;padding:10px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);min-width:min(260px,100%)}
+.explored{color:var(--ink-2);font-size:.95rem}
+.paths{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:26px}
+@media (max-width:760px){.paths{grid-template-columns:1fr}}
+.path{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:18px}
+.path h2{font-size:1.35rem;display:flex;gap:8px;align-items:center;margin-bottom:10px}
+.topic{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px dashed var(--line)}
+.topic:first-of-type{border-top:0}
+.topic .t{flex:1}
+.topic .t b{display:block;font-size:1.05rem}
+.topic .t span{color:var(--ink-2);font-size:.92rem}
+.topic.soon{opacity:.55}
+.badge{font-size:.8rem;border:1px solid var(--line);border-radius:999px;padding:2px 10px;color:var(--ink-2);white-space:nowrap}
+
+/* cycle */
+.cycle{list-style:none;margin:4px 0 14px;padding:0;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.cycle li{flex:1 0 auto;display:flex;align-items:center;gap:6px;font-size:.85rem;color:var(--ink-2);padding:6px 10px;border-radius:999px;background:transparent;white-space:nowrap}
+.cycle li i{font-style:normal;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:.72rem;border:1.5px solid var(--line)}
+.cycle li.done i{background:var(--ok);border-color:var(--ok);color:#fff}
+.cycle li.now{background:var(--ink);color:var(--paper)}
+.cycle li.now i{border-color:var(--paper)}
+
+/* lab */
+.lab{display:grid;grid-template-columns:minmax(0,1fr) 350px;grid-template-rows:auto 1fr;gap:16px;align-items:start}
+.lab>.side{grid-column:2;grid-row:1 / span 2}
+#obsPanel:empty{display:none}
+#obsPanel{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:16px}
+
+.bench,.panel{background:var(--paper);border:1px solid var(--line);border-radius:18px}
+.bench{padding:14px}
+.panel{padding:14px;margin-bottom:12px}
+.panel h3{font-size:1.05rem;margin-bottom:10px;display:flex;justify-content:space-between;align-items:baseline}
+.panel h3 small{font-family:var(--body);font-weight:400;font-size:.8rem;color:var(--ink-2)}
+.guide{display:flex;gap:12px;align-items:flex-start;background:var(--ink);color:var(--paper);border-radius:14px;padding:12px 16px;min-height:72px}
+.guide svg{flex:0 0 34px;width:34px;height:34px;margin-top:2px}
+.guide .gt{flex:1}
+.guide .gt p{margin:0;font-size:1.18rem;font-weight:500}
+.guide .gt .who{font-size:.8rem;opacity:.7}
+.guide .gact{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+.guide .btn.amber{padding:8px 16px}
+.gnote{margin:8px 2px 0;padding:8px 12px;border-radius:10px;background:var(--amber-soft);border-inline-start:4px solid var(--amber);font-weight:500;display:none}
+.gnote.show{display:block;animation:pop .25s ease}
+.gnote.bad{background:var(--bad-soft);border-color:var(--bad)}
+@keyframes pop{from{transform:translateY(-4px);opacity:0}to{transform:none;opacity:1}}
+.stage{display:grid;grid-template-columns:minmax(0,1fr) 170px;gap:14px;align-items:end;margin-top:12px}
+.beakerzone{position:relative;display:flex;flex-direction:column;align-items:center;border-radius:16px;border:2px dashed transparent;padding:6px 0 0;transition:border-color .15s,background .15s}
+.beakerzone.hot{border-color:var(--glass);background:rgba(79,179,200,.08)}
+.beakerzone canvas{width:100%;max-width:290px;aspect-ratio:260/330;display:block}
+.beakerzone canvas.sepcv{max-width:340px;aspect-ratio:320/360}
+.benchline{width:100%;height:10px;background:var(--ink);border-radius:3px;margin-top:-4px;opacity:.85}
+.droplabel{position:absolute;top:8px;inset-inline:0;text-align:center;font-size:.85rem;color:var(--ink-2);pointer-events:none}
+.readings{display:grid;gap:8px}
+.reading{background:var(--bench);border-radius:10px;padding:8px 10px}
+.reading span{display:block;font-size:.8rem;color:var(--ink-2)}
+.reading b{font-size:1.35rem;font-weight:600}
+.dens{font-size:.85rem;color:var(--ink-2);background:transparent;border:1px dashed var(--line);border-radius:10px;padding:8px 10px}
+.dens div{display:flex;justify-content:space-between;gap:6px}
+.shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px}
+.item{display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 4px 8px;border:1.5px solid var(--line);border-radius:12px;background:var(--paper);cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;text-align:center;line-height:1.3}
+.item:hover{border-color:var(--ink-2)}
+.item .nm{font-weight:600;font-size:.92rem}
+.item .sub{font-size:.75rem;color:var(--ink-2)}
+.item.sel{border-color:var(--amber);box-shadow:0 0 0 3px var(--amber-soft)}
+.item.dim{opacity:.4}
+.item.worn{border-color:var(--ok);background:var(--ok-soft)}
+.item svg{width:42px;height:42px}
+.dragghost{position:fixed;z-index:99;pointer-events:none;transform:translate(-50%,-60%) rotate(-6deg);opacity:.92;box-shadow:0 10px 24px rgba(0,0,0,.25);width:90px}
+.safety ul{margin:0;padding-inline-start:18px;color:var(--ink-2);font-size:.92rem}
+.jar{--c:#9cc;--c2:#7aa;width:34px;height:42px;position:relative;margin-top:6px;border:2px solid var(--ink-2);border-top:0;border-radius:3px 3px 9px 9px}
+.jar::before{content:"";position:absolute;top:-7px;left:-4px;right:-4px;height:7px;background:var(--ink-2);border-radius:3px}
+.jar i{position:absolute;left:2px;right:2px;bottom:2px;height:64%;border-radius:2px 2px 6px 6px;background:var(--c)}
+.jar.gr i{background:radial-gradient(circle,var(--c2) 0 1.1px,transparent 1.5px) 0 0/5px 5px,var(--c)}
+.jar.big i{background:radial-gradient(circle,var(--c2) 0 3px,transparent 3.5px) 0 0/10px 9px,var(--c)}
+.obs{}
+.obs h3{font-size:1.1rem;margin-bottom:4px}
+.obs p{margin:0 0 10px;color:var(--ink-2)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.chip{border:1.5px solid var(--line);background:var(--paper);border-radius:999px;padding:7px 14px;cursor:pointer;font-weight:500}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+/* questions */
+.qwrap{max-width:760px;margin:0 auto}
+.qhead{display:flex;justify-content:space-between;align-items:center;margin:4px 0 12px;gap:10px}
+.qhead h2{font-size:1.4rem}
+.qcard{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:20px}
+.qprompt{font-size:1.25rem;font-weight:600;margin:0 0 6px}
+.tries{display:flex;gap:6px;align-items:center;font-size:.85rem;color:var(--ink-2);margin-bottom:14px}
+.tries i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.tries i.used{background:var(--amber)}
+.opts{display:grid;gap:8px}
+.opt{display:flex;align-items:center;gap:12px;text-align:start;width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--paper);cursor:pointer;font-size:1.02rem}
+.opt:hover:not(:disabled){border-color:var(--ink-2)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft);text-decoration:line-through;opacity:.75}
+.opt.right{border-color:var(--ok);background:var(--ok-soft);font-weight:600}
+.opt:disabled{cursor:default}
+.opts.toolgrid{grid-template-columns:repeat(2,1fr)}
+.opts.toolgrid .opt{flex-direction:column;text-align:center;gap:4px}
+.opts.toolgrid svg{width:46px;height:46px}
+.fb{margin-top:14px}
+.hint,.explain{padding:12px 14px;border-radius:12px;margin-top:10px}
+.hint{background:var(--amber-soft);border-inline-start:4px solid var(--amber)}
+.explain{background:var(--ok-soft);border-inline-start:4px solid var(--ok)}
+.hint b,.explain b{display:block;margin-bottom:2px}
+.next{margin-top:16px;display:flex;justify-content:flex-end}
+.seq{display:grid;gap:6px;margin-bottom:12px;counter-reset:s}
+.seq .slot{min-height:46px;border:1.5px dashed var(--line);border-radius:10px;padding:10px 12px;display:flex;gap:10px;align-items:center}
+.seq .slot::before{counter-increment:s;content:counter(s);font-weight:700;color:var(--ink-2);width:22px;flex:0 0 22px;text-align:center}
+.seq .slot.filled{border-style:solid;cursor:pointer;background:var(--bench)}
+.pool{display:flex;flex-wrap:wrap;gap:8px}
+.bins{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.bin{min-height:120px;border:2px dashed var(--line);border-radius:14px;padding:10px;cursor:pointer}
+.bin.hot{border-color:var(--glass);background:rgba(79,179,200,.08)}
+.bin h4{margin:0 0 8px;font-family:var(--display);font-size:1rem}
+.bin .chip{display:inline-block;margin:0 0 6px 6px}
+.card-chip{touch-action:none;user-select:none}
+.card-chip.active{outline:3px solid var(--amber);outline-offset:1px}
+
+/* learned / result */
+.learn{max-width:760px;margin:0 auto}
+.learn .lead{background:var(--ink);color:var(--paper);border-radius:18px;padding:22px}
+.learn .lead h2{font-size:1.5rem;margin-bottom:6px}
+.learn .lead p{margin:0;font-size:1.15rem}
+.learn section{padding:16px 4px;border-bottom:1px dashed var(--line)}
+.learn section h3{font-size:1.15rem;margin-bottom:4px}
+.learn section p{margin:0}
+.concept{margin-top:16px;padding:16px;border-radius:14px;border:2px solid var(--ok);background:var(--ok-soft)}
+.score{display:flex;align-items:baseline;gap:10px;margin:8px 0 4px}
+.score b{font-family:var(--display);font-size:3rem;line-height:1}
+.bars{display:grid;gap:8px;margin-top:12px}
+.bar{display:grid;grid-template-columns:150px 1fr 56px;gap:10px;align-items:center;font-size:.92rem}
+@media (max-width:520px){.bar{grid-template-columns:110px 1fr 50px}}
+.bar .tr{height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.bar .tr i{display:block;height:100%;background:var(--glass)}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.tag{border-radius:999px;padding:3px 12px;font-size:.88rem;background:var(--ok-soft);border:1px solid var(--ok)}
+.tag.rf{background:var(--amber-soft);border-color:var(--amber)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+
+/* records */
+.rec{background:var(--paper);border:1px solid var(--line);border-radius:14px;margin-bottom:10px}
+.rec summary{display:flex;gap:12px;align-items:center;padding:12px 16px;cursor:pointer;list-style:none;flex-wrap:wrap}
+.rec summary::-webkit-details-marker{display:none}
+.rec summary .ttl{flex:1;font-weight:600;min-width:180px}
+.rec summary .meta{color:var(--ink-2);font-size:.88rem}
+.rec .body{padding:0 16px 14px;font-size:.95rem}
+.rec .body dl{display:grid;grid-template-columns:150px 1fr;gap:4px 12px;margin:0}
+@media (max-width:520px){.rec .body dl{grid-template-columns:1fr}}
+.rec .body dt{color:var(--ink-2)}
+.rec .body dd{margin:0}
+.pill{font-weight:700;border-radius:8px;padding:2px 10px;background:var(--bench)}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.95rem;background:var(--paper);border-radius:12px;overflow:hidden}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:start;white-space:nowrap}
+th{font-family:var(--display);font-weight:600;background:var(--bench)}
+.note{color:var(--ink-2);font-size:.92rem}
+.empty{padding:30px;text-align:center;color:var(--ink-2);background:var(--paper);border:1px dashed var(--line);border-radius:14px}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(5px)}50%{transform:translateX(-5px)}75%{transform:translateX(3px)}}
+@media (max-width:900px){
+  .lab{grid-template-columns:1fr;grid-template-rows:none;gap:12px}
+  .lab>.side{grid-column:auto;grid-row:auto}
+  .lab.observing .bench{position:static;box-shadow:none}
+  .lab .bench.stick{position:sticky;top:calc(env(safe-area-inset-top,0px) + 54px);z-index:5;box-shadow:0 8px 18px rgba(0,0,0,.12);padding:10px}
+  .guide{padding:8px 12px;min-height:0}
+  .guide svg{display:none}
+  .guide .gt p{font-size:1.02rem}
+  .stage{grid-template-columns:minmax(0,1fr) 118px;gap:8px;margin-top:8px}
+  .beakerzone canvas{max-width:210px}
+  .reading{padding:5px 8px}.reading b{font-size:1.05rem}
+  .dens{padding:6px 8px;font-size:.78rem}
+  .shelf{grid-template-columns:repeat(auto-fill,minmax(74px,1fr));gap:6px}
+  .item{padding:8px 2px 6px}.item svg{width:32px;height:32px}
+  .top .wrap{flex-wrap:nowrap;padding-block:8px}
+  .brand{font-size:1.05rem}.brand svg{width:24px;height:24px}
+  .nav{flex-wrap:nowrap;gap:2px}.nav button{padding:4px 6px;font-size:.82rem;white-space:nowrap}
+  .brand{white-space:nowrap}
+}
+/* الاحتكاك */
+.frbar{display:flex;gap:12px;align-items:center;margin:12px 0 6px;flex-wrap:wrap}
+.frblock{flex:0 0 auto;width:96px}
+.frblock .blk{display:block;width:44px;height:26px;margin-top:6px;background:#B07A43;border:1.5px solid #5E3A17;border-radius:3px;box-shadow:inset 0 -5px 0 rgba(94,58,23,.25)}
+.frforces{display:flex;gap:6px;align-items:center;font-weight:600;font-size:.92rem}
+.frzone{padding:0;border-radius:12px;display:block;min-width:0}
+.frzone canvas{width:100%;max-width:none!important;display:block}
+.frtab td,.frtab th{white-space:nowrap}
+.frin{width:84px;font:inherit;padding:6px 8px;border:1.5px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);direction:ltr;text-align:center}
+.sm-btn{padding:6px 12px}
+.frobs:empty{display:none}
+.inh{font-size:1.08rem;margin:14px 2px 2px}
+.hide-b{display:none}
+.seg{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-weight:600}
+.seg .chip{padding:5px 12px}
+.frscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:12px;width:100%;max-width:100%}
+@media (max-width:760px){
+  .frzone canvas{width:760px!important}
+  .frbar p{flex:1 1 100%!important;order:3}
+  .frbar .btn{margin-inline-start:auto}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* ===== الجوال ===== */
+.ls{display:none}
+.swipe-hint{display:none;margin:6px 2px 0;font-size:.8rem;color:var(--ink-2);text-align:center}
+@media (max-width:760px){.swipe-hint{display:block}}
+@media (max-width:640px){
+  .wrap{padding:12px}
+  .top .wrap{gap:8px}
+  .brand{font-size:1rem}.brand svg{width:22px;height:22px}
+  .lf{display:none}.ls{display:inline}
+  .nav button{padding:4px 7px;font-size:.84rem}
+  /* مراحل التعلم: الحالية بالاسم، والبقية دوائر */
+  .cycle{justify-content:space-between;gap:2px;overflow:visible}
+  .cycle li{flex:0 0 auto;padding:4px;gap:4px}
+  .cycle li:not(.now) .cl{display:none}
+  .cycle li.now{padding:4px 10px}
+  /* الجداول تتحول إلى بطاقات حتى لا يختفي عمود خارج الشاشة */
+  table.cards thead{display:none}
+  table.cards,table.cards tbody,table.cards tr,table.cards td{display:block;width:100%}
+  table.cards{background:transparent}
+  table.cards tr{border:1px solid var(--line);border-radius:12px;margin-bottom:10px;padding:4px 12px;background:var(--paper)}
+  table.cards td{display:flex;justify-content:space-between;align-items:center;gap:10px;border:0;border-bottom:1px dashed var(--line);padding:8px 0;white-space:normal;text-align:start}
+  table.cards td:last-child{border-bottom:0}
+  table.cards td{flex-wrap:wrap}
+  table.cards td>span{flex-wrap:wrap;margin-inline-start:auto}
+  table.cards .frtab td, .frtab td{white-space:normal}
+  table.cards td::before{content:attr(data-label);font-weight:600;color:var(--ink-2);font-size:.85rem;flex:0 0 auto}
+  table.cards td:first-child{font-size:1.02rem}
+  .tablewrap{overflow-x:visible}
+  .guide .gact .btn{padding:7px 12px}
+  .bar{grid-template-columns:96px 1fr 52px;gap:8px;font-size:.86rem}
+  .learn .lead{padding:16px}
+  .qcard{padding:14px}
+  .opts.toolgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <button class="brand" data-go="home" aria-label="الصفحة الرئيسية">
+    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3h8M13 3v9L5.5 25.5A2.4 2.4 0 0 0 7.6 29h16.8a2.4 2.4 0 0 0 2.1-3.5L19 12V3"/><path d="M8.5 21h15" stroke="var(--glass)"/><circle cx="14" cy="24.5" r="1.3" fill="var(--glass)" stroke="none"/><circle cx="19" cy="23" r="1" fill="var(--glass)" stroke="none"/></svg>
+    مختبر العلوم
+  </button>
+  <nav class="nav" aria-label="التنقل">
+    <button data-go="home">الرئيسية</button>
+    <button data-go="records"><span class="lf">سجل تجاربي</span><span class="ls">سجلي</span></button>
+    <button data-go="teacher"><span class="lf">لوحة المعلم</span><span class="ls">المعلم</span></button>
+  </nav>
+</div></header>
+<main id="app" class="wrap"></main>
+
+<script>
+'use strict';
+/* =========================================================
+   أدوات عامة
+   ========================================================= */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+/* الأرقام والوحدات بالعربية حسب منهج المرحلة المتوسطة: م، ث، كجم، جم، مل، نيوتن، م/ث، م/ث²، °س */
+const AR_D='٠١٢٣٤٥٦٧٨٩';
+const UNIT_AR={'m/s²':'م/ث²','m/s':'م/ث','g/mL':'جم/مل','mL':'مل','kg':'كجم','°C':'°س','cm':'سم','N':'نيوتن','g':'جم','m':'م','s':'ث'};
+function arNum(s){
+  s=String(s).replace(/(\d+(?:\.\d+)?)\s?(m\/s²|m\/s|g\/mL|mL|kg|°C|cm|N|g|m|s)(?![A-Za-z\/²])/g,(x,n,u)=>n+' '+UNIT_AR[u]);
+  return s.replace(/(\d)\.(?=\d)/g,'$1٫').replace(/\d/g,d=>AR_D[d]);
+}
+const bidi=s=>arNum(s);
+/* قراءة رقم كتبه الطالب بأرقام عربية أو لاتينية */
+function parseNum(v){return parseFloat(String(v).trim().replace(/[٠-٩]/g,d=>AR_D.indexOf(d)).replace(/[٫,،]/g,'.'))}
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const store={
+  get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+};
+
+/* =========================================================
+   المواد والأدوات (بيانات حقيقية عند 25°C)
+   ========================================================= */
+const M={
+  water :{name:'الماء',state:'liquid',density:1.00,amount:'100 mL',mass:100,jar:['#7CC0EA']},
+  oil   :{name:'الزيت',state:'liquid',density:0.92,amount:'50 mL',mass:46,jar:['#E8B22E']},
+  salt  :{name:'الملح',state:'solid',density:2.16,amount:'10 g',mass:10,dissolves:true,dissVol:3.2,dT:1.5,
+         grain:{color:'#FFFFFF',size:2.8,count:70,sink:1.1,shape:'cube'},jar:['#F1F4F6','#B9C4CD','gr']},
+  sugar :{name:'السكر',state:'solid',density:1.59,amount:'10 g',mass:10,dissolves:true,dissVol:6.3,dT:0.4,
+         grain:{color:'#FBF6E6',size:3.4,count:55,sink:1,shape:'cube'},jar:['#FAF5E4','#D8C9A0','gr']},
+  sand  :{name:'الرمل',state:'solid',density:2.65,amount:'30 g',mass:30,
+         grain:{color:'#D4AE62',size:2.3,count:170,sink:.75,shape:'round'},jar:['#D8B36A','#A57D39','gr']},
+  gravel:{name:'الحصى',state:'solid',density:2.60,amount:'40 g',mass:40,
+         grain:{color:'#8E949B',size:9,count:14,sink:2.6,shape:'stone'},jar:['#A3A9B0','#6C737B','big']},
+  iron  :{name:'برادة الحديد',state:'solid',density:7.87,amount:'20 g',mass:20,magnetic:true,
+         grain:{color:'#3B3F46',size:2.2,count:120,sink:2.1,shape:'needle'},jar:['#545961','#1E2125','gr']}
+};
+const n=k=>M[k].name;
+const d=k=>M[k].density.toFixed(2);
+
+const ICON={
+  goggles:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M4 20c6-3 34-3 40 0"/><rect x="6" y="18" width="16" height="13" rx="6" fill="var(--glass)" fill-opacity=".25"/><rect x="26" y="18" width="16" height="13" rx="6" fill="var(--glass)" fill-opacity=".25"/><path d="M22 24h4"/></svg>',
+  gloves:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M15 42V24l-4-6a2.6 2.6 0 0 1 4.3-2.9L18 19V8a2.5 2.5 0 0 1 5 0v10-12a2.5 2.5 0 0 1 5 0v12-9a2.5 2.5 0 0 1 5 0v10-5a2.5 2.5 0 0 1 5 0v14c0 6-3 10-6 12v4z" fill="var(--glass)" fill-opacity=".2"/><path d="M15 42h18"/></svg>',
+  stirrer:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M36 5 13 43"/><path d="M38 6 15 44" stroke="var(--glass)" stroke-width="1.2"/></svg>',
+  magnet:'<svg viewBox="0 0 48 48" fill="none" stroke-width="2.4" stroke-linejoin="round"><path d="M10 8v16a14 14 0 0 0 28 0V8h-8v16a6 6 0 0 1-12 0V8z" stroke="currentColor"/><path d="M10 8h8v7h-8z" fill="#C3473E" stroke="currentColor"/><path d="M30 8h8v7h-8z" fill="#3A6FB0" stroke="currentColor"/></svg>',
+  filter:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M6 8h36L28 26v16h-8V26z"/><path d="M11 11h26L24 24z" fill="var(--paper)" stroke-dasharray="3 2"/></svg>',
+  sepfunnel:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M20 3h8M21 3v5c-8 4-11 10-11 15a14 14 0 0 0 9 9v4h10v-4a14 14 0 0 0 9-9c0-5-3-11-11-15V3"/><path d="M12 20h24" stroke="#E8B22E"/><path d="M18 33h12M22 36v8h4v-8"/></svg>',
+  burner:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M10 44h28l-4-6H14z"/><path d="M20 38V20h8v18"/><path d="M24 4c-4 5-6 8-4 12 1 2 7 2 8 0 2-4 0-7-4-12z" fill="#E8B22E" fill-opacity=".6"/></svg>',
+  sieve:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4"><ellipse cx="24" cy="20" rx="18" ry="8"/><path d="M6 20c0 10 8 16 18 16s18-6 18-16M14 16l20 8M14 24l20-8M24 12v16"/><path d="M42 20h4"/></svg>'
+};
+const TOOLS={
+  goggles  :{name:'نظارة الأمان',sub:'سلامة',safety:true},
+  gloves   :{name:'القفازات',sub:'سلامة',safety:true},
+  stirrer  :{name:'ساق التحريك',sub:'للتحريك'},
+  magnet   :{name:'المغناطيس',sub:'أداة فصل',wrong:'المغناطيس يجذب المواد التي فيها حديد، لكنه لا يحرّك الخليط. اختر أداة للتحريك.'},
+  filter   :{name:'ورق الترشيح',sub:'أداة فصل',wrong:'ورق الترشيح يفصل حبيبات صلبة عن سائل. نحن الآن في مرحلة الخلط وليس الفصل.'},
+  sepfunnel:{name:'قمع الفصل',sub:'أداة فصل',wrong:'قمع الفصل يفصل سائلين لا يمتزجان. الآن نريد تحريك الخليط فقط.'},
+  burner   :{name:'موقد بنزن',sub:'تسخين',wrong:'هذه التجربة لا تحتاج تسخينًا. تشغيل اللهب دون حاجة مخالف لقواعد السلامة.',unsafe:true},
+  sieve    :{name:'المنخل',sub:'أداة فصل',wrong:'المنخل يفصل الحبيبات الكبيرة عن الصغيرة. الآن نريد التحريك.'}
+};
+function jarHTML(k){const j=M[k].jar;return `<span class="jar ${j[2]||''}" style="--c:${j[0]};--c2:${j[1]||j[0]}"><i></i></span>`}
+
+/* =========================================================
+   المفاهيم
+   ========================================================= */
+const CONCEPTS={
+  het:'المخلوط غير المتجانس', hom:'المخلوط المتجانس (المحلول)', sol:'الذوبان',
+  dens:'الكثافة والطفو والترسّب', prop:'احتفاظ مكونات المخلوط بخصائصها',
+  sep:'طرق فصل المخاليط', obs:'دقة الملاحظة', safe:'الالتزام بالسلامة'
+};
+
+/* =========================================================
+   محتوى موضوع «المخاليط»
+   لإضافة موضوع جديد: أضف كائنًا مماثلًا إلى CONTENT
+   واربطه بمحرك مناسب في ENGINES، ثم فعّله في TOPICS.
+   ========================================================= */
+const OBS_CHIPS={
+  layers:'تكوّنت طبقتان منفصلتان', temp:'امتزجت المواد مؤقتًا أثناء التحريك',
+  dissolve:'اختفت المادة الصلبة في السائل', settle:'ترسّبت حبيبات في القاع',
+  visible:'يمكن تمييز المكونات بالعين', clear:'بقي السائل شفافًا',
+  tchange:'تغيّرت درجة الحرارة قليلًا', color:'تغيّر لون المواد', gas:'تصاعدت فقاعات غاز'
+};
+
+const MIXTURES={
+  id:'mixtures',
+  title:'المخاليط',
+  materials:['water','oil','salt','sugar','sand','gravel','iron'],
+  tools:['goggles','gloves','stirrer','magnet','filter','sepfunnel','burner','sieve'],
+  safety:['لا تتذوق أي مادة في المختبر، حتى لو بدت مألوفة.','ارتدِ النظارة والقفازات قبل لمس المواد.','نظّف أي سائل منسكب فورًا حتى لا ينزلق أحد.','لا تشعل الموقد إلا إذا طلبت التجربة ذلك.'],
+
+  classify(a,b){
+    const liq=[a,b].filter(k=>M[k].state==='liquid');
+    if(liq.length===2) return {cls:'immiscible',first:'water',second:'oil',L:'water',S:'oil'};
+    if(liq.length===1){
+      const L=liq[0],S=L===a?b:a;
+      return {cls:(L==='water'&&M[S].dissolves)?'solution':'sediment',first:L,second:S,L,S};
+    }
+    return {cls:'solids',first:a,second:b,A:a,B:b};
+  },
+
+  obs:{
+    immiscible:{ok:['layers','temp'],neutral:['visible','clear']},
+    solution  :{ok:['dissolve','clear'],neutral:['temp','tchange']},
+    sediment  :{ok:['settle','visible'],neutral:['temp','clear']},
+    solids    :{ok:['visible'],neutral:['temp']}
+  },
+  resultLabel:{
+    immiscible:'طبقتان منفصلتان (مخلوط غير متجانس)',
+    solution:'محلول (مخلوط متجانس)',
+    sediment:'ترسّب المادة الصلبة (مخلوط غير متجانس)',
+    solids:'مخلوط صلب غير متجانس'
+  },
+
+  /* ---- الأسئلة: [ملاحظة، تفسير، فصل] ثم موقف جديد ---- */
+  questions(c){
+    const Q={};
+    Q.immiscible=[
+      {type:'mcq',concept:'het',prompt:'ماذا لاحظت بعد أن توقف التحريك؟',
+       options:[{t:'صعد الزيت وكوّن طبقة مستقلة فوق الماء',ok:1},{t:'امتزج الزيت بالماء وأصبحا سائلًا واحدًا'},{t:'نزل الزيت إلى قاع البيكر'},{t:'اختفى الزيت تمامًا'}],
+       hints:['ارجع إلى ما لاحظته بعد توقف التحريك. هل بقي الزيت موزعًا في الماء؟','انظر إلى أعلى البيكر: هل يوجد سائل مختلف اللون فوق الماء؟'],
+       explain:'بعد توقف التحريك صعدت قطرات الزيت وتجمّعت فوق الماء، فظهرت طبقتان يمكن تمييزهما بالعين.'},
+      {type:'mcq',concept:'dens',prompt:'لماذا لم يمتزج الزيت بالماء، ولماذا استقر فوقه؟',
+       options:[{t:'لأن الزيت لا يذوب في الماء، وكثافته (0.92 g/mL) أقل من كثافة الماء (1.00 g/mL)',ok:1},{t:'لأن الزيت أكثف من الماء فيضغط عليه'},{t:'لأن مدة التحريك كانت قصيرة'},{t:'لأن الماء بارد'}],
+       hints:['تذكّر ما حدث أثناء التحريك: تفرّق الزيت إلى قطرات. هل بقيت القطرات موزعة بعد التوقف؟','قارن الكثافتين في لوحة القياسات. المادة الأقل كثافة تطفو فوق الأكثر كثافة.'],
+       explain:'الزيت لا يذوب في الماء، فلا تنتشر جسيماته بين جسيمات الماء. ولأن كثافته أقل، تطفو قطراته وتتجمّع في الأعلى مهما حرّكت.'},
+      {type:'tool',concept:'sep',prompt:'إذا أردت فصل الزيت عن الماء، فما الأداة المناسبة؟',
+       options:[{tool:'sepfunnel',ok:1},{tool:'magnet'},{tool:'filter'},{tool:'burner'}],
+       hints:['المكوّنان سائلان، وكل منهما في طبقة مستقلة.','تحتاج أداة يخرج منها السائل السفلي وحده من الأسفل، ثم تغلقها قبل وصول الزيت.'],
+       explain:'قمع الفصل له صنبور في أسفله: نترك الطبقتين تنفصلان، ثم نفتح الصنبور فيخرج الماء أولًا، ونغلقه عند وصول الزيت.'}
+    ];
+    if(c.cls==='immiscible') return Q.immiscible;
+    if(c.cls==='solution'){ Q.solution=[
+      {type:'mcq',concept:'sol',prompt:`ماذا حدث لحبيبات ${n(c.S)} عندما حرّكت الخليط؟`,
+       options:[{t:'اختفت تدريجيًا وتوزعت في الماء، أي ذابت',ok:1},{t:'ترسّبت وبقيت مرئية في القاع'},{t:'طفت وكوّنت طبقة فوق الماء'},{t:'تحوّلت إلى غاز وخرجت فقاعات'}],
+       hints:[`انظر إلى قاع البيكر بعد التحريك: هل بقيت حبيبات ${n(c.S)}؟`,'الكتلة في لوحة القياسات لم تنقص. إذن المادة ما زالت في البيكر، لكن أين ذهبت؟'],
+       explain:`ذاب ${n(c.S)} في الماء: تفكّكت حبيباته إلى جسيمات صغيرة جدًا لا تُرى، وتوزعت بانتظام بين جسيمات الماء. والدليل أن الكتلة الكلية بقيت ${(100+M[c.S].mass).toFixed(1)} g.`},
+      {type:'classify',concept:'hom',prompt:'صنّف هذه المخاليط إلى متجانسة وغير متجانسة.',
+       bins:['متجانس','غير متجانس'],
+       items:[{t:`الماء و${n(c.S)} (تجربتك)`,bin:0},{t:'الماء والزيت',bin:1},{t:'الماء والرمل',bin:1},{t:'الهواء الذي نتنفسه',bin:0}],
+       hints:['المخلوط المتجانس لا تستطيع تمييز مكوناته بالعين، ويبدو مادة واحدة في كل أجزائه.',`في تجربتك لم تعد ترى ${n(c.S)}. أما في الماء والرمل، فهل ترى الرمل؟`],
+       explain:`محلول ${n(c.S)} في الماء والهواء مخلوطان متجانسان، لأن مكوناتهما موزعة بانتظام ولا تُميَّز بالعين. أما الماء مع الزيت أو الرمل فمكوناتهما تُرى منفصلة، فهما غير متجانسين.`},
+      {type:'mcq',concept:'sep',prompt:`هل يمكن فصل ${n(c.S)} عن الماء باستخدام ورق الترشيح؟`,
+       options:[{t:`لا، لأن جسيمات ${n(c.S)} الذائبة صغيرة جدًا فتمر مع الماء عبر الورق`,ok:1},{t:'نعم، فورق الترشيح يحجز كل المواد الصلبة'},{t:'نعم، إذا كان ورق الترشيح سميكًا'},{t:`لا، لأن ${n(c.S)} يتفاعل مع الورق`}],
+       hints:[`ورق الترشيح يحجز الحبيبات التي يمكنك رؤيتها. هل كنت ترى حبيبات ${n(c.S)} بعد الذوبان؟`,'الجسيمات الذائبة أصغر بكثير من ثقوب ورق الترشيح.'],
+       explain:`يمر المحلول كاملًا عبر ورق الترشيح لأن جسيمات ${n(c.S)} الذائبة أصغر من ثقوبه. لاسترجاع ${n(c.S)} نبخّر الماء بالتسخين.`}
+    ]; return Q.solution; }
+    if(c.cls==='sediment'){
+    const ironInSed=c.S==='iron';
+    Q.sediment=[
+      {type:'mcq',concept:'het',prompt:`أين استقرت حبيبات ${n(c.S)} بعد توقف التحريك؟`,
+       options:[{t:'في قاع البيكر، ويمكن رؤيتها',ok:1},{t:`ذابت واختفت في ${n(c.L)}`},{t:`طفت فوق سطح ${n(c.L)}`},{t:'بقيت موزعة في السائل ولم تستقر'}],
+       hints:['ركّز على أسفل البيكر بعد انتهاء العد التنازلي.',`أثناء التحريك تحرّكت الحبيبات في ${n(c.L)}. ماذا فعلت عندما توقف التحريك؟`],
+       explain:`لم يذب ${n(c.S)} في ${n(c.L)}، فهبطت حبيباته واستقرت في القاع، ويمكن تمييز المكونين بالعين؛ لذلك فهو مخلوط غير متجانس.`},
+      {type:'mcq',concept:'dens',prompt:`ما سبب ترسّب ${n(c.S)} في القاع؟`,
+       options:[{t:`لأنه لا يذوب في ${n(c.L)}، وكثافته (${d(c.S)} g/mL) أكبر من كثافة ${n(c.L)} (${d(c.L)} g/mL)`,ok:1},{t:`لأن كثافته أقل من كثافة ${n(c.L)}`},{t:'لأنه ذاب ثم عاد فظهر من جديد'},{t:`لأننا وضعناه بعد ${n(c.L)}`}],
+       hints:[`هل اختفت حبيبات ${n(c.S)} في أي لحظة؟ هذا يخبرك هل ذاب أم لا.`,'قارن الكثافتين في لوحة القياسات: المادة الأكثف تهبط.'],
+       explain:`${n(c.S)} لا يذوب في ${n(c.L)}، وكثافته أكبر، فتهبط حبيباته وتترسب.`+(c.L==='oil'&&M[c.S].dissolves?` لاحظ أن ${n(c.S)} يذوب في الماء لكنه لا يذوب في الزيت؛ فالذوبان يعتمد على المادتين معًا.`:'')},
+      {type:'tool',concept:'sep',prompt:`ما الأداة المناسبة لفصل ${n(c.S)} عن ${n(c.L)}؟`+(ironInSed?' (قد توجد أكثر من إجابة صحيحة)':''),
+       options:[{tool:'filter',ok:1},{tool:'magnet',ok:ironInSed?1:0},{tool:'sepfunnel'},{tool:'burner'}],
+       hints:['المكوّن الصلب لم يذب، وما زالت حبيباته مرئية.','تحتاج أداة يمر منها السائل وتبقى الحبيبات فوقها.'+(ironInSed?' وتذكّر خاصية تميّز الحديد.':'')],
+       explain:`ورق الترشيح يسمح بمرور ${n(c.L)} ويحجز حبيبات ${n(c.S)} لأنها أكبر من ثقوبه.`+(ironInSed?' ويمكن أيضًا استخدام المغناطيس لأن برادة الحديد تنجذب إليه.':'')}
+    ]; return Q.sediment; }
+    const pair=[c.A,c.B], has=k=>pair.includes(k);
+    let method='none';
+    if(has('iron')) method='magnet';
+    else if(has('gravel')) method='sieve';
+    else if(pair.filter(k=>M[k].dissolves).length===1) method='dissolve';
+    const extraOk=has('iron')&&has('gravel')?'sieve':null;
+    const methodHint={
+      magnet:'إحدى المادتين لها خاصية مغناطيسية لا تملكها الأخرى.',
+      sieve:'قارن حجم حبيبات الحصى بحجم حبيبات المادة الأخرى.',
+      dissolve:'إحدى المادتين تذوب في الماء والأخرى لا تذوب.',
+      none:'فكّر في كل طريقة: هل توجد خاصية بسيطة تختلف فيها المادتان بوضوح؟ كلتاهما تذوب في الماء.'
+    }[method];
+    const methodExplain={
+      magnet:'برادة الحديد تنجذب إلى المغناطيس، أما المادة الأخرى فلا، فنفصلهما بتمرير المغناطيس فوق الخليط.',
+      sieve:'حبيبات الحصى كبيرة فتبقى فوق المنخل، أما الحبيبات الصغيرة فتسقط عبر ثقوبه.',
+      dissolve:'نضيف الماء فيذوب أحد المكونين، ثم نرشّح لنحجز المكوّن الذي لم يذب، ثم نبخّر الماء لنسترجع المكوّن الذائب.',
+      none:'الملح والسكر حبيبات بيضاء صغيرة، وكلاهما يذوب في الماء، فلا تصلح المغناطيس أو المنخل أو الترشيح لفصلهما. ليس كل مخلوط سهل الفصل بالأدوات البسيطة.'
+    }[method];
+    Q.solids=[
+      {type:'mcq',concept:'het',prompt:`بعد خلط ${n(c.A)} و${n(c.B)}، هل يمكنك تمييز كل مادة بالعين؟`,
+       options:[{t:'نعم، حبيبات كل مادة تظهر بلونها وشكلها',ok:1},{t:'لا، اندمجتا في مادة واحدة جديدة'},{t:'لا، ذابت إحداهما في الأخرى'},{t:'لا، لأن الخليط أصبح سائلًا'}],
+       hints:['قرّب نظرك إلى البيكر: هل ترى ألوانًا أو أحجامًا مختلفة من الحبيبات؟','المخلوط الذي تُرى مكوناته منفصلة يسمى مخلوطًا غير متجانس.'],
+       explain:'كل مادة بقيت ظاهرة بلونها وشكلها، لذلك فالخليط غير متجانس.'},
+      {type:'mcq',concept:'prop',prompt:`هل تكوّنت مادة جديدة عند خلط ${n(c.A)} و${n(c.B)}؟`,
+       options:[{t:'لا؛ كل مادة احتفظت بخصائصها مثل اللون والشكل',ok:1},{t:'نعم؛ لأن شكل الخليط يختلف عن كل مادة وحدها'},{t:'نعم؛ لأننا حرّكنا الخليط'},{t:'لا يمكن معرفة ذلك'}],
+       hints:['هل تغيّر لون أي حبيبة؟ هل تغيّرت درجة الحرارة أو خرج غاز؟','في المخلوط تبقى المواد كما هي ويمكن فصلها، أما المادة الجديدة فتتكوّن بتفاعل كيميائي.'],
+       explain:'لم يتغير اللون ولا الحرارة ولم يخرج غاز؛ كل مادة بقيت كما هي. وهذا ما يميّز المخلوط عن التفاعل الكيميائي.'+(has('iron')?' لو قرّبت مغناطيسًا لانجذبت برادة الحديد وحدها، فهي ما زالت حديدًا.':'')},
+      {type:'mcq',concept:'sep',prompt:`ما الطريقة المناسبة لفصل ${n(c.A)} عن ${n(c.B)}؟`+(extraOk?' (قد توجد أكثر من إجابة صحيحة)':''),
+       options:[{t:'استخدام المغناطيس',ok:method==='magnet'?1:0},{t:'استخدام المنخل',ok:(method==='sieve'||extraOk)?1:0},{t:'الإذابة في الماء ثم الترشيح ثم التبخير',ok:method==='dissolve'?1:0},{t:'لا توجد طريقة بسيطة مناسبة بهذه الأدوات',ok:method==='none'?1:0}],
+       hints:[methodHint,'اختر الطريقة التي تستفيد من الخاصية التي تختلف فيها المادتان.'],
+       explain:methodExplain}
+    ];
+    return Q[c.cls];
+  },
+
+  apply(c){
+    const sandIron={type:'tool',concept:'sep',prompt:'موقف جديد: لديك خليط من الرمل وبرادة الحديد. أي أداة ستستخدم لفصل مكونات الخليط؟',
+      options:[{tool:'magnet',ok:1},{tool:'filter'},{tool:'sepfunnel'},{tool:'burner'}],
+      hints:['ما الخاصية التي تملكها برادة الحديد ولا يملكها الرمل؟','الحديد ينجذب إلى أداة معينة.'],
+      explain:'المغناطيس يجذب برادة الحديد ويترك الرمل، لأن الحديد مادة مغناطيسية والرمل ليس كذلك.'};
+    const muddy={type:'tool',concept:'sep',prompt:'موقف جديد: بعد المطر امتلأ دلو بماء عكر فيه طين. أي أداة تجعل الماء أوضح؟',
+      options:[{tool:'filter',ok:1},{tool:'magnet'},{tool:'sepfunnel'},{tool:'sieve'}],
+      hints:['الطين حبيبات صغيرة لا تذوب في الماء.','تحتاج أداة يمر منها الماء وتحجز الحبيبات الصغيرة.'],
+      explain:'ورق الترشيح يحجز حبيبات الطين غير الذائبة ويمرّر الماء، فيصبح أوضح.'};
+    const saltSand={type:'order',concept:'sep',prompt:'موقف جديد: سقط ملح في كيس رمل. رتّب خطوات استرجاع الملح نظيفًا.',
+      items:['أضف الماء إلى الخليط وحرّكه حتى يذوب الملح','رشّح الخليط ليبقى الرمل على ورق الترشيح','سخّن الماء المرشَّح حتى يتبخر','اجمع بلورات الملح المتبقية'],
+      hints:['ما الخاصية التي تميّز الملح عن الرمل؟ أحدهما يذوب في الماء.','لا يمكن الترشيح قبل إذابة الملح، ولا يمكن التبخير قبل فصل الرمل.'],
+      explain:'نذيب الملح أولًا، ثم نرشّح لنحجز الرمل، ثم نبخّر الماء فيبقى الملح. استفدنا من خاصية الذوبان التي يملكها الملح ولا يملكها الرمل.'};
+    const oilSpill={type:'tool',concept:'sep',prompt:'موقف جديد: انسكب زيت في وعاء ماء وتكوّنت طبقتان. أي أداة تفصلهما؟',
+      options:[{tool:'sepfunnel',ok:1},{tool:'sieve'},{tool:'magnet'},{tool:'filter'}],
+      hints:['المكوّنان سائلان لا يمتزجان، وكل منهما في طبقة.','تحتاج أداة لها صنبور يُخرج الطبقة السفلية وحدها.'],
+      explain:'قمع الفصل يُخرج الماء من الأسفل أولًا، ونغلقه عند وصول الزيت.'};
+    if(c.cls==='immiscible') return sandIron;
+    if(c.cls==='solution') return saltSand;
+    if(c.cls==='sediment') return c.S==='iron'?muddy:sandIron;
+    return oilSpill;
+  },
+
+  learned(c,r){
+    c={S:'salt',L:'water',A:'sand',B:'iron',...c}; // قيم احتياطية: الكائن أدناه يُبنى لكل الحالات ويُختار منها واحدة
+    const L={
+      immiscible:{
+        lead:'بعض السوائل لا تمتزج مع بعضها، فتنفصل إلى طبقات ويتكوّن مخلوط غير متجانس.',
+        happened:'عند التحريك تفرّق الزيت إلى قطرات صغيرة بين جسيمات الماء، فبدا الخليط معكّرًا. وعند التوقف صعدت القطرات وتجمّعت في طبقة فوق الماء.',
+        why:'الزيت لا يذوب في الماء، وكثافته (0.92 g/mL) أقل من كثافة الماء (1.00 g/mL)، لذلك يطفو فوقه.',
+        concept:'المخلوط غير المتجانس: مخلوط لا تتوزع مكوناته بانتظام، ويمكن تمييزها بالعين.'},
+      solution:{
+        lead:`بعض المواد الصلبة تذوب في الماء، فتتوزع جسيماتها بانتظام ويتكوّن محلول متجانس.`,
+        happened:`تفكّكت حبيبات ${n(c.S)} إلى جسيمات صغيرة جدًا وانتشرت بين جسيمات الماء. اختفت عن عينك، لكن كتلتها بقيت في البيكر.`,
+        why:`جسيمات الماء تجذب جسيمات ${n(c.S)} وتفصلها عن بعضها، والتحريك يسرّع ذلك. لهذا لا تترسب ولا تنفصل مع مرور الوقت.`+(c.S==='salt'?' وانخفاض الحرارة قليلًا سببه أن ذوبان الملح يمتص قدرًا صغيرًا من الحرارة.':''),
+        concept:'المحلول: مخلوط متجانس تتوزع مكوناته بانتظام ولا يمكن تمييزها بالعين.'},
+      sediment:{
+        lead:'المادة الصلبة التي لا تذوب في السائل تترسّب، فيتكوّن مخلوط غير متجانس يمكن فصله بالترشيح.',
+        happened:`أثناء التحريك حمل ${n(c.L)} حبيبات ${n(c.S)} معه، وعند التوقف هبطت الحبيبات واستقرت في القاع.`,
+        why:`${n(c.S)} لا يذوب في ${n(c.L)}، وكثافته (${d(c.S)} g/mL) أكبر من كثافة ${n(c.L)} (${d(c.L)} g/mL)، فيهبط.`,
+        concept:'المخلوط غير المتجانس: تبقى مكوناته منفصلة ويمكن رؤيتها، ويمكن فصلها بطرق فيزيائية.'},
+      solids:{
+        lead:'عند خلط المواد الصلبة تحتفظ كل مادة بخصائصها، ويمكن فصلها بالاستفادة من خاصية تختلف فيها.',
+        happened:`تبادلت حبيبات ${n(c.A)} و${n(c.B)} أماكنها أثناء التحريك، لكن لم يتغير لون ولا شكل أي منها.`,
+        why:'الخلط لا يغيّر طبيعة المواد؛ لا يحدث تفاعل كيميائي، لذلك لا تتكوّن مادة جديدة.',
+        concept:'المخلوط: مادتان أو أكثر تختلطان دون أن تفقد أي منهما خصائصها.'}
+    }[c.cls];
+    return L;
+  }
+};
+
+const CONTENT={mixtures:MIXTURES};
+const PATHS={
+  phys:{title:'المسار الفيزيائي',icon:'⚙️'},
+  chem:{title:'المسار الكيميائي',icon:'🧪'}
+};
+const TOPICS=[
+  {id:'mixtures',path:'phys',title:'المخاليط',desc:'اخلط مادتين واكتشف: هل تمتزجان؟ هل تذوب إحداهما؟ وكيف تفصلهما؟',ready:true},
+  {id:'friction',path:'phys',title:'قوة الاحتكاك',desc:'ثلاثة أسطح مختلفة الخشونة: أين يتوقف القالب؟ ولماذا؟ (قوانين نيوتن)',ready:true},
+  {id:'inertia',path:'phys',title:'القصور الذاتي',desc:'عربة وراكب وحاجز، وعربات مختلفة الكتلة بالدفعة نفسها (القانون الأول لنيوتن)',ready:true},
+  {id:'density',path:'phys',title:'الكثافة والطفو والغوص',desc:'لماذا تطفو بعض الأجسام وتغوص أخرى؟'},
+  {id:'massvol',path:'phys',title:'الكتلة والحجم',desc:'قِس بالميزان والمخبار المدرّج.'},
+  {id:'separation',path:'phys',title:'الفصل: الترشيح والمغناطيس والتبخير',desc:'نفّذ عمليات الفصل بنفسك.'},
+  {id:'states',path:'phys',title:'تغيرات الحالة',desc:'الانصهار والتبخر والتكثف.'},
+  {id:'heat',path:'phys',title:'انتقال الحرارة',desc:'التوصيل والحمل والإشعاع.'},
+  {id:'acids',path:'chem',title:'الأحماض والقواعد',desc:'اختبر مواد من المنزل.'},
+  {id:'indicators',path:'chem',title:'المؤشرات وتغيّر اللون',desc:'كاشف الملفوف الأحمر وورق تبّاع الشمس.'},
+  {id:'neutral',path:'chem',title:'التعادل',desc:'حمض مع قاعدة: ماذا ينتج؟'},
+  {id:'gas',path:'chem',title:'تكوّن الغاز',desc:'الخل وصودا الخبز.'},
+  {id:'precip',path:'chem',title:'تكوّن الراسب',desc:'متى يظهر جسم صلب من محلولين؟'},
+  {id:'thermo',path:'chem',title:'التفاعلات وتغيّر الحرارة',desc:'تفاعلات تسخن وأخرى تبرد.'}
+];
+
+/* =========================================================
+   محاكي البيكر (Canvas)
+   ========================================================= */
+const SIM=(()=>{
+  const W=260,H=330,L=48,R=212,BOT=306,TOP=46,CAP=250,PX=(BOT-TOP-14)/CAP,NC=54,CW=(R-L)/NC;
+  let cv,cx,raf=0,last=0,s=null,col={},onTick=null,tickAcc=0;
+  const rnd=(a,b)=>a+Math.random()*(b-a);
+
+  function readColors(){
+    const cs=getComputedStyle(document.documentElement);
+    col={ink:cs.getPropertyValue('--ink').trim()||'#13324A',ink2:cs.getPropertyValue('--ink-2').trim()||'#4F6879'};
+  }
+  function reset(){
+    s={water:0,oilBase:0,oilLayer:0,drops:[],dropN0:1,grains:[],solids:{},pours:[],spawns:[],
+       stirOn:false,stirT:0,stirDone:null,wob:0,t:0,colH:new Array(NC).fill(0)};
+  }
+  const hasWater=()=>s.water>0.01;
+  const hasLiquid=()=>s.water>0.01||s.oilBase>0.01||s.oilLayer>0.01||s.drops.length>0;
+  const dropVol=()=>s.drops.reduce((a,x)=>a+x.v,0);
+  function solidVol(){
+    if(!hasLiquid()) return 0;
+    let v=0;
+    for(const k in s.solids){const o=s.solids[k],m=M[k];
+      const diss=diss_(k);
+      v+=(1-diss)*o.mass/m.density + (m.dissolves&&hasWater()?diss*m.dissVol:0);
+    }
+    return v;
+  }
+  function diss_(k){
+    const o=s.solids[k]; if(!o||!M[k].dissolves) return 0;
+    if(o.spawned<o.n0) return 0;
+    let a=0; for(const g of s.grains) if(g.k===k) a+=g.a;
+    return Math.max(0,Math.min(1,1-a/o.n0));
+  }
+  const baseTop=()=>BOT-3-(s.water+s.oilBase+dropVol()+solidVol())*PX;
+  const surfTop=()=>baseTop()-s.oilLayer*PX;
+
+  function reading(){
+    const liq=hasLiquid();
+    let mass=s.water*1+(s.oilBase+s.oilLayer+dropVol())*0.92, temp=25;
+    for(const k in s.solids){mass+=s.solids[k].mass; temp-=diss_(k)*(M[k].dT||0)}
+    const vol=liq?s.water+s.oilBase+s.oilLayer+dropVol()+solidVol():null;
+    return {vol,mass,temp,dissolved:Object.keys(s.solids).some(k=>diss_(k)>0.95)};
+  }
+
+  function addLiquid(k){return new Promise(res=>{s.pours.push({k,left:k==='water'?100:50,res})})}
+  function addSolid(k){
+    const m=M[k];
+    s.solids[k]={mass:m.mass,n0:m.grain.count,spawned:0};
+    return new Promise(res=>{s.spawns.push({k,left:m.grain.count,acc:0,res})});
+  }
+  function stir(sec){
+    return new Promise(res=>{
+      s.stirOn=true; s.stirT=sec; s.stirDone=res; s.colH.fill(0);
+      for(const g of s.grains){g.settled=false;g.roll=0;g.rolls=0}
+      if(hasWater()&&s.oilLayer>0.5){
+        const cnt=Math.min(36,Math.max(8,Math.round(s.oilLayer/1.4))), v=s.oilLayer/cnt;
+        s.oilLayer=0;
+        for(let i=0;i<cnt;i++) s.drops.push({x:0,y:0,vx:0,vy:0,v,r:rnd(2.4,6),seed:Math.random()});
+        const bt=baseTop();
+        for(const dr of s.drops){dr.x=rnd(L+10,R-10);dr.y=rnd(bt+dr.r+2,BOT-dr.r-6)}
+        s.dropN0=cnt;
+      }
+    });
+  }
+
+  function update(dt){
+    s.t+=dt;
+    for(let i=s.pours.length-1;i>=0;i--){const p=s.pours[i],dv=Math.min(p.left,85*dt);p.left-=dv;
+      if(p.k==='water') s.water+=dv; else if(hasWater()) s.oilLayer+=dv; else s.oilBase+=dv;
+      if(p.left<=0){s.pours.splice(i,1);setTimeout(p.res,250)}}
+    for(let i=s.spawns.length-1;i>=0;i--){const sp=s.spawns[i],m=M[sp.k];
+      sp.acc+=dt*m.grain.count/0.8;
+      while(sp.acc>=1&&sp.left>0){sp.acc--;sp.left--;s.solids[sp.k].spawned++;
+        s.grains.push({k:sp.k,x:150+rnd(-16,16),y:TOP-34+rnd(-8,8),vx:rnd(-25,25),vy:rnd(40,90),
+          r:m.grain.size/2*rnd(.75,1.25),a:1,rot:rnd(0,3),seed:Math.random(),settled:false})}
+      if(sp.left<=0){s.spawns.splice(i,1);setTimeout(sp.res,900)}}
+    if(s.stirOn){s.stirT-=dt;s.wob=Math.min(1,s.wob+dt*3);
+      if(s.stirT<=0){s.stirOn=false;const r=s.stirDone;s.stirDone=null;r&&r()}}
+    else s.wob=Math.max(0,s.wob-dt*.7);
+
+    const bt=baseTop(),st=surfTop(),liq=hasLiquid(),k3=Math.min(1,dt*3);
+    for(let i=s.grains.length-1;i>=0;i--){
+      const g=s.grains[i],m=M[g.k],sink=m.grain.sink;
+      const inL=liq&&g.y>st, inWater=hasWater()&&g.y>bt;
+      if(m.dissolves&&inWater){
+        g.a-=(s.stirOn?.36:.025)*dt*(.7+.6*g.seed);
+        if(g.a<=.06){s.grains.splice(i,1);continue}
+      }
+      if(g.settled&&!s.stirOn) continue;
+      if(s.stirOn&&(inL||!liq)){
+        g.settled=false;
+        if(liq){const lift=1/sink;
+          g.vx+=(Math.sin(s.t*4.2+g.y*.06+g.seed*6)*95*lift-g.vx)*k3;
+          g.vy+=(Math.cos(s.t*3.3+g.x*.05+g.seed*4)*78*lift+14*sink-g.vy)*k3;
+        }else{
+          g.vx+=(Math.sin(s.t*(4+g.seed*3)+g.seed*6.28)*60+(150-g.x)*.35-g.vx)*Math.min(1,dt*4); g.vy+=420*dt;
+        }
+      }else{
+        const tv=inL?24*sink:320;
+        g.vy+=(tv-g.vy)*Math.min(1,dt*(inL?3:5));
+        if(g.roll) g.vx=g.roll*(inL?24:60); else g.vx*=1-k3;
+      }
+      g.x+=g.vx*dt; g.y+=g.vy*dt; g.rot+=g.vx*dt*.05;
+      const r=g.r*g.a;
+      if(g.x<L+r+3){g.x=L+r+3;g.vx=Math.abs(g.vx)}
+      if(g.x>R-r-3){g.x=R-r-3;g.vx=-Math.abs(g.vx)}
+      if(s.stirOn&&liq&&inL&&g.y<st+r+1){g.y=st+r+1;g.vy=Math.abs(g.vy)}
+      const c0=Math.max(0,Math.floor((g.x-r-L)/CW)),c1=Math.min(NC-1,Math.floor((g.x+r-L)/CW));
+      let h=0; for(let c=c0;c<=c1;c++) h=Math.max(h,s.colH[c]);
+      const rest=BOT-4-h-r;
+      if(g.y>=rest){g.y=rest;
+        if(!s.stirOn){
+          // زاوية الاستقرار (~32°): إن كان الميل أشد تتدحرج الحبيبة إلى الجهة الأخفض
+          const cl=c0>0?s.colH[c0-1]:1e9, cl2=c0>1?s.colH[c0-2]:cl, cr=c1<NC-1?s.colH[c1+1]:1e9, cr2=c1<NC-2?s.colH[c1+2]:cr;
+          const step=CW*.62, dL=Math.max(h-cl-step,h-cl2-2*step), dR=Math.max(h-cr-step,h-cr2-2*step);
+          if(Math.max(dL,dR)>0&&(g.rolls=(g.rolls||0)+1)<400){g.roll=dL>dR?-1:dR>dL?1:(Math.random()<.5?-1:1);g.vy=0}
+          else{g.roll=0;g.settled=true;g.vx=0;g.vy=0;
+            const add=Math.max(Math.PI*r*r/.62/((c1-c0+1)*CW),r*1.2);
+            for(let c=c0;c<=c1;c++) s.colH[c]=h+add}
+        }
+        else g.vy=-Math.abs(g.vy)*.35-(liq?0:rnd(30,90));
+      }
+    }
+    for(let i=s.drops.length-1;i>=0;i--){const dr=s.drops[i];
+      if(s.stirOn){
+        dr.vx+=(Math.sin(s.t*4.2+dr.y*.06+dr.seed*6)*110-dr.vx)*k3;
+        dr.vy+=(Math.cos(s.t*3.3+dr.x*.05+dr.seed*4)*90-dr.vy)*k3;
+      }else{dr.vy+=(-(16+dr.r*7)-dr.vy)*Math.min(1,dt*2);dr.vx*=1-Math.min(1,dt*2)}
+      dr.x+=dr.vx*dt; dr.y+=dr.vy*dt;
+      if(dr.x<L+dr.r+3){dr.x=L+dr.r+3;dr.vx=Math.abs(dr.vx)}
+      if(dr.x>R-dr.r-3){dr.x=R-dr.r-3;dr.vx=-Math.abs(dr.vx)}
+      if(dr.y>BOT-6-dr.r){dr.y=BOT-6-dr.r;dr.vy=-Math.abs(dr.vy)}
+      const top=baseTop();
+      if(dr.y-dr.r<=top+.5){
+        if(s.stirOn){dr.y=top+dr.r+.5;dr.vy=Math.abs(dr.vy)}
+        else{s.drops.splice(i,1);s.oilLayer+=dr.v}
+      }
+    }
+  }
+
+  function band(c,top,bottom,wob,phase){
+    c.beginPath(); c.moveTo(L-2,bottom);
+    for(let x=L-2;x<=R+2;x+=4) c.lineTo(x,top+Math.sin(x*.07+s.t*6+phase)*3*wob);
+    c.lineTo(R+2,bottom); c.closePath(); c.fill();
+  }
+  function beakerPath(c){
+    c.beginPath(); c.moveTo(L,TOP); c.lineTo(L,BOT-12); c.quadraticCurveTo(L,BOT,L+12,BOT);
+    c.lineTo(R-12,BOT); c.quadraticCurveTo(R,BOT,R,BOT-12); c.lineTo(R,TOP); c.closePath();
+  }
+  function draw(){
+    const c=cx; c.clearRect(0,0,W,H);
+    const bt=baseTop(),st=surfTop(),wob=s.wob;
+    c.save(); beakerPath(c); c.clip();
+    if(s.water>0.01||s.oilBase>0.01){
+      c.fillStyle=s.water>0.01?'rgba(96,170,226,.36)':'rgba(226,170,40,.72)';
+      band(c,bt,BOT+2,s.oilLayer>0.01?wob*.5:wob,0);
+    }
+    if(s.oilLayer>0.01){c.fillStyle='rgba(232,176,42,.8)';band(c,st,bt+1,wob,1.3)}
+    if(s.drops.length){
+      c.fillStyle=`rgba(240,205,120,${.2*Math.min(1,s.drops.length/12)})`; c.fillRect(L,bt,R-L,BOT-bt);
+      for(const dr of s.drops){c.beginPath();c.arc(dr.x,dr.y,dr.r,0,7);c.fillStyle='rgba(232,176,42,.9)';c.fill();
+        c.beginPath();c.arc(dr.x-dr.r*.35,dr.y-dr.r*.35,dr.r*.3,0,7);c.fillStyle='rgba(255,255,255,.55)';c.fill()}
+    }
+    if(hasLiquid()){
+      let lifted=0,tot=0;
+      for(const g of s.grains) if(g.k==='sand'){tot++; if(!g.settled&&g.y>st) lifted++}
+      if(lifted) {c.fillStyle=`rgba(196,156,86,${.28*lifted/tot})`;c.fillRect(L,st,R-L,BOT-st)}
+    }
+    for(const g of s.grains){
+      const m=M[g.k],r=g.r*g.a;
+      c.globalAlpha=Math.min(1,g.a*1.5);
+      if(m.dissolves&&g.a<.98&&hasWater()&&g.y>bt){
+        c.strokeStyle='rgba(255,255,255,.4)';c.lineWidth=1;c.beginPath();
+        for(let j=0;j<6;j++) c.lineTo(g.x+Math.sin(s.t*5+j+g.seed*9)*2,g.y-r-j*3);
+        c.stroke();
+      }
+      c.save(); c.translate(g.x,g.y); c.rotate(g.rot);
+      if(m.grain.shape==='cube'){c.fillStyle=m.grain.color;c.fillRect(-r,-r,r*2,r*2);c.strokeStyle='rgba(30,50,70,.35)';c.lineWidth=.7;c.strokeRect(-r,-r,r*2,r*2)}
+      else if(m.grain.shape==='needle'){c.strokeStyle=m.grain.color;c.lineWidth=1.5;c.beginPath();c.moveTo(-r*1.6,0);c.lineTo(r*1.6,0);c.stroke()}
+      else if(m.grain.shape==='stone'){c.fillStyle=m.grain.color;c.beginPath();c.ellipse(0,0,r,r*.78,0,0,7);c.fill();c.strokeStyle='rgba(40,45,52,.6)';c.lineWidth=1;c.stroke();c.fillStyle='rgba(255,255,255,.25)';c.beginPath();c.ellipse(-r*.3,-r*.3,r*.35,r*.22,0,0,7);c.fill()}
+      else{c.fillStyle=m.grain.color;c.beginPath();c.arc(0,0,r,0,7);c.fill()}
+      c.restore(); c.globalAlpha=1;
+    }
+    c.restore();
+    for(const p of s.pours){c.strokeStyle=p.k==='water'?'rgba(96,170,226,.7)':'rgba(232,176,42,.9)';c.lineWidth=5;c.lineCap='round';
+      c.beginPath();c.moveTo(152,0);c.lineTo(150+Math.sin(s.t*20),st);c.stroke()}
+    if(s.stirOn){const x=130+Math.sin(s.t*7)*52;
+      c.lineCap='round';c.strokeStyle=col.ink2;c.lineWidth=7;c.beginPath();c.moveTo(x+16,TOP-40);c.lineTo(x,BOT-14);c.stroke();
+      c.strokeStyle='rgba(200,232,242,.95)';c.lineWidth=4.5;c.stroke()}
+    // glass
+    c.lineJoin='round';c.lineCap='round';c.strokeStyle=col.ink;c.globalAlpha=.8;c.lineWidth=3;
+    c.beginPath();c.moveTo(L-10,TOP-9);c.quadraticCurveTo(L,TOP-6,L,TOP+4);c.lineTo(L,BOT-12);c.quadraticCurveTo(L,BOT,L+12,BOT);
+    c.lineTo(R-12,BOT);c.quadraticCurveTo(R,BOT,R,BOT-12);c.lineTo(R,TOP-2);c.quadraticCurveTo(R,TOP-6,R+5,TOP-8);c.stroke();
+    c.globalAlpha=.35;c.strokeStyle='#ffffff';c.lineWidth=3;c.beginPath();c.moveTo(L+9,TOP+20);c.lineTo(L+9,BOT-26);c.stroke();c.globalAlpha=1;
+    c.fillStyle=col.ink2;c.strokeStyle=col.ink2;c.lineWidth=1.2;c.font='600 10px "IBM Plex Sans Arabic",sans-serif';c.textAlign='right';c.textBaseline='middle';
+    for(let v=25;v<=CAP;v+=25){const y=BOT-3-v*PX,big=v%50===0;c.beginPath();c.moveTo(R-3,y);c.lineTo(R-(big?18:10),y);c.stroke();if(big)c.fillText(String(v),R-21,y)}
+    c.textAlign='left';c.fillText('مل',L+16,TOP+10);
+  }
+  function loop(now){
+    const dt=Math.min(.05,Math.max(0,(now-last)/1000)); last=now;
+    update(dt); draw();
+    tickAcc+=dt; if(onTick&&tickAcc>.15){tickAcc=0;onTick(reading())}
+    raf=requestAnimationFrame(loop);
+  }
+  function mount(canvas,tick){
+    cancelAnimationFrame(raf); cv=canvas; cx=cv.getContext('2d'); onTick=tick;
+    const dpr=Math.min(2,window.devicePixelRatio||1); cv.width=W*dpr; cv.height=H*dpr; cx.setTransform(dpr,0,0,dpr,0,0);
+    readColors(); reset(); last=performance.now(); raf=requestAnimationFrame(loop);
+  }
+  function stop(){cancelAnimationFrame(raf);onTick=null}
+  return {mount,stop,addLiquid,addSolid,stir,reading,readColors};
+})();
+matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',()=>{SIM.readColors();SEP.readColors()});
+
+/* =========================================================
+   محاكي الفصل العملي (Canvas)
+   ========================================================= */
+const SEP=(()=>{
+  const W=320,H=360;
+  let cv,c,raf=0,last=0,col={},sc=null;
+  const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+  const ease=x=>x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2;
+  const lerp=(a,b,t)=>a+(b-a)*t;
+  const prand=i=>{const x=Math.sin(i*127.1+311.7)*43758.5453;return x-Math.floor(x)};
+  const LIQ={water:'rgba(96,170,226,.45)',oil:'rgba(232,176,42,.85)'};
+  const DOTS={sand:60,salt:34,sugar:30,iron:50,gravel:7};
+  const SEED={sand:11,salt:211,sugar:401,iron:613,gravel:809};
+  function readColors(){const cs=getComputedStyle(document.documentElement);
+    col={ink:cs.getPropertyValue('--ink').trim()||'#13324A',ink2:cs.getPropertyValue('--ink-2').trim()||'#4F6879'}}
+  const scale=(ct,f)=>({water:ct.water*f,oil:ct.oil*f,solids:Object.fromEntries(Object.entries(ct.solids).map(([k,o])=>[k,{...o,g:o.g*f}]))});
+
+  function grain(k,x,y,a=1){
+    const m=M[k],r=m.grain.size/2; c.globalAlpha=a; c.save(); c.translate(x,y);
+    if(m.grain.shape==='cube'){c.rotate(prand(x)*3);c.fillStyle=m.grain.color;c.fillRect(-r,-r,2*r,2*r);c.strokeStyle='rgba(30,50,70,.4)';c.lineWidth=.7;c.strokeRect(-r,-r,2*r,2*r)}
+    else if(m.grain.shape==='needle'){c.rotate(prand(y)*3);c.strokeStyle=m.grain.color;c.lineWidth=1.5;c.beginPath();c.moveTo(-r*1.6,0);c.lineTo(r*1.6,0);c.stroke()}
+    else if(m.grain.shape==='stone'){c.fillStyle=m.grain.color;c.beginPath();c.ellipse(0,0,r,r*.78,0,0,7);c.fill();c.strokeStyle='rgba(40,45,52,.6)';c.lineWidth=1;c.stroke()}
+    else{c.fillStyle=m.grain.color;c.beginPath();c.arc(0,0,r,0,7);c.fill()}
+    c.restore(); c.globalAlpha=1;
+  }
+  function dotsFor(k,g,x0,x1,y0,y1){
+    const cnt=Math.max(1,Math.round(DOTS[k]*Math.min(1.2,g/M[k].mass))),s=SEED[k],out=[];
+    for(let i=0;i<cnt;i++) out.push({x:x0+5+prand(s+i*2)*(x1-x0-10),y:y0+prand(s+i*2+1)*Math.max(1,y1-y0)});
+    return out;
+  }
+  function outline(x0,x1,top,bot){
+    c.strokeStyle=col.ink;c.globalAlpha=.8;c.lineWidth=2.5;c.lineJoin='round';c.lineCap='round';
+    c.beginPath();c.moveTo(x0-6,top-5);c.quadraticCurveTo(x0,top-3,x0,top+3);c.lineTo(x0,bot-10);c.quadraticCurveTo(x0,bot,x0+10,bot);
+    c.lineTo(x1-10,bot);c.quadraticCurveTo(x1,bot,x1,bot-10);c.lineTo(x1,top);c.stroke();c.globalAlpha=1;
+  }
+  function vessel(x0,x1,top,bot,cap,ct,o={}){
+    const px=(bot-top-6)/cap,B=bot-3;
+    const und=Object.keys(ct.solids).filter(k=>ct.solids[k].g>0.01&&!ct.solids[k].dis);
+    const sv=und.reduce((a,k)=>a+ct.solids[k].g/M[k].density,0),bh=und.length?Math.max(6,sv*px*1.4):0;
+    const w=ct.water>0.05?ct.water:0,ol=ct.oil>0.05?ct.oil:0,lv=(w+ol)>0?sv:0;
+    let surf=B-bh;
+    c.save();c.beginPath();c.moveTo(x0,top);c.lineTo(x0,bot-10);c.quadraticCurveTo(x0,bot,x0+10,bot);c.lineTo(x1-10,bot);c.quadraticCurveTo(x1,bot,x1,bot-10);c.lineTo(x1,top);c.closePath();c.clip();
+    if(w){const wt=B-(w+lv)*px;c.fillStyle=LIQ.water;c.fillRect(x0,wt,x1-x0,bot-wt);surf=Math.min(surf,wt);
+      if(ol){const ot=wt-ol*px;c.fillStyle=LIQ.oil;c.fillRect(x0,ot,x1-x0,wt-ot);surf=Math.min(surf,ot)}}
+    else if(ol){const ot=B-(ol+lv)*px;c.fillStyle=LIQ.oil;c.fillRect(x0,ot,x1-x0,bot-ot);surf=Math.min(surf,ot)}
+    for(const k of und){if(o.skip&&o.skip.includes(k))continue;
+      const a=o.fade&&o.fade.includes(k)?clamp(1-o.fadeP):1;
+      for(const p of dotsFor(k,ct.solids[k].g,x0,x1,B-bh,B-1)) grain(k,p.x,p.y,a)}
+    c.restore(); outline(x0,x1,top,bot);
+    return {surf,bandTop:B-bh,bandBot:B-1};
+  }
+  const mainV=(ct,o)=>vessel(100,220,150,330,250,ct,o);
+
+  function drawMagnet(x,y){
+    c.lineCap='butt';c.strokeStyle=col.ink2;c.lineWidth=11;
+    c.beginPath();c.moveTo(x-16,y+20);c.lineTo(x-16,y);c.arc(x,y,16,Math.PI,0);c.lineTo(x+16,y+20);c.stroke();
+    c.lineWidth=11;c.strokeStyle='#C3473E';c.beginPath();c.moveTo(x-16,y+12);c.lineTo(x-16,y+22);c.stroke();
+    c.strokeStyle='#3A6FB0';c.beginPath();c.moveTo(x+16,y+12);c.lineTo(x+16,y+22);c.stroke();
+  }
+  function dish(x,y,rx){c.strokeStyle=col.ink;c.lineWidth=2;c.globalAlpha=.8;c.beginPath();c.ellipse(x,y,rx,7,0,0,Math.PI);c.stroke();c.beginPath();c.moveTo(x-rx,y);c.lineTo(x+rx,y);c.stroke();c.globalAlpha=1}
+  function stream(x0,y0,x1,y1,color,cx_,cy_){c.strokeStyle=color;c.lineWidth=4;c.lineCap='round';c.beginPath();c.moveTo(x0,y0);
+    if(cx_!==undefined)c.quadraticCurveTo(cx_,cy_,x1,y1);else c.lineTo(x1,y1);c.stroke()}
+  const liqColor=ct=>ct.water>0.5?'rgba(96,170,226,.75)':'rgba(232,176,42,.9)';
+
+  /* ---- قمع الفصل ---- */
+  const FX=160,FTOP=62,FBOT=232;
+  const hw=y=>y>=150?6+(FBOT-y)/(FBOT-150)*49:55-33*Math.pow((150-y)/(150-FTOP),2);
+  const FT=[];let facc=0;for(let y=FBOT;y>=FTOP;y--){facc+=2*hw(y);FT.push([y,facc])}
+  const FK=190/facc;
+  const levelY=v=>{if(v<=0.01)return FBOT+1;for(const [y,a] of FT)if(a*FK>=v)return y;return FTOP};
+  function bulbPath(){c.beginPath();c.moveTo(FX-hw(FTOP),FTOP);for(let y=FTOP;y<=FBOT;y+=2)c.lineTo(FX-hw(y),y);
+    for(let y=FBOT;y>=FTOP;y-=2)c.lineTo(FX+hw(y),y);c.closePath()}
+  function drawFunnel(st,t){
+    // حامل
+    c.strokeStyle=col.ink2;c.globalAlpha=.6;c.lineWidth=4;c.beginPath();c.moveTo(290,30);c.lineTo(290,354);c.moveTo(290,150);c.lineTo(FX+56,150);c.stroke();c.globalAlpha=1;
+    const flowing=st.rate>0&&(st.fw+st.fo)>0.01;
+    const recv=vessel(108,212,292,352,150,{water:st.rw,oil:st.ro,solids:{}});
+    if(flowing){stream(FX,288,FX,recv.surf,st.fw>0.01?LIQ.water.replace('.45','.8'):LIQ.oil,undefined);
+      c.fillStyle=st.fw>0.01?'rgba(96,170,226,.8)':'rgba(232,176,42,.9)';c.fillRect(FX-3,FBOT,6,56)}
+    c.save();bulbPath();c.clip();
+    const yw=levelY(st.fw),yo=levelY(st.fw+st.fo);
+    c.fillStyle=LIQ.water;c.fillRect(0,yw,W,FBOT+2-yw);
+    c.fillStyle=LIQ.oil;c.fillRect(0,yo,W,yw-yo);
+    if(st.fw>0.01&&st.fo>0.01){c.strokeStyle='rgba(120,80,10,.55)';c.lineWidth=1.2;c.beginPath();c.moveTo(0,yw);c.lineTo(W,yw);c.stroke()}
+    c.restore();
+    c.strokeStyle=col.ink;c.globalAlpha=.85;c.lineWidth=2.5;c.lineJoin='round';
+    c.beginPath();c.moveTo(FX-11,FTOP-24);c.lineTo(FX-11,FTOP);c.lineTo(FX-hw(FTOP),FTOP);
+    for(let y=FTOP;y<=FBOT;y+=2)c.lineTo(FX-hw(y),y);c.lineTo(FX-4,FBOT+3);c.lineTo(FX-4,288);
+    c.moveTo(FX+4,288);c.lineTo(FX+4,FBOT+3);for(let y=FBOT;y>=FTOP;y-=2)c.lineTo(FX+hw(y),y);c.lineTo(FX+11,FTOP);c.lineTo(FX+11,FTOP-24);c.stroke();
+    c.fillStyle=col.ink2;c.fillRect(FX-13,FTOP-30,26,8);c.globalAlpha=1;
+    // الصنبور
+    c.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--paper')||'#fff';
+    c.strokeStyle=col.ink;c.lineWidth=2;c.beginPath();c.arc(FX,252,7,0,7);c.fill();c.stroke();
+    c.strokeStyle='#D98E1F';c.lineWidth=4;c.lineCap='round';c.beginPath();
+    if(st.rate>0){c.moveTo(FX,240);c.lineTo(FX,264)}else{c.moveTo(FX-16,252);c.lineTo(FX+16,252)}c.stroke();
+  }
+
+  /* ---- المشاهد ---- */
+  const SC={
+    idle:{dur:0,draw(d){mainV(d.ct)}},
+    pour:{dur:1.4,draw(d,p){const ct={...d.ct,water:d.ct.water+100*p};const v=mainV(ct);if(p<1)stream(165,0,165,v.surf,LIQ.water.replace('.45','.8'))}},
+    stir:{dur:2.8,draw(d,p,t){mainV(d.ct,{fade:d.fade,fadeP:p*1.15});
+      if(p<1){const x=160+Math.sin(t*7)*42;c.lineCap='round';c.strokeStyle=col.ink2;c.lineWidth=7;c.beginPath();c.moveTo(x+14,118);c.lineTo(x,318);c.stroke();c.strokeStyle='rgba(200,232,242,.95)';c.lineWidth=4.5;c.stroke()}}},
+    filter:{dur:5.5,draw(d,p,t){
+      const f=clamp(p/.55),dr=clamp((p-.1)/.85),L=d.src.water+d.src.oil;
+      const sv=vessel(228,298,40,118,250,scale(d.src,1-f));
+      if(f<1&&L>0)stream(231,44,165,150,liqColor(d.src),205,34);
+      const recv=vessel(112,218,262,345,200,scale(d.filtrate,dr));
+      if(p>.1&&p<.97&&L>0)for(let i=0;i<3;i++){const ph=(t*1.8+i/3)%1;c.fillStyle=liqColor(d.filtrate);c.beginPath();c.arc(165,254+ph*(recv.surf-254),2.3,0,7);c.fill()}
+      const inCone=Math.max(0,L*f-L*dr),h=Math.min(68,72*Math.sqrt(clamp(inCone/(L*.4||1))));
+      if(h>1){c.fillStyle=liqColor(d.src).replace('.75','.5');c.beginPath();c.moveTo(165,222);c.lineTo(165-h*58/72,222-h);c.lineTo(165+h*58/72,222-h);c.closePath();c.fill()}
+      for(const k in d.residue.solids){const ds=dotsFor(k,d.residue.solids[k].g,0,1,0,1);const nshow=Math.round(ds.length*f);
+        for(let i=0;i<nshow;i++){const hy=2+ds[i].y*16,ww=hy*58/72;grain(k,165+(ds[i].x-.5)*2*ww*.85,222-hy)}}
+      c.strokeStyle=col.ink;c.globalAlpha=.85;c.lineWidth=2.5;c.beginPath();c.moveTo(105,150);c.lineTo(161,222);c.lineTo(161,252);c.moveTo(169,252);c.lineTo(169,222);c.lineTo(225,150);c.stroke();
+      c.setLineDash([3,3]);c.lineWidth=1.2;c.globalAlpha=.6;c.beginPath();c.moveTo(112,153);c.lineTo(165,218);c.lineTo(218,153);c.stroke();c.setLineDash([]);c.globalAlpha=1;}},
+    sieve:{dur:4.5,draw(d,p,t){
+      const f=clamp(p/.55),dr=clamp((p-.1)/.85);
+      vessel(228,298,40,118,250,scale(d.src,1-f));
+      if(f<1)stream(231,44,170,165,d.src.water+d.src.oil>0.5?liqColor(d.src):'rgba(150,130,100,.6)',205,34);
+      vessel(110,220,250,345,250,scale(d.passed,dr));
+      if(p>.1&&p<.95)for(let i=0;i<5;i++){const ph=(t*1.5+i/5)%1,k=Object.keys(d.passed.solids)[i%Math.max(1,Object.keys(d.passed.solids).length)];
+        if(k)grain(k,135+i*14,182+ph*80,.8)}
+      c.save();c.beginPath();c.ellipse(165,172,62,13,0,0,7);c.clip();c.strokeStyle=col.ink2;c.globalAlpha=.4;c.lineWidth=1;
+      for(let x=100;x<=230;x+=7){c.beginPath();c.moveTo(x,155);c.lineTo(x,190);c.stroke()}for(let y=158;y<=188;y+=5){c.beginPath();c.moveTo(100,y);c.lineTo(230,y);c.stroke()}c.restore();c.globalAlpha=1;
+      if(d.kept){const ds=dotsFor('gravel',d.kept.solids.gravel.g,120,210,0,1);for(let i=0;i<Math.round(ds.length*f);i++)grain('gravel',ds[i].x,170-ds[i].y*4)}
+      c.strokeStyle=col.ink;c.lineWidth=3;c.globalAlpha=.85;c.beginPath();c.ellipse(165,172,62,13,0,0,7);c.stroke();c.beginPath();c.moveTo(227,172);c.lineTo(262,165);c.stroke();c.globalAlpha=1;}},
+    magnet:{dur:4.6,draw(d,p,t){
+      const v=mainV(d.ct,{skip:['iron']});
+      let mx=160,my;
+      if(p<.25)my=lerp(-50,92,ease(p/.25));
+      else if(!d.has){my=92;mx=160+Math.sin((p-.25)*30)*10*(p<.75?1:0);if(p>.75)my=lerp(92,-50,ease((p-.75)/.25))}
+      else if(p<.6)my=92;
+      else if(p<.85){const q=ease((p-.6)/.25);mx=lerp(160,276,q);my=lerp(92,255,q)}
+      else{mx=276;my=255}
+      dish(276,330,30);
+      if(d.has){
+        if(!d.dots)d.dots=dotsFor('iron',d.ct.solids.iron.g,100,220,v.bandTop,v.bandBot);
+        d.dots.forEach((pt,i)=>{const s=prand(i+77);let x=pt.x,y=pt.y;
+          const tx=mx+(s<.5?-16:16)+(prand(i+5)-.5)*14,ty=my+24+prand(i+9)*7;
+          if(p>.25&&p<=.85){const q=clamp(((p-.25)/.35)*1.3-s*.3);x=lerp(pt.x,tx,ease(q));y=lerp(pt.y,ty,ease(q))}
+          if(p>.85){const q=ease((p-.85)/.15);x=lerp(tx,262+prand(i+3)*28,q);y=lerp(ty,326-prand(i+4)*5,q)}
+          grain('iron',x,y)});
+      }
+      drawMagnet(mx,my);}},
+    evap:{dur:7,draw(d,p,t){
+      const heat=clamp(p/.2),rem=1-clamp((p-.2)/.65),on=p<.93;
+      const temp=p<.2?25+75*heat:(rem>0.01?100:100);
+      // موقد
+      c.fillStyle=col.ink2;c.fillRect(140,334,40,8);c.fillRect(155,286,10,48);
+      if(on){const fh=26*Math.min(1,heat*1.5);c.fillStyle='rgba(80,140,240,.75)';c.beginPath();c.ellipse(160,284-fh/2,6,fh/2,0,0,7);c.fill();
+        c.fillStyle='rgba(240,170,60,.6)';c.beginPath();c.ellipse(160,286-fh*.35,3.5,fh*.35,0,0,7);c.fill()}
+      // حامل ثلاثي وشبكة
+      c.strokeStyle=col.ink2;c.lineWidth=3;c.beginPath();c.moveTo(112,340);c.lineTo(126,222);c.moveTo(208,340);c.lineTo(194,222);c.moveTo(104,222);c.lineTo(216,222);c.stroke();
+      c.setLineDash([2,3]);c.lineWidth=2;c.beginPath();c.moveTo(108,218);c.lineTo(212,218);c.stroke();c.setLineDash([]);
+      // جفنة
+      c.save();c.beginPath();c.moveTo(108,178);c.quadraticCurveTo(160,236,212,178);c.closePath();c.clip();
+      const ly=214-30*rem;c.fillStyle=LIQ.water;if(rem>0.01)c.fillRect(100,ly,120,40);
+      const cf=clamp((.65-rem)/.6);
+      for(const k of d.cryst){const ds=dotsFor(k,d.ct.solids[k].g,128,192,203,213);for(let i=0;i<Math.round(ds.length*cf);i++)grain(k,ds[i].x,ds[i].y)}
+      c.restore();
+      c.strokeStyle=col.ink;c.lineWidth=2.5;c.globalAlpha=.85;c.beginPath();c.moveTo(106,177);c.quadraticCurveTo(160,238,214,177);c.stroke();c.globalAlpha=1;
+      if(p>.2&&rem>0.02){for(let i=0;i<4;i++){const ph=(t*.45+i/4)%1;c.strokeStyle=`rgba(160,175,190,${.45*(1-ph)})`;c.lineWidth=2.5;c.beginPath();
+        for(let j=0;j<10;j++)c.lineTo(132+i*18+Math.sin(t*3+j*.8+i)*5,178-ph*90-j*5);c.stroke()}}
+      c.direction='ltr';c.fillStyle=col.ink;c.font='700 16px "IBM Plex Sans Arabic",sans-serif';c.textAlign='left';c.fillText(`${temp.toFixed(0)} °C`,18,32);
+      c.font='500 12px "IBM Plex Sans Arabic",sans-serif';c.fillStyle=col.ink2;c.fillText(`الماء: ${(d.ct.water*rem).toFixed(0)} mL`,18,52);}},
+    funnel:{dur:0,draw(d,p,t){drawFunnel(d.st,t)}}
+  };
+
+  function loop(now){
+    const dt=Math.min(.05,Math.max(0,(now-last)/1000));last=now;
+    c.clearRect(0,0,W,H);
+    if(sc){sc.t+=dt;
+      if(sc.kind==='funnel'){const st=sc.data.st;
+        if(st.rate>0){let dv=st.rate*dt;const a=Math.min(dv,st.fw);st.fw-=a;st.rw+=a;dv-=a;const b=Math.min(dv,st.fo);st.fo-=b;st.ro+=b}
+        sc.data.onTick&&sc.data.onTick(st)}
+      const p=SC[sc.kind].dur?clamp(sc.t/SC[sc.kind].dur):0;
+      SC[sc.kind].draw(sc.data,p,sc.t);
+      if(SC[sc.kind].dur&&p>=1&&sc.res){const r=sc.res;sc.res=null;setTimeout(r,350)}
+    }
+    raf=requestAnimationFrame(loop);
+  }
+  function mount(canvas){cancelAnimationFrame(raf);cv=canvas;c=cv.getContext('2d');
+    const dpr=Math.min(2,window.devicePixelRatio||1);cv.width=W*dpr;cv.height=H*dpr;c.setTransform(dpr,0,0,dpr,0,0);
+    readColors();sc=null;last=performance.now();raf=requestAnimationFrame(loop)}
+  function play(kind,data){return new Promise(res=>{sc={kind,data,t:0,res}})}
+  function idle(ct){sc={kind:'idle',data:{ct},t:0}}
+  function funnel(init,onTick){const st={fw:init.water,fo:init.oil,rw:0,ro:0,rate:0};sc={kind:'funnel',data:{st,onTick},t:0};return st}
+  function setRate(r){if(sc&&sc.kind==='funnel')sc.data.st.rate=r}
+  function stop(){cancelAnimationFrame(raf);sc=null}
+  return {mount,play,idle,funnel,setRate,stop,readColors};
+})();
+
+/* =========================================================
+   متحكم الفصل العملي
+   ========================================================= */
+function solidsMethod(a,b){const s=[a,b];if(s.includes('iron'))return'magnet';if(s.includes('gravel'))return'sieve';
+  if(s.filter(k=>M[k].dissolves).length===1)return'dissolve';return'none'}
+function sepTargets(c){
+  if(c.cls==='immiscible')return['water','oil'];
+  if(c.cls==='solution')return[c.S];
+  if(c.cls==='sediment')return[c.S,c.L];
+  return solidsMethod(c.A,c.B)==='none'?[]:[c.A,c.B];
+}
+const ctComps=ct=>[...(ct.water>3.1?['water']:[]),...(ct.oil>3.1?['oil']:[]),...Object.keys(ct.solids).filter(k=>ct.solids[k].g>0.05)];
+function ctText(ct){const p=[];if(ct.water>0.5)p.push(`ماء ${ct.water.toFixed(0)} mL`);if(ct.oil>0.5)p.push(`زيت ${ct.oil.toFixed(0)} mL`);
+  for(const k in ct.solids){const s=ct.solids[k];if(s.g>0.05)p.push(`${n(k)} ${s.g.toFixed(1)} g${s.dis?' (ذائب)':''}`)}return p.join('، ')||'فارغ'}
+const compName=k=>k==='water'?'الماء':k==='oil'?'الزيت':n(k);
+
+function startSeparation(){
+  const r=APP.run,c=r.ctx,ct={water:0,oil:0,solids:{}};
+  for(const k of [c.first,c.second]){if(k==='water')ct.water=100;else if(k==='oil')ct.oil=50;else ct.solids[k]={g:M[k].mass,dis:c.cls==='solution'}}
+  r.sep={work:ct,out:[],steps:[],actions:[],wrong:0,busy:false,done:false,funnel:false,targets:sepTargets(c),msg:''};
+  go('separate');
+}
+function sepDone(){const s=APP.run.sep,all=[s.work,...s.out.map(o=>o.ct)];
+  return s.targets.length>0&&s.targets.every(t=>all.some(ct=>{const cm=ctComps(ct);return cm.length===1&&cm[0]===t}))}
+function nextToolName(){
+  const s=APP.run.sep,W=s.work,und=Object.keys(W.solids).filter(k=>!W.solids[k].dis);
+  if(!s.targets.length)return 'زر «لا يمكن الفصل بهذه الأدوات»';
+  if(W.water>3&&W.oil>3)return TOOLS.sepfunnel.name;
+  if(W.solids.iron)return TOOLS.magnet.name;
+  if(W.solids.gravel)return TOOLS.sieve.name;
+  const solU=und.filter(k=>M[k].dissolves);
+  if(solU.length&&W.water<0.5&&W.oil<0.5)return 'إضافة الماء من رف المواد';
+  if(solU.length&&W.water>0.5)return TOOLS.stirrer.name;
+  if(und.length&&(W.water>0.5||W.oil>0.5))return TOOLS.filter.name;
+  return TOOLS.burner.name;
+}
+function sepWrong(msg,unsafe){
+  const r=APP.run,s=r.sep;s.wrong++;r.log.push('فصل: '+msg);
+  if(unsafe)logMistake('safety','حاول تسخين الزيت على لهب مكشوف');
+  note(msg+(s.wrong>=2?` تلميح: جرّب ${nextToolName()}.`:''),true);
+}
+function normalizeWork(){
+  const s=APP.run.sep;
+  if(ctComps(s.work).length<=1){const i=s.out.findIndex(o=>ctComps(o.ct).length>1&&o.ct.water<0.5);
+    if(i>=0){const o=s.out.splice(i,1)[0];if(ctComps(s.work).length)s.out.push({label:'ناتج جانبي',ct:s.work});s.work=o.ct;SEP.idle(s.work)}}
+}
+function afterStep(msg){
+  const s=APP.run.sep;normalizeWork();
+  if(sepDone()){s.done=true;s.msg=msg}else s.msg=msg+' ما الخطوة التالية؟';
+  sepGuide();refreshSepOut();
+}
+function refreshSepOut(st){
+  const s=APP.run.sep,box=$('#sepOut');if(!box)return;
+  const card=(label,ct,ok)=>`<div class="reading"><span>${label}${ok?' ✓':''}</span><b style="font-size:.95rem;line-height:1.4">${bidi(ctText(ct))}</b></div>`;
+  const pure=ct=>{const cm=ctComps(ct);return cm.length===1&&s.targets.includes(cm[0])};
+  let h='<div class="dens" style="border-style:solid"><b>حصيلة الفصل</b></div>';
+  if(st) h+=card('في القمع',{water:st.fw,oil:st.fo,solids:{}})+card('في الكأس',{water:st.rw,oil:st.ro,solids:{}});
+  else{h+=card(s.done?(s.workLabel||'في البيكر'):'الخليط الحالي',s.work,pure(s.work));s.out.forEach(o=>h+=card(o.label,o.ct,pure(o.ct)))}
+  box.innerHTML=h;
+}
+function sepGuide(){
+  const r=APP.run,s=r.sep,t=$('#gtext'),act=$('#gact');if(!t)return;act.innerHTML='';
+  if(s.funnel){t.textContent='افتح الصنبور ليخرج الماء، وأغلقه لحظة وصول الحد الفاصل بين الطبقتين إلى الصنبور. قرب النهاية افتحه قليلًا.';
+    act.innerHTML='<button class="btn amber" data-r="9">افتح كاملًا</button><button class="btn amber" data-r="2.5">افتح قليلًا</button><button class="btn" data-r="0" style="background:var(--paper);color:var(--ink)">أغلق الصنبور</button>';
+    $$('[data-r]',act).forEach(b=>b.onclick=()=>{const v=+b.dataset.r;SEP.setRate(v);if(v===0)funnelClosed()});return}
+  if(s.busy){t.textContent='راقب ما يحدث…';return}
+  if(s.done){t.textContent=bidi((s.targets.length?'تم الفصل! ':'أحسنت! ')+(s.msg||''));
+    act.innerHTML='<button class="btn amber" id="toLearn">إلى الخلاصة</button>';$('#toLearn').onclick=()=>go('learned');return}
+  t.textContent=bidi(s.msg)||'الآن افصل مكونات الخليط عمليًا. اسحب الأداة المناسبة إلى البيكر.';
+  act.innerHTML='<button class="btn" id="noSep" style="background:transparent;border:1px solid currentColor;color:inherit;padding:6px 12px">لا يمكن الفصل بهذه الأدوات</button>';
+  $('#noSep').onclick=()=>{
+    if(s.busy||s.done)return;
+    s.actions.push({t:'none'});
+    if(!s.targets.length){s.done=true;s.steps.push('الاستنتاج: لا توجد طريقة بسيطة لفصل المادتين');
+      s.msg='استنتاجك صحيح: كلتا المادتين تذوب في الماء، ولا تنجذب للمغناطيس، وحبيباتهما متقاربة الحجم؛ فلا تفصلهما هذه الأدوات.';sepGuide();refreshSepOut()}
+    else sepWrong('يمكن فصل هذا الخليط. فكّر في خاصية تختلف فيها المكونات.');
+  };
+}
+function funnelClosed(){
+  const r=APP.run,s=r.sep,st=s.fst;if(!st)return;
+  if(st.ro>3){s.wrong++;r.log.push(`فصل: تسرّب ${st.ro.toFixed(1)} mL زيت إلى كأس الماء`);
+    note(`تسرّب ${st.ro.toFixed(1)} mL من الزيت إلى كأس الماء، فالفصل غير نقي. أعدنا التجربة: افتح الصنبور قليلًا عندما يقترب الحد الفاصل.`,true);
+    s.fst=SEP.funnel({water:s.work.water,oil:s.work.oil},x=>{s.fst=x;if(s.funnel)refreshSepOut(x)});return}
+  if(st.fw>3){note(`بقي في القمع نحو ${st.fw.toFixed(0)} mL من الماء. افتح الصنبور مجددًا.`);return}
+  s.funnel=false;s.busy=false;
+  s.out.push({label:'في الكأس',ct:{water:st.rw,oil:st.ro,solids:{}}});
+  s.work={water:st.fw,oil:st.fo,solids:{}};s.workLabel='في القمع';
+  s.steps.push(`قمع الفصل: ${st.rw.toFixed(0)} mL ماء في الكأس، و${st.fo.toFixed(0)} mL زيت بقيت في القمع`);
+  afterStep(`انفصل السائلان: ${st.rw.toFixed(0)} mL ماء في الكأس، و${st.fo.toFixed(0)} mL زيت في القمع.`);
+}
+async function sepTool(t){
+  const r=APP.run,s=r.sep;if(s.busy||s.done||s.funnel)return;
+  if(!TOOLS[t].safety)s.actions.push({t});
+  const W=s.work,und=Object.keys(W.solids).filter(k=>!W.solids[k].dis&&W.solids[k].g>0.05),dis=Object.keys(W.solids).filter(k=>W.solids[k].dis);
+  const liq=W.water>0.5||W.oil>0.5;
+  r.tools.add(TOOLS[t].name);
+  const run=async(kind,data)=>{s.busy=true;sepGuide();await SEP.play(kind,data);s.busy=false};
+  if(TOOLS[t].safety){note('أنت ترتدي معدات السلامة.');return}
+  if(t==='sepfunnel'){
+    if(W.water>3&&W.oil>3){s.funnel=true;s.busy=true;s.fst=SEP.funnel({water:W.water,oil:W.oil},x=>{s.fst=x;if(s.funnel)refreshSepOut(x)});sepGuide();return}
+    return sepWrong('قمع الفصل يفصل سائلين لا يمتزجان، وهذا الخليط ليس كذلك.');
+  }
+  if(t==='filter'){
+    if(!liq)return sepWrong('الترشيح يحتاج سائلًا يمر عبر الورق، وهذا الخليط صلب كله.');
+    if(!und.length&&W.water>3&&W.oil>3)return sepWrong('الماء والزيت كلاهما يمر عبر ورق الترشيح، فلن ينفصلا.');
+    const residue={water:0,oil:0,solids:{}};und.forEach(k=>residue.solids[k]={...W.solids[k]});
+    const ret=und.length?(und.includes('sand')?4:2):0;
+    const filtrate={water:Math.max(0,W.water-(W.water>0.5?ret:0)),oil:Math.max(0,W.oil-(W.water>0.5?0:ret)),solids:{}};
+    dis.forEach(k=>filtrate.solids[k]={...W.solids[k]});
+    await run('filter',{src:W,residue,filtrate});
+    s.work=filtrate;SEP.idle(filtrate);
+    if(und.length){s.out.push({label:'على ورق الترشيح (رطب)',ct:residue});
+      s.steps.push(`الترشيح: بقي ${ctText(residue)} على الورق، ومرّ ${ctText(filtrate)}`);
+      afterStep(`مرّ السائل عبر الورق وبقيت الحبيبات فوقه. الراشح أقل بنحو ${ret} mL لأن الورق والحبيبات الرطبة احتجزتها.`)}
+    else{s.steps.push('الترشيح: مرّ الخليط كله ولم يبقَ شيء على الورق');sepGuide();refreshSepOut();
+      sepWrong('مرّ الخليط كله عبر الورق ولم يبقَ شيء فوقه؛ المادة الذائبة لا يحجزها ورق الترشيح.')}
+    return;
+  }
+  if(t==='magnet'){
+    const has=!!W.solids.iron;await run('magnet',{ct:W,has});
+    if(has){const iron={water:0,oil:0,solids:{iron:{...W.solids.iron}}};delete W.solids.iron;
+      s.out.push({label:'على المغناطيس',ct:iron});SEP.idle(W);
+      s.steps.push(`المغناطيس: جذب ${iron.solids.iron.g.toFixed(1)} g من برادة الحديد`);
+      afterStep(`انجذبت ${iron.solids.iron.g.toFixed(1)} g من برادة الحديد إلى المغناطيس، وبقي الباقي مكانه.`)}
+    else{SEP.idle(W);s.steps.push('المغناطيس: لم ينجذب شيء');sepGuide();refreshSepOut();sepWrong('لم ينجذب شيء؛ لا توجد في الخليط مادة مغناطيسية.')}
+    return;
+  }
+  if(t==='sieve'){
+    const has=!!W.solids.gravel,kept=has?{water:0,oil:0,solids:{gravel:{...W.solids.gravel}}}:null;
+    const passed=JSON.parse(JSON.stringify(W));delete passed.solids.gravel;
+    await run('sieve',{src:W,kept,passed});
+    s.work=passed;SEP.idle(passed);
+    if(has){s.out.push({label:'فوق المنخل',ct:kept});s.steps.push(`المنخل: بقي ${kept.solids.gravel.g.toFixed(1)} g حصى فوقه`);
+      afterStep('بقي الحصى فوق المنخل لأن حبيباته أكبر من ثقوبه، ومرّ الباقي.')}
+    else{s.steps.push('المنخل: مرّ كل شيء');sepGuide();refreshSepOut();sepWrong('مرّ كل شيء عبر ثقوب المنخل؛ الحبيبات أصغر من ثقوبه.')}
+    return;
+  }
+  if(t==='burner'){
+    if(W.oil>0.5)return sepWrong('خطر! لا تسخّن الزيت على لهب مكشوف؛ قد يشتعل.',true);
+    if(W.water<0.5)return sepWrong('لا يوجد ماء ليتبخر، فالتسخين لا يفيد هنا.');
+    if(und.length&&dis.length)return sepWrong('في الخليط حبيبات لم تذب. لو بخّرت الآن لاختلطت بالبلورات؛ افصلها أولًا.');
+    if(!dis.length)return sepWrong('لا توجد مادة ذائبة لنسترجعها؛ التبخير هنا يهدر الماء. توجد طريقة أبسط تحتفظ بالماء.');
+    await run('evap',{ct:W,cryst:dis});
+    const cr={water:0,oil:0,solids:{}};dis.forEach(k=>cr.solids[k]={g:W.solids[k].g,dis:false});
+    s.steps.push(`التبخير: تبخّر ${W.water.toFixed(0)} mL ماء وبقي ${ctText(cr)}`);
+    s.work=cr;s.workLabel='في الجفنة';
+    afterStep(dis.length>1?'تبخّر الماء، لكن البلورات المتبقية خليط من المادتين!':
+      `تبخّر ${W.water.toFixed(0)} mL من الماء وبقي ${cr.solids[dis[0]].g.toFixed(1)} g من بلورات ${n(dis[0])}. الماء نفسه لم نسترجعه؛ لاسترجاعه نحتاج التقطير.`+(dis.includes('sugar')?' في المختبر الحقيقي نسخّن السكر بهدوء، فالحرارة الشديدة تحرقه.':''));
+    return;
+  }
+  if(t==='stirrer'){
+    const sol=und.filter(k=>M[k].dissolves);
+    if(W.water>0.5&&sol.length){await run('stir',{ct:W,fade:sol});sol.forEach(k=>W.solids[k].dis=true);SEP.idle(W);
+      s.steps.push(`الإذابة: ذاب ${sol.map(n).join(' و')} في الماء`);afterStep(`ذاب ${sol.map(n).join(' و')} في الماء، وبقي ما لا يذوب.`)}
+    else sepWrong('التحريك يخلط المكونات ولا يفصلها.');
+  }
+}
+async function sepMat(k){
+  const r=APP.run,s=r.sep;if(s.busy||s.done||s.funnel)return;
+  const W=s.work;
+  if(k!=='water')return note('هذه المادة ليست مطلوبة في الفصل.');
+  s.actions.push({t:'water'});
+  if(W.water>0.5)return note('الخليط فيه ماء بالفعل.');
+  if(W.oil>0.5)return sepWrong('إضافة الماء إلى الزيت تصنع خليطًا جديدًا ولا تفصل شيئًا.');
+  if(!Object.keys(W.solids).some(x=>M[x].dissolves&&!W.solids[x].dis))return sepWrong('لن يذوب أي من المكونين في الماء، فإضافته لا تساعد على الفصل.');
+  s.busy=true;sepGuide();await SEP.play('pour',{ct:W});s.busy=false;W.water=100;SEP.idle(W);
+  s.steps.push('أضاف 100 mL ماء');afterStep('أضفت 100 mL من الماء.');
+}
+function renderSeparate(){
+  const r=APP.run,C=CONTENT[r.topic];
+  app.innerHTML=`${cycleHTML(4)}
+  <div class="lab">
+    <section class="bench stick" aria-label="طاولة الفصل">
+      <div class="guide" role="status" aria-live="polite">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3h8M13 3v9L5.5 25.5A2.4 2.4 0 0 0 7.6 29h16.8a2.4 2.4 0 0 0 2.1-3.5L19 12V3"/><path d="M8.5 21h15" stroke="var(--glass)"/></svg>
+        <div class="gt"><span class="who">المرشد</span><p id="gtext"></p><div class="gact" id="gact"></div></div>
+      </div>
+      <div class="gnote" id="gnote" role="alert"></div>
+      <div class="stage">
+        <div class="beakerzone" data-zone="beaker"><canvas id="sv" class="sepcv" aria-label="منطقة الفصل"></canvas><div class="benchline"></div></div>
+        <aside class="readings" id="sepOut" aria-live="polite"></aside>
+      </div>
+    </section>
+    <div id="obsPanel"></div>
+    <aside class="side">
+      <div class="panel"><h3>الأدوات <small>اسحبها إلى منطقة الفصل أو انقرها</small></h3><div class="shelf" id="tools"></div></div>
+      <div class="panel"><h3>المواد</h3><div class="shelf" id="shelf"></div></div>
+      <div class="panel safety"><h3>قواعد السلامة</h3><ul><li>لا تقرّب وجهك من البخار أثناء التبخير.</li><li>لا تسخّن الزيت على لهب مكشوف.</li><li>أطفئ الموقد فور انتهاء التسخين.</li><li>لا تلمس الجفنة الساخنة بيدك.</li></ul></div>
+    </aside>
+  </div>`;
+  const tl=['magnet','filter','sepfunnel','sieve','burner','stirrer'];
+  $('#tools').innerHTML=tl.map(t=>`<button class="item" data-tool="${t}">${ICON[t]}<span class="nm">${TOOLS[t].name}</span><span class="sub">${t==='burner'?'تبخير':t==='stirrer'?'إذابة':'فصل'}</span></button>`).join('');
+  $('#shelf').innerHTML=`<button class="item" data-mat="water">${jarHTML('water')}<span class="nm">ماء نقي</span><span class="sub num">100 mL</span></button>`;
+  $$('[data-tool]').forEach(el=>draggable(el,{onDrop:()=>sepTool(el.dataset.tool),onTap:()=>sepTool(el.dataset.tool)}));
+  $$('[data-mat]').forEach(el=>draggable(el,{onDrop:()=>sepMat(el.dataset.mat),onTap:()=>sepMat(el.dataset.mat)}));
+  SEP.mount($('#sv'));
+  const s=r.sep;
+  if(s.funnel&&s.fst){s.fst=SEP.funnel({water:s.fst.fw+s.fst.rw,oil:s.fst.fo+s.fst.ro},x=>{s.fst=x;if(s.funnel)refreshSepOut(x)})}
+  else SEP.idle(s.work);
+  sepGuide();refreshSepOut();
+}
+
+/* =========================================================
+   السحب والإفلات (يعمل باللمس والفأرة) + بديل النقر
+   ========================================================= */
+function draggable(el,{onDrop,onTap,zones='[data-zone]'}){
+  let sx=null,sy=0,ghost=null,lastZone=null;
+  const zoneAt=(x,y)=>{const t=document.elementFromPoint(x,y);return t?t.closest(zones):null};
+  el.addEventListener('pointerdown',e=>{if(e.button>0)return;sx=e.clientX;sy=e.clientY;try{el.setPointerCapture(e.pointerId)}catch(_){}});
+  el.addEventListener('pointermove',e=>{
+    if(sx===null)return;
+    if(!ghost&&Math.hypot(e.clientX-sx,e.clientY-sy)>8){ghost=el.cloneNode(true);ghost.classList.add('dragghost');ghost.removeAttribute('id');document.body.appendChild(ghost)}
+    if(ghost){ghost.style.left=e.clientX+'px';ghost.style.top=e.clientY+'px';
+      const z=zoneAt(e.clientX,e.clientY); if(z!==lastZone){lastZone&&lastZone.classList.remove('hot');z&&z.classList.add('hot');lastZone=z}}
+  });
+  const end=(e,cancel)=>{
+    if(sx===null)return; sx=null;
+    if(ghost){ghost.remove();ghost=null;lastZone&&lastZone.classList.remove('hot');
+      el._dragEnd=Date.now();
+      if(!cancel){const z=zoneAt(e.clientX,e.clientY);if(z)onDrop&&onDrop(z,e.clientX,e.clientY)}
+      lastZone=null}
+  };
+  el.addEventListener('pointerup',e=>end(e,false));
+  el.addEventListener('pointercancel',e=>end(e,true));
+  el.addEventListener('click',()=>{if(el._dragEnd&&Date.now()-el._dragEnd<400)return;onTap&&onTap()});
+}
+
+/* =========================================================
+   الحالة والتنقل
+   ========================================================= */
+const APP={student:store.get('lab:student',''),run:null};
+/* 🔗 الوضع المرتبط ببوابة الطالب: ?hw=<معرف النشاط>. الهوية من جلسة البوابة على نفس الموقع. */
+const PORTAL=(()=>{const q=new URLSearchParams(location.search);const hw=(q.get('hw')||'').replace(/[^a-z0-9_-]/gi,'').slice(0,24);
+  let sid='',name='';try{sid=localStorage.getItem('hw_sid_v1')||'';name=localStorage.getItem('hwdev_name_v1')||''}catch(e){}
+  return {hw,sid,name,api:'https://homework.ahmadalmarzooq2009.workers.dev',graded:false,cfg:null,status:null,dev:(()=>{try{return localStorage.getItem('hwdev_id_v1')||''}catch(e){return ''}})()};})();
+const app=$('#app');
+function go(screen){
+  SIM.stop();SEP.stop();if(typeof FRSIM!=='undefined')FRSIM.stop();if(typeof INSIM!=='undefined')INSIM.stop();
+  $$('.nav button').forEach(x=>{if(x.dataset.go===screen)x.setAttribute('aria-current','page');else x.removeAttribute('aria-current')});
+  ({home:renderHome,lab:renderLab,fric:renderFric,challenge:renderChal,inert:renderInert,inchal:renderInChal,think:renderThink,separate:renderSeparate,learned:renderLearned,apply:renderApply,result:renderResult,records:renderRecords,teacher:renderTeacher}[screen])();
+  window.scrollTo({top:0});
+}
+
+$$('[data-go]').forEach(x=>x.addEventListener('click',()=>go(x.dataset.go)));
+
+const pairKey=(a,b)=>[a,b].sort().join('+');
+const explored=()=>store.get('lab:explored:'+APP.student,[]);
+const TOTAL_PAIRS=21;
+
+/* ---------- الرئيسية ---------- */
+function renderHome(){
+  const ex=APP.student?explored().length:0;
+  app.innerHTML=`
+  <section class="hero">
+    <h1>مختبر العلوم</h1>
+    <p>هنا لا نحفظ النتيجة، نكتشفها. اختر المواد، جرّب بيديك، لاحظ ما يحدث، ثم فسّره.</p>
+    <div class="rack" aria-hidden="true">${MIXTURES.materials.map(k=>`<span class="slot">${jarHTML(k)}${n(k)}</span>`).join('')}</div>
+    <div class="namebox">
+      <label for="sname">اسمك</label>
+      <input id="sname" autocomplete="name" placeholder="اكتب اسمك الثلاثي" value="${esc(APP.student)}">
+      ${APP.student?`<span class="explored">اكتشفت <b class="num">${ex}</b> من <b class="num">${TOTAL_PAIRS}</b> تركيبة في المخاليط</span>`:''}
+    </div>
+  </section>
+  <div class="paths">
+    ${Object.entries(PATHS).map(([pk,p])=>`
+      <section class="path"><h2><span aria-hidden="true">${p.icon}</span>${p.title}</h2>
+        ${TOPICS.filter(t=>t.path===pk).map(t=>`
+          <div class="topic ${t.ready?'':'soon'}"><div class="t"><b>${t.title}</b><span>${t.desc}</span></div>
+          ${t.ready?`<button class="btn" data-topic="${t.id}">ادخل المختبر</button>`:'<span class="badge">قريبًا</span>'}</div>`).join('')}
+      </section>`).join('')}
+  </div>`;
+  const inp=$('#sname');
+  inp.addEventListener('input',()=>{APP.student=inp.value.trim();store.set('lab:student',APP.student)});
+  $$('[data-topic]').forEach(btn=>btn.addEventListener('click',()=>{
+    const v=inp.value.trim();
+    if(!v){inp.focus();inp.classList.add('shake');inp.placeholder='اكتب اسمك أولًا ليُحفظ سجلك';setTimeout(()=>inp.classList.remove('shake'),400);return}
+    APP.student=v;store.set('lab:student',v);
+    startRun(btn.dataset.topic);
+  }));
+}
+
+/* ---------- تشغيل التجربة ---------- */
+function startRun(topic){
+  APP.run={topic,step:'safety',worn:{},sel:[],ctx:null,graded:PORTAL.graded,fixed:PORTAL.graded&&PORTAL.cfg&&PORTAL.cfg.pair?PORTAL.cfg.pair.slice():null,mist:{safety:0,tool:0,exec:0},log:[],tools:new Set(),
+    obs:[],obsScore:0,answers:[],qi:0,reading:null,saved:false};
+  go((CONTENT[topic]&&CONTENT[topic].screen)||'lab');
+}
+const CYCLE=['التوجيه','التجربة','الملاحظة','التفكير','الفصل العملي','الاستنتاج','التطبيق','التقييم'];
+function cycleHTML(i){const CY=(APP.run&&CONTENT[APP.run.topic]&&CONTENT[APP.run.topic].cycle)||CYCLE;return `<ol class="cycle" aria-label="مراحل التعلم">${CY.map((c,j)=>`<li class="${j<i?'done':j===i?'now':''}" ${j===i?'aria-current="step"':''}><i>${j<i?'✓':j+1}</i><span class="cl">${c}</span></li>`).join('')}</ol>`}
+
+function renderLab(){
+  const r=APP.run,C=CONTENT[r.topic];
+  app.innerHTML=`
+  <div id="cyc"></div>
+  <div class="lab">
+    <section class="bench stick" aria-label="طاولة التجربة">
+      <div class="guide" role="status" aria-live="polite">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3h8M13 3v9L5.5 25.5A2.4 2.4 0 0 0 7.6 29h16.8a2.4 2.4 0 0 0 2.1-3.5L19 12V3"/><path d="M8.5 21h15" stroke="var(--glass)"/></svg>
+        <div class="gt"><span class="who">المرشد</span><p id="gtext"></p><div class="gact" id="gact"></div></div>
+      </div>
+      <div class="gnote" id="gnote" role="alert"></div>
+      <div class="stage">
+        <div class="beakerzone" data-zone="beaker" id="bz"><span class="droplabel" id="dl">أفلت هنا</span><canvas id="cv" aria-label="بيكر سعته 250 مليلتر"></canvas><div class="benchline"></div></div>
+        <aside class="readings" aria-label="القياسات">
+          <div class="reading"><span>الحجم</span><b class="num" id="rv">—</b></div>
+          <div class="reading"><span>الكتلة</span><b class="num" id="rm">0.0 g</b></div>
+          <div class="reading"><span>درجة الحرارة</span><b class="num" id="rt">25.0 °C</b></div>
+          <div class="dens" id="rd"></div>
+        </aside>
+      </div>
+    </section>
+    <div id="obsPanel" aria-live="polite"></div>
+    <aside class="side">
+      <div class="panel"><h3>المواد <small>اسحبها إلى البيكر أو انقرها</small></h3><div class="shelf" id="shelf"></div></div>
+      <div class="panel"><h3>الأدوات</h3><div class="shelf" id="tools"></div></div>
+      <div class="panel safety"><h3>قواعد السلامة</h3><ul>${C.safety.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+    </aside>
+  </div>`;
+  $('#shelf').innerHTML=C.materials.map(k=>`<button class="item" data-mat="${k}" aria-label="${n(k)}">${jarHTML(k)}<span class="nm">${n(k)}</span><span class="sub num">${M[k].amount}</span></button>`).join('');
+  $('#tools').innerHTML=C.tools.map(t=>`<button class="item" data-tool="${t}">${ICON[t]}<span class="nm">${TOOLS[t].name}</span><span class="sub">${TOOLS[t].sub}</span></button>`).join('');
+  $$('[data-mat]').forEach(el=>draggable(el,{onDrop:()=>matAct(el.dataset.mat,true),onTap:()=>matAct(el.dataset.mat,false)}));
+  $$('[data-tool]').forEach(el=>draggable(el,{onDrop:()=>toolAct(el.dataset.tool),onTap:()=>toolAct(el.dataset.tool)}));
+  SIM.mount($('#cv'),rd=>{
+    r.reading=rd;
+    $('#rv').textContent=rd.vol==null?'—':rd.vol.toFixed(0)+' mL';
+    $('#rm').textContent=rd.mass.toFixed(1)+' g';
+    $('#rt').textContent=rd.temp.toFixed(1)+' °C';
+  });
+  r.step='safety'; r.worn={}; r.sel=[];
+  setGuide();
+}
+
+function note(msg,bad){
+  const g=$('#gnote'); if(!g)return;
+  g.textContent=bidi(msg); g.className='gnote show'+(bad?' bad':'');
+  clearTimeout(note._t); note._t=setTimeout(()=>g.classList.remove('show'),5000);
+}
+function logMistake(kind,msg){APP.run.mist[kind]++;APP.run.log.push(msg)}
+function setGuide(){
+  const r=APP.run,c=r.ctx,act=$('#gact'),t=$('#gtext');
+  act.innerHTML='';
+  const lab=$('.lab'); if(lab) lab.classList.toggle('observing',r.step==='observe');
+  const cyc=$('#cyc'); if(cyc) cyc.innerHTML=cycleHTML(['safety','choose'].includes(r.step)?0:r.step==='observe'?2:1);
+  const msgs={
+    safety:'قبل أن تلمس أي مادة: ارتدِ نظارة الأمان والقفازات من رف الأدوات.',
+    choose:r.fixed?`تجربة اليوم: خلط ${n(r.fixed[0])} و${n(r.fixed[1])}. ماذا تتوقع أن يحدث؟`:r.sel.length===2?`اخترت ${n(r.sel[0])} و${n(r.sel[1])}. ماذا تتوقع أن يحدث عند خلطهما؟`:'لديك مجموعة من المواد. اختر مادتين تريد معرفة ما يحدث عند خلطهما.',
+    addFirst:c&&`ضع ${n(c.first)} في البيكر.`,
+    addSecond:c&&`أضف ${n(c.second)} إلى ${n(c.first)}.`,
+    busy:'انتظر قليلًا…',
+    stir:'حرّك الخليط بساق التحريك ولاحظ ما يحدث.',
+    stirring:'جارٍ التحريك… راقب ما يحدث للمواد.',
+    watch:'توقّف التحريك. راقب البيكر جيدًا.',
+    observe:'ماذا لاحظت؟ سجّل ملاحظاتك تحت البيكر.'
+  };
+  t.textContent=msgs[r.step]||'';
+  if(r.step==='choose'&&r.sel.length===2){
+    act.innerHTML='<button class="btn amber" id="startMix">ابدأ التجربة</button>'+(r.fixed?'':'<button class="btn ghost" id="resetSel" style="color:inherit;border-color:currentColor">غيّر اختياري</button>');
+    $('#startMix').onclick=()=>{
+      r.ctx=CONTENT[r.topic].classify(r.sel[0],r.sel[1]); r.step='addFirst';
+      $('#dl').textContent=''; refreshItems(); setGuide();
+    };
+    if($('#resetSel'))$('#resetSel').onclick=()=>{r.sel=[];refreshItems();setGuide()};
+  }
+  if(r.step==='choose'||r.step==='safety') $('#dl').textContent='';
+  refreshItems();
+}
+function refreshItems(){
+  const r=APP.run;
+  $$('[data-mat]').forEach(el=>{const k=el.dataset.mat;
+    el.classList.toggle('sel',r.sel.includes(k));
+    el.classList.toggle('dim',(r.step!=='choose'&&r.step!=='safety'&&!r.sel.includes(k))||(r.ctx&&((r.step!=='addFirst'&&k===r.ctx.first)||(['stir','stirring','watch','observe','busy'].includes(r.step)&&k===r.ctx.second))));
+  });
+  $$('[data-tool]').forEach(el=>el.classList.toggle('worn',!!r.worn[el.dataset.tool]));
+  const dens=$('#rd');
+  if(dens) dens.innerHTML=r.sel.length?'<b>الكثافة</b>'+r.sel.map(k=>`<div><span>${n(k)}</span><span class="num">${d(k)} g/mL</span></div>`).join(''):'<span>اختر المواد لترى كثافتها</span>';
+}
+
+function matAct(k,dropped){
+  const r=APP.run,c=r.ctx;
+  if(r.step==='safety'){logMistake('safety','لمس المواد قبل ارتداء معدات السلامة');note('توقف! ارتدِ النظارة والقفازات أولًا قبل لمس أي مادة.',true);return}
+  if(r.step==='choose'){
+    if(r.fixed){note(`المادتان في تجربة اليوم محددتان من معلمك: ${n(r.fixed[0])} و${n(r.fixed[1])}.`);return}
+    if(r.sel.includes(k)) r.sel=r.sel.filter(x=>x!==k);
+    else if(r.sel.length<2) r.sel.push(k);
+    else note('اخترت مادتين بالفعل. أزل إحداهما إن أردت التبديل.');
+    setGuide(); return;
+  }
+  if(r.step==='addFirst'||r.step==='addSecond'){
+    const want=r.step==='addFirst'?c.first:c.second;
+    if(k===want){
+      const isFirst=r.step==='addFirst'; r.step='busy'; setGuide();
+      const p=M[k].state==='liquid'?SIM.addLiquid(k):SIM.addSolid(k);
+      p.then(()=>{r.step=isFirst?'addSecond':'stir';setGuide()});
+      return;
+    }
+    if(r.sel.includes(k)){logMistake('exec',`ترتيب خاطئ: أضاف ${n(k)} قبل ${n(want)}`);note(`ابدأ بـ${n(want)} أولًا. الترتيب يساعدك على ملاحظة ما يحدث بوضوح.`,true)}
+    else{logMistake('exec',`أضاف مادة خارج اختياره: ${n(k)}`);note(`${n(k)} ليس ضمن المادتين اللتين اخترتهما. التزم بخطة التجربة.`,true)}
+    return;
+  }
+  note('أكمل الخطوة الحالية أولًا.');
+}
+
+function toolAct(t){
+  const r=APP.run,T=TOOLS[t];
+  if(T.safety){
+    if(r.worn[t]){note(`أنت ترتدي ${T.name} بالفعل.`);return}
+    r.worn[t]=true; r.tools.add(T.name);
+    if(r.step==='safety'&&r.worn.goggles&&r.worn.gloves){r.step='choose';if(r.fixed)r.sel=r.fixed.slice();note('ممتاز، أنت جاهز للعمل بأمان.')}
+    setGuide(); return;
+  }
+  if(r.step==='safety'){note('ارتدِ معدات السلامة أولًا.');return}
+  if(r.step==='stir'){
+    if(t==='stirrer'){
+      r.tools.add(T.name); r.step='stirring'; setGuide();
+      SIM.stir(3.6).then(()=>{
+        r.step='watch'; setGuide();
+        let left=6; const tick=()=>{const g=$('#gtext'); if(!g||r.step!=='watch')return;
+          g.textContent=`توقّف التحريك. راقب البيكر جيدًا… ${left}`;
+          if(left--<=0){r.step='observe';setGuide();renderObs();return} setTimeout(tick,1000)};
+        tick();
+      });
+      return;
+    }
+    r.tools.add(T.name); logMistake('tool',`استخدم ${T.name} بدل ساق التحريك`);
+    if(T.unsafe) logMistake('safety','حاول تشغيل الموقد دون حاجة');
+    note(T.wrong,true); return;
+  }
+  if(t==='stirrer'){
+    if(['stirring','watch'].includes(r.step)){note('انتظر وراقب ما يحدث.');return}
+    if(r.step==='observe'){note('سجّل ملاحظاتك أولًا.');return}
+    note('ضع المادتين في البيكر أولًا، ثم حرّك.');return;
+  }
+  note(`${T.name}: ستحتاجه في مواقف الفصل. ركّز الآن على خطوات التجربة.`);
+}
+
+function renderObs(){
+  const r=APP.run;
+  const box=$('#obsPanel');
+  box.innerHTML=`<div class="obs"><h3>🔎 سجّل ملاحظاتك</h3><p>اختر كل ما شاهدته فعلًا أثناء التجربة وبعدها.</p>
+    <div class="chips">${shuffle(Object.keys(OBS_CHIPS)).map(k=>`<button class="chip" aria-pressed="false" data-obs="${k}">${OBS_CHIPS[k]}</button>`).join('')}</div>
+    <button class="btn" id="obsDone" disabled>سجّلت ملاحظاتي</button></div>`;
+  $$('[data-obs]',box).forEach(ch=>ch.addEventListener('click',()=>{
+    ch.setAttribute('aria-pressed',ch.getAttribute('aria-pressed')==='true'?'false':'true');
+    $('#obsDone').disabled=!$$('[data-obs][aria-pressed="true"]',box).length;
+  }));
+  $('#obsDone').onclick=()=>{
+    r.obs=$$('[data-obs][aria-pressed="true"]',box).map(x=>x.dataset.obs);
+    const set=CONTENT[r.topic].obs[r.ctx.cls];
+    const hits=r.obs.filter(o=>set.ok.includes(o)).length, wrong=r.obs.filter(o=>!set.ok.includes(o)&&!set.neutral.includes(o)).length;
+    r.obsScore=Math.max(0,Math.min(1,hits/set.ok.length-.34*wrong));
+    if(wrong) r.log.push('ملاحظة غير دقيقة: '+r.obs.filter(o=>!set.ok.includes(o)&&!set.neutral.includes(o)).map(o=>OBS_CHIPS[o]).join('، '));
+    r.finalReading=r.reading;
+    const ex=explored(),pk=pairKey(r.sel[0],r.sel[1]); if(!ex.includes(pk)){ex.push(pk);store.set('lab:explored:'+APP.student,ex)}
+    r.qi=0; go('think');
+  };
+  box.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+/* ---------- محرك الأسئلة ---------- */
+function renderQuestion(host,q,onDone){
+  let tries=0,done=false;const alog=[];
+  host.innerHTML=`<div class="qcard"><p class="qprompt">${q.prompt}</p>
+    <div class="tries" aria-label="المحاولات"><span>المحاولات</span><i></i><i></i><i></i></div>
+    <div class="qbody"></div><div class="fb" aria-live="polite"></div><div class="next"></div></div>`;
+  const body=$('.qbody',host),fb=$('.fb',host),nx=$('.next',host),wrongs=[];
+  const dots=()=>$$('.tries i',host).forEach((x,i)=>x.classList.toggle('used',i<tries));
+  function fail(extra){
+    tries++; dots();
+    if(tries<3){fb.innerHTML=`<div class="hint"><b>تلميح ${tries===1?'':'أوضح'}</b>${extra?extra+' ':''}${q.hints[tries-1]}</div>`;return}
+    finish(false);
+  }
+  function finish(ok){
+    done=true; reveal&&reveal();
+    fb.innerHTML=`<div class="explain"><b>${ok?(tries===0?'أحسنت! اكتشفتها من أول محاولة.':'أحسنت! وصلت إليها بنفسك.'):'لنفهمها معًا'}</b>${q.explain}</div>`;
+    nx.innerHTML='<button class="btn">التالي</button>';
+    $('button',nx).onclick=()=>onDone({prompt:q.prompt,concept:q.concept,attempts:ok?tries+1:3,correct:ok,wrongs,log:alog.slice(0,3)});
+    $('button',nx).focus();
+  }
+  let reveal=null;
+  if(q.type==='mcq'||q.type==='tool'){
+    const opts=shuffle(q.options.map((o,i)=>({...o,_i:i})));
+    body.innerHTML=`<div class="opts ${q.type==='tool'?'toolgrid':''}">${opts.map((o,i)=>`<button class="opt" data-i="${i}">${o.tool?ICON[o.tool]+`<span>${TOOLS[o.tool].name}</span>`:o.t}</button>`).join('')}</div>`;
+    const btns=$$('.opt',body);
+    reveal=()=>{btns.forEach((bt,i)=>{bt.disabled=true;if(opts[i].ok)bt.classList.add('right')})};
+    btns.forEach((bt,i)=>bt.addEventListener('click',()=>{
+      if(done)return; const o=opts[i]; alog.push(o._i);
+      if(o.ok){bt.classList.add('right');finish(true)}
+      else{bt.classList.add('wrong');bt.disabled=true;wrongs.push(o.t||TOOLS[o.tool].name);fail()}
+    }));
+  }
+  if(q.type==='order'){
+    const pool=shuffle(q.items.map((t,i)=>({t,i}))); let seq=[];
+    const draw=()=>{
+      body.innerHTML=`<div class="seq">${q.items.map((_,j)=>`<div class="slot ${seq[j]?'filled':''}" data-j="${j}">${seq[j]?seq[j].t:''}</div>`).join('')}</div>
+        <div class="pool">${pool.filter(p=>!seq.includes(p)).map(p=>`<button class="chip" data-p="${p.i}">${p.t}</button>`).join('')}</div>
+        <div class="next" style="justify-content:flex-start"><button class="btn" id="chk" ${seq.length<q.items.length||done?'disabled':''}>تحقّق من الترتيب</button></div>`;
+      if(done){$('#chk',body).remove();return}
+      $$('[data-p]',body).forEach(x=>x.onclick=()=>{seq.push(pool.find(p=>p.i==x.dataset.p));draw()});
+      $$('.slot.filled',body).forEach(x=>x.onclick=()=>{seq.splice(+x.dataset.j,1);draw()});
+      $('#chk',body).onclick=()=>{
+        alog.push(seq.map(p=>p.i));
+        const right=seq.filter((p,j)=>p.i===j).length;
+        if(right===q.items.length){finish(true);draw()}
+        else{wrongs.push(seq.map(p=>p.t).join(' ← '));fail(`${right} من ${q.items.length} خطوات في مكانها الصحيح.`);if(done)draw()}
+      };
+    };
+    reveal=()=>{seq=q.items.map((t,i)=>({t,i}))};
+    draw();
+  }
+  if(q.type==='classify'){
+    const items=shuffle(q.items.map((x,i)=>({...x,i}))); const place={}; let active=null;
+    const draw=()=>{
+      body.innerHTML=`<div class="bins">${q.bins.map((bn,bi)=>`<div class="bin" data-bin="${bi}" role="button" tabindex="0" aria-label="${bn}"><h4>${bn}</h4>${items.filter(it=>place[it.i]===bi).map(it=>`<button class="chip card-chip ${active===it.i?'active':''}" data-it="${it.i}">${it.t}</button>`).join('')}</div>`).join('')}</div>
+        <div class="pool">${items.filter(it=>place[it.i]===undefined).map(it=>`<button class="chip card-chip ${active===it.i?'active':''}" data-it="${it.i}">${it.t}</button>`).join('')}</div>
+        <p class="note">اسحب كل بطاقة إلى مكانها، أو انقر البطاقة ثم انقر المجموعة.</p>
+        <div class="next" style="justify-content:flex-start"><button class="btn" id="chk" ${Object.keys(place).length<items.length||done?'disabled':''}>تحقّق من التصنيف</button></div>`;
+      if(done){$('#chk',body).remove();$$('.chip',body).forEach(c=>c.disabled=true);return}
+      $$('[data-it]',body).forEach(x=>draggable(x,{zones:'[data-bin]',onDrop:z=>{place[+x.dataset.it]=+z.dataset.bin;active=null;draw()},onTap:()=>{active=active===+x.dataset.it?null:+x.dataset.it;draw()}}));
+      $$('[data-bin]',body).forEach(z=>{const put=()=>{if(active===null)return;place[active]=+z.dataset.bin;active=null;draw()};
+        z.addEventListener('click',e=>{if(e.target.closest('[data-it]'))return;put()});
+        z.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();put()}})});
+      $('#chk',body).onclick=()=>{
+        alog.push(q.items.map((_,j)=>place[j]));
+        const wrong=items.filter(it=>place[it.i]!==it.bin);
+        if(!wrong.length){finish(true);draw()}
+        else{wrongs.push(wrong.map(w=>w.t).join('، '));fail(tries>=1?`${wrong.length} ${wrong.length===1?'بطاقة':'بطاقات'} في المجموعة الخطأ.`:'');if(done)draw()}
+      };
+    };
+    reveal=()=>{items.forEach(it=>place[it.i]=it.bin);active=null};
+    draw();
+  }
+}
+
+/* ---------- مرحلة التفكير ---------- */
+function renderThink(){
+  const r=APP.run,C=CONTENT[r.topic],qs=C.questions(r.ctx),q=qs[r.qi];
+  app.innerHTML=`${cycleHTML(3)}<div class="qwrap"><div class="qhead"><h2>فكّر فيما شاهدته</h2><span class="badge">سؤال <span class="num">${r.qi+1}</span> من <span class="num">${qs.length}</span></span></div><div id="qh"></div></div>`;
+  renderQuestion($('#qh'),q,res=>{
+    r.answers[r.qi]=res; if(!res.correct||res.attempts>1) r.log.push(...res.wrongs.map(w=>`إجابة خاطئة: ${w}`));
+    r.qi++; if(r.qi<qs.length) renderThink(); else if(CONTENT[r.topic].practical) go(CONTENT[r.topic].practical); else startSeparation();
+  });
+}
+
+/* ---------- ماذا تعلمت ---------- */
+function renderLearned(){
+  if(APP.run.topic==='friction') return renderFrLearned();
+  if(APP.run.topic==='inertia') return renderInLearned();
+  const r=APP.run,C=CONTENT[r.topic],c=r.ctx,L=C.learned(c,r),rd=r.finalReading||SIM.reading();
+  const set=C.obs[c.cls];
+  const mine=r.obs.map(o=>`${set.ok.includes(o)||set.neutral.includes(o)?'✓':'✗'} ${OBS_CHIPS[o]}`).join('، ');
+  const missed=set.ok.filter(o=>!r.obs.includes(o)).map(o=>OBS_CHIPS[o]);
+  app.innerHTML=`${cycleHTML(5)}<article class="learn">
+    <div class="lead"><h2>🎓 ماذا تعلمت من التجربة؟</h2><p>تعلمت أن ${L.lead}</p></div>
+    <section><h3>🔎 ماذا لاحظت؟</h3><p>خلطت ${n(c.first)} مع ${n(c.second)}. سجّلت: ${mine}.${missed.length?` وفاتتك ملاحظة: ${missed.join('، ')}.`:''}</p>
+      <p class="note">القراءات النهائية: ${rd&&rd.vol!=null?`الحجم <span class="num">${rd.vol.toFixed(0)} mL</span>، `:''}الكتلة <span class="num">${rd?rd.mass.toFixed(1):'—'} g</span>، الحرارة <span class="num">${rd?rd.temp.toFixed(1):'25.0'} °C</span>.</p></section>
+    ${r.sep&&r.sep.steps.length?`<section><h3>⚗️ كيف فصلت المكونات؟</h3><p>${r.sep.steps.map(x=>bidi(esc(x))).join('، ثم ')}.</p></section>`:''}
+    <section><h3>🧠 ماذا حدث؟</h3><p>${L.happened}</p></section>
+    <section><h3>💡 لماذا حدث ذلك؟</h3><p>${L.why}</p></section>
+    <div class="concept"><h3>🎯 المفهوم الذي تعلمته</h3><p>${L.concept}</p></div>
+    <div class="actions"><button class="btn" id="toApply">اختبر فهمك في موقف جديد</button></div>
+  </article>`;
+  $('#toApply').onclick=()=>go('apply');
+}
+
+/* ---------- التطبيق ---------- */
+function renderApply(){
+  const r=APP.run,q=CONTENT[r.topic].apply(r.ctx);
+  app.innerHTML=`${cycleHTML(6)}<div class="qwrap"><div class="qhead"><h2>طبّق ما اكتشفته</h2></div><div id="qh"></div></div>`;
+  renderQuestion($('#qh'),q,res=>{
+    r.answers[3]=res; if(res.wrongs.length) r.log.push(...res.wrongs.map(w=>`إجابة خاطئة في التطبيق: ${w}`));
+    go('result');
+  });
+}
+
+/* ---------- التقييم والسجل ---------- */
+function computeScore(r){
+  if(CONTENT[r.topic].score) return CONTENT[r.topic].score(r);
+  const f=a=>a&&a.correct?[0,1,.6,.3][a.attempts]:0, q=r.answers;
+  const parts=[
+    ['الالتزام بالسلامة',Math.max(0,10-5*r.mist.safety),10],
+    ['اختيار المواد',5,5],
+    ['اختيار الأدوات',Math.max(0,5-2*r.mist.tool),5],
+    ['الفصل العملي',r.sep&&(r.sep.done)?Math.max(0,10-2.5*r.sep.wrong):0,10],
+    ['تنفيذ التجربة',Math.max(0,15-4*r.mist.exec),15],
+    ['دقة الملاحظة',15*r.obsScore,15],
+    ['الإجابات',10*f(q[0])+10*f(q[2]),20],
+    ['تفسير النتيجة',10*f(q[1]),10],
+    ['التطبيق في موقف جديد',10*f(q[3]),10]
+  ];
+  const total=Math.round(parts.reduce((a,p)=>a+p[1],0));
+  const byC={};
+  q.forEach(a=>{if(!a)return;const ok=a.correct&&a.attempts===1;byC[a.concept]=byC[a.concept]===undefined?ok:byC[a.concept]&&ok});
+  byC.obs=r.obsScore>=.8; byC.safe=r.mist.safety===0;
+  return {parts,total,mastered:Object.keys(byC).filter(k=>byC[k]),reinforce:Object.keys(byC).filter(k=>!byC[k])};
+}
+function gradeWord(t){return t>=90?'ممتاز':t>=75?'جيد جدًا':t>=60?'جيد':'تحتاج إلى مراجعة'}
+function suggestNext(r){
+  if(CONTENT[r.topic].next) return CONTENT[r.topic].next(r);
+  const C=CONTENT[r.topic],ex=explored(),cur=r.ctx.cls,mats=C.materials,cands=[];
+  for(let i=0;i<mats.length;i++)for(let j=i+1;j<mats.length;j++){const a=mats[i],b=mats[j];
+    if(ex.includes(pairKey(a,b)))continue; cands.push({a,b,cls:C.classify(a,b).cls})}
+  const pick=cands.find(x=>x.cls!==cur)||cands[0];
+  if(!pick) return 'جرّبت كل التركيبات الممكنة. أنت مستكشف حقيقي!';
+  if(pick.a==='oil'||pick.b==='oil'){const o=pick.a==='oil'?pick.b:pick.a; if(M[o].dissolves) return `جرّب ${n(o)} مع الزيت: هل سيذوب كما يذوب في الماء؟`}
+  return `جرّب ${n(pick.a)} مع ${n(pick.b)}: هل ستكون النتيجة مثل تجربتك هذه؟`;
+}
+function renderResult(){
+  const r=APP.run,C=CONTENT[r.topic],c=r.ctx,sc=computeScore(r),L=C.learned(c,r);
+  if(PORTAL.hw&&r.graded) return renderPortalResult(r,sc,L);
+  if(!r.saved&&!PORTAL.hw){
+    const X=C.record?C.record(r,sc):null;
+    const rec={id:Date.now(),student:APP.student,topic:r.topic,title:X?X.title:`${C.title}: ${n(c.first)} + ${n(c.second)}`,date:new Date().toISOString(),
+      materials:X?X.materials:[n(c.first),n(c.second)],tools:[...r.tools],result:X?X.result:C.resultLabel[c.cls],observations:r.obs.map(o=>OBS_CHIPS[o]||FR_OBS[o]||o),
+      answers:r.answers.map(a=>({prompt:a.prompt,attempts:a.attempts,correct:a.correct})),mistakes:r.log.slice(),
+      mastered:sc.mastered.map(k=>CONCEPTS[k]),reinforce:sc.reinforce.map(k=>CONCEPTS[k]),score:sc.total,
+      separation:X?X.separation:(r.sep?r.sep.steps.slice():[]),breakdown:sc.parts.map(p=>({label:p[0],got:Math.round(p[1]*10)/10,max:p[2]}))};
+    const all=store.get('lab:records',[]); all.push(rec); store.set('lab:records',all); r.saved=true;
+  }
+  app.innerHTML=`${cycleHTML(7)}<article class="learn">
+    <div class="lead"><h2>اكتشافك اليوم</h2><p>${L.lead}</p></div>
+    <section><h3>كيف كان أداؤك العلمي؟</h3>
+      <div class="score"><b class="num">${sc.total}</b><span>من 100، ${gradeWord(sc.total)}</span></div>
+      <p class="note">الدرجة تساعدك على معرفة ما تحتاج إلى تقويته. الأهم أنك جرّبت ولاحظت وفسّرت بنفسك.</p>
+      <div class="bars">${sc.parts.map(p=>`<div class="bar"><span>${p[0]}</span><span class="tr"><i style="width:${Math.round(p[1]/p[2]*100)}%"></i></span><span class="num">${Math.round(p[1]*10)/10}/${p[2]}</span></div>`).join('')}</div>
+    </section>
+    <section><h3>مفاهيم أتقنتها</h3><div class="tags">${sc.mastered.map(k=>`<span class="tag">${CONCEPTS[k]}</span>`).join('')||'<span class="note">ستظهر هنا عندما تجيب من أول محاولة.</span>'}</div>
+      ${sc.reinforce.length?`<h3 style="margin-top:12px">تحتاج إلى تعزيز</h3><div class="tags">${sc.reinforce.map(k=>`<span class="tag rf">${CONCEPTS[k]}</span>`).join('')}</div>`:''}
+    </section>
+    <section><h3>تجربتك القادمة</h3><p>${suggestNext(r)}</p></section>
+    <div class="actions"><button class="btn" id="again">${r.topic!=='mixtures'?'أعد التجربة':'جرّب مادتين أخريين'}</button>${PORTAL.hw?'<a class="btn ghost" href="../">العودة لبوابة الطالب</a>':'<button class="btn ghost" data-go2="records">سجل تجاربي</button><button class="btn ghost" data-go2="home">الرئيسية</button>'}</div>
+  </article>`;
+  $('#again').onclick=()=>startRun(r.topic);
+  $$('[data-go2]').forEach(x=>x.onclick=()=>go(x.dataset.go2));
+}
+
+const fmtDate=iso=>{try{return new Intl.DateTimeFormat('ar-SA',{dateStyle:'medium',timeStyle:'short'}).format(new Date(iso))}catch(e){return iso.slice(0,16)}};
+function recHTML(rec,showName){
+  return `<details class="rec"><summary><span class="ttl">${showName?esc(rec.student)+' — ':''}${esc(rec.title)}</span><span class="meta">${fmtDate(rec.date)}</span><span class="pill num">${rec.score}/100</span></summary>
+  <div class="body"><dl>
+    <dt>المواد</dt><dd>${rec.materials.map(esc).join('، ')}</dd>
+    <dt>الأدوات</dt><dd>${rec.tools.map(esc).join('، ')||'—'}</dd>
+    <dt>النتيجة</dt><dd>${esc(rec.result)}</dd>
+    <dt>الملاحظات المسجّلة</dt><dd>${rec.observations.map(esc).join('، ')||'—'}</dd>
+    <dt>الأسئلة</dt><dd>${rec.answers.map(a=>`${a.correct?'✓':'✗'} ${esc(a.prompt)} <span class="note">(${a.attempts} ${a.attempts===1?'محاولة':'محاولات'})</span>`).join('<br>')}</dd>
+    <dt>الفصل العملي</dt><dd>${(rec.separation||[]).map(x=>bidi(esc(x))).join('<br>')||'—'}</dd>
+    <dt>الأخطاء</dt><dd>${rec.mistakes.map(esc).join('<br>')||'لا توجد'}</dd>
+    <dt>مفاهيم أتقنها</dt><dd>${rec.mastered.map(esc).join('، ')||'—'}</dd>
+    <dt>تحتاج تعزيزًا</dt><dd>${rec.reinforce.map(esc).join('، ')||'—'}</dd>
+  </dl></div></details>`;
+}
+function renderRecords(){
+  const mine=store.get('lab:records',[]).filter(x=>x.student===APP.student).reverse();
+  app.innerHTML=`<div class="qhead"><h2>سجل تجاربي${APP.student?' — '+esc(APP.student):''}</h2></div>
+    ${!APP.student?'<div class="empty">اكتب اسمك في الصفحة الرئيسية لترى سجلك.</div>':mine.length?mine.map(x=>recHTML(x,false)).join(''):'<div class="empty">لم تنفّذ أي تجربة بعد. ادخل مختبر المخاليط وابدأ أول اكتشاف.</div>'}`;
+}
+function renderTeacher(){
+  const all=store.get('lab:records',[]);
+  const students={};
+  all.forEach(x=>{const s=students[x.student]||(students[x.student]={n:0,sum:0,last:x.date,rf:{}});s.n++;s.sum+=x.score;if(x.date>s.last)s.last=x.date;x.reinforce.forEach(c=>s.rf[c]=(s.rf[c]||0)+1)});
+  const cCount={}; all.forEach(x=>x.reinforce.forEach(c=>cCount[c]=(cCount[c]||0)+1));
+  app.innerHTML=`<div class="qhead"><h2>لوحة المعلم</h2>${all.length?'<button class="btn ghost" id="wipe">حذف كل السجلات</button>':''}</div>
+  <p class="note">تعرض هذه اللوحة التجارب المحفوظة على هذا الجهاز فقط.</p>
+  ${!all.length?'<div class="empty">لا توجد تجارب محفوظة على هذا الجهاز بعد.</div>':`
+  <h3 style="margin:14px 0 8px">الطلاب</h3>
+  <div class="tablewrap"><table><thead><tr><th>الطالب</th><th>التجارب</th><th>متوسط الدرجة</th><th>آخر نشاط</th><th>يحتاج تعزيزًا في</th></tr></thead><tbody>
+  ${Object.entries(students).map(([nm,s])=>`<tr><td>${esc(nm)}</td><td class="num">${s.n}</td><td class="num">${Math.round(s.sum/s.n)}</td><td>${fmtDate(s.last)}</td><td>${Object.entries(s.rf).sort((a,b)=>b[1]-a[1]).slice(0,2).map(e=>esc(e[0])).join('، ')||'—'}</td></tr>`).join('')}
+  </tbody></table></div>
+  <h3 style="margin:18px 0 8px">المفاهيم الأكثر حاجة إلى تعزيز</h3>
+  <div class="tags">${Object.entries(cCount).sort((a,b)=>b[1]-a[1]).map(e=>`<span class="tag rf">${esc(e[0])} <span class="num">(${e[1]})</span></span>`).join('')||'<span class="note">لا توجد</span>'}</div>
+  <h3 style="margin:18px 0 8px">كل التجارب</h3>
+  ${all.slice().reverse().map(x=>recHTML(x,true)).join('')}`}`;
+  const w=$('#wipe'); if(w) w.onclick=()=>{if(confirm('سيُحذف سجل كل الطلاب على هذا الجهاز. متابعة؟')){store.set('lab:records',[]);renderTeacher()}};
+}
+
+/* =========================================================
+   ⚙️ تجربة قوة الاحتكاك
+   ثلاثة مسارات: منحدر منحنٍ أملس ومتماثل (المتغير المضبوط)
+   يتبعه سطح أفقي مختلف الخشونة (المتغير المستقل).
+   المتغير التابع: مسافة التوقف. القيم حقيقية: d = h ÷ μ
+   ========================================================= */
+const SURF={
+  glass:{name:'زجاج أملس',mu:0.12},
+  wood:{name:'خشب',mu:0.30},
+  sand:{name:'ورق صنفرة خشن',mu:0.60}
+};
+const FR={g:9.8,m:0.5,L:2.6,R:0.45,HMAX:0.35,heights:[0.10,0.20,0.30],tol:0.03,flag:1.0};
+const frDist=(s,h)=>Math.min(FR.L,h/SURF[s].mu);
+const frV0=h=>Math.sqrt(2*FR.g*h);
+const frF=s=>SURF[s].mu*FR.m*FR.g;
+const cm=h=>Math.round(h*100);
+const fx2=v=>(Math.round(v*100)/100).toFixed(2);
+
+const FRSIM=(()=>{
+  const W=800,LH=118,TOP=12,XB=680,S=215,BW=.10*S,BH=.06*S;
+  let cv,c,raf=0,last=0,col={},L=[],opt={},onEvent=null;
+  const hR=u=>FR.HMAX*Math.pow(u/FR.R,2);
+  const dR=u=>2*FR.HMAX*u/(FR.R*FR.R);
+  const uOf=h=>FR.R*Math.sqrt(h/FR.HMAX);
+  const yb=i=>TOP+i*LH+LH-40;
+  const prand=i=>{const x=Math.sin(i*91.7+17.3)*43758.5453;return x-Math.floor(x)};
+  function readColors(){const cs=getComputedStyle(document.documentElement);
+    col={ink:cs.getPropertyValue('--ink').trim()||'#13324A',ink2:cs.getPropertyValue('--ink-2').trim()||'#4F6879',
+         paper:cs.getPropertyValue('--paper').trim()||'#fff',bad:cs.getPropertyValue('--bad').trim()||'#C3473E',
+         glass:cs.getPropertyValue('--glass').trim()||'#4FB3C8'}}
+  function mount(canvas,lanes,o,ev){
+    cancelAnimationFrame(raf);cv=canvas;c=cv.getContext('2d');opt=o||{};onEvent=ev;
+    L=lanes.map(s=>({s,h:null,phase:'idle',u:0,d:0,v:0,t:0,v0:0}));
+    const H=TOP+lanes.length*LH+4,dpr=Math.min(2,window.devicePixelRatio||1);
+    cv.width=W*dpr;cv.height=H*dpr;cv.style.aspectRatio=`${W}/${H}`;c.setTransform(dpr,0,0,dpr,0,0);
+    readColors();last=performance.now();raf=requestAnimationFrame(loop);
+  }
+  function stop(){cancelAnimationFrame(raf)}
+  function place(i,h){const l=L[i];if(!l||l.phase==='ramp'||l.phase==='flat')return false;
+    Object.assign(l,{h,phase:'ready',u:uOf(h),d:0,v:0,t:0,v0:0});return true}
+  function release(i){const l=L[i];if(!l||l.phase!=='ready')return false;l.phase='ramp';l.v=0;l.t=0;return true}
+  function hitTest(px,py){ // إحداثيات اللوحة → مسار وعلامة ارتفاع
+    for(let i=0;i<L.length;i++){
+      let best=null,bd=1e9;
+      for(const h of FR.heights){const u=uOf(h),x=XB+u*S,y=yb(i)-h*S;const dd=Math.hypot(px-x,py-y);if(dd<bd){bd=dd;best=h}}
+      if(bd<34)return {lane:i,h:best};
+    }
+    return null;
+  }
+  function toCanvas(cx_,cy_){const r=cv.getBoundingClientRect();return {x:(cx_-r.left)*W/r.width,y:(cy_-r.top)*(cv.height/(Math.min(2,window.devicePixelRatio||1)))/r.height}}
+  function step(dt){
+    for(let i=0;i<L.length;i++){const l=L[i];
+      if(l.phase==='ramp'){
+        for(let k=0;k<8;k++){const ddt=dt/8;const sl=dR(l.u),sin=sl/Math.sqrt(1+sl*sl);
+          l.v+=FR.g*sin*ddt;const du=l.v*ddt/Math.sqrt(1+sl*sl);l.u-=du;l.t+=ddt;
+          if(l.u<=0){l.u=0;l.v0=frV0(l.h);l.v=l.v0;l.phase='flat';l.tf=0;break}}
+      }else if(l.phase==='flat'){
+        onEvent&&onEvent('pos',i,XB-l.d*S);
+        const a=SURF[l.s].mu*FR.g;
+        l.v-=a*dt;l.tf+=dt;l.t+=dt;
+        if(l.v<=0){l.v=0;l.d=frDist(l.s,l.h);l.tf=l.v0/a;l.phase='stop';onEvent&&onEvent('stop',i,{d:l.d,tf:l.tf,v0:l.v0})}
+        else{l.d=Math.min(FR.L,(l.v0*l.v0-l.v*l.v)/(2*a))}
+      }
+    }
+  }
+  function blockAt(l,i){
+    if(l.phase==='ready'||l.phase==='ramp'){const u=l.u,sl=dR(u);return {x:XB+u*S,y:yb(i)-hR(u)*S,ang:Math.atan(sl)}}
+    return {x:XB-l.d*S,y:yb(i),ang:0};
+  }
+  function surfStrip(s,x0,x1,y){
+    c.save();c.beginPath();c.rect(x1,y,x0-x1,9);c.clip();
+    if(s==='glass'){const g=c.createLinearGradient(0,y,0,y+9);g.addColorStop(0,'#E4F5FB');g.addColorStop(1,'#9FD2E6');c.fillStyle=g;c.fillRect(x1,y,x0-x1,9);
+      c.strokeStyle='rgba(255,255,255,.9)';c.lineWidth=1.2;for(let x=x1+10;x<x0;x+=46){c.beginPath();c.moveTo(x,y+7);c.lineTo(x+14,y+2);c.stroke()}}
+    else if(s==='wood'){c.fillStyle='#C8935A';c.fillRect(x1,y,x0-x1,9);c.strokeStyle='rgba(110,66,26,.55)';c.lineWidth=1;
+      for(let k=0;k<3;k++){c.beginPath();for(let x=x1;x<=x0;x+=8)c.lineTo(x,y+2+k*2.6+Math.sin(x*.05+k)*0.9);c.stroke()}}
+    else{c.fillStyle='#8C7A5B';c.fillRect(x1,y,x0-x1,9);for(let k=0;k<700;k++){const px=x1+prand(k)*(x0-x1),py=y+prand(k+999)*9;
+      c.fillStyle=k%3?'rgba(40,30,15,.55)':'rgba(235,220,190,.6)';c.fillRect(px,py,1.6,1.6)}}
+    c.restore();c.strokeStyle=col.ink;c.lineWidth=1.2;c.strokeRect(x1,y,x0-x1,9);
+  }
+  function arrow(x0,y0,x1,y1,color,label,labelBelow){
+    c.strokeStyle=color;c.fillStyle=color;c.lineWidth=3;c.beginPath();c.moveTo(x0,y0);c.lineTo(x1,y1);c.stroke();
+    const a=Math.atan2(y1-y0,x1-x0);c.beginPath();c.moveTo(x1,y1);c.lineTo(x1-9*Math.cos(a-.45),y1-9*Math.sin(a-.45));c.lineTo(x1-9*Math.cos(a+.45),y1-9*Math.sin(a+.45));c.closePath();c.fill();
+    if(label){c.font='700 11px "IBM Plex Sans Arabic",sans-serif';c.direction='ltr';c.textAlign='center';c.fillText(label,(x0+x1)/2,(labelBelow?y0+14:y0-6))}
+  }
+  function draw(){
+    const H=TOP+L.length*LH+4;c.clearRect(0,0,W,H);
+    L.forEach((l,i)=>{
+      const y=yb(i),xEnd=XB-FR.L*S;
+      // المنحدر المنحني (أملس ومتماثل)
+      c.beginPath();c.moveTo(XB,y+9);for(let u=0;u<=FR.R+1e-9;u+=.01)c.lineTo(XB+u*S,y-hR(u)*S);c.lineTo(XB+FR.R*S,y+9);c.closePath();
+      c.fillStyle='rgba(79,179,200,.14)';c.fill();
+      c.beginPath();for(let u=0;u<=FR.R+1e-9;u+=.01)c.lineTo(XB+u*S,y-hR(u)*S);c.strokeStyle=col.ink;c.lineWidth=2.4;c.stroke();
+      // علامات الارتفاع
+      c.font='600 10px "IBM Plex Sans Arabic",sans-serif';c.direction='rtl';c.textAlign='right';
+      FR.heights.forEach(h=>{const u=uOf(h),x=XB+u*S,yy=y-h*S,on=l.h===h&&l.phase!=='idle';
+        c.fillStyle=on?col.bad:col.ink2;c.beginPath();c.arc(x,yy,on?4.5:3.2,0,7);c.fill();
+        c.fillText(`${cm(h)} سم`,x-8,yy+3)});
+      // السطح الأفقي + المسطرة
+      surfStrip(l.s,XB,xEnd,y);
+      c.strokeStyle=col.ink2;c.fillStyle=col.ink2;c.lineWidth=1;c.direction='ltr';c.textAlign='center';c.font='600 10px "IBM Plex Sans Arabic",sans-serif';
+      for(let k=0;k<=FR.L*10+1e-6;k++){const x=XB-k/10*S,big=k%5===0;c.beginPath();c.moveTo(x,y+11);c.lineTo(x,y+(big?20:15));c.stroke();if(big)c.fillText(`${(k/10).toFixed(1)} m`,x,y+31)}
+      // اسم السطح
+      c.direction='rtl';c.textAlign='right';c.fillStyle=col.ink;c.font='700 13px "IBM Plex Sans Arabic",sans-serif';
+      c.fillText(SURF[l.s].name,XB-6,y-64);
+      // العلم (التحدي)
+      if(opt.flag){const fx=XB-opt.flag*S;c.strokeStyle=col.bad;c.lineWidth=2;c.beginPath();c.moveTo(fx,y);c.lineTo(fx,y-44);c.stroke();
+        c.fillStyle=col.bad;c.beginPath();c.moveTo(fx,y-44);c.lineTo(fx-20,y-37);c.lineTo(fx,y-30);c.fill()}
+      // القالب
+      if(l.phase!=='idle'){
+        const b=blockAt(l,i);
+        c.save();c.translate(b.x,b.y);c.rotate(-b.ang);
+        c.fillStyle='#B07A43';c.fillRect(-BW/2,-BH,BW,BH);c.strokeStyle='#5E3A17';c.lineWidth=1.2;c.strokeRect(-BW/2,-BH,BW,BH);
+        c.strokeStyle='rgba(94,58,23,.5)';c.beginPath();c.moveTo(-BW/2+3,-BH+4);c.lineTo(BW/2-3,-BH+4);c.stroke();
+        c.restore();
+        if(l.phase==='flat'||l.phase==='stop'){c.fillStyle=col.bad;c.beginPath();c.moveTo(b.x,y+10);c.lineTo(b.x-4,y+3);c.lineTo(b.x+4,y+3);c.fill()}
+        // القوى
+        if(opt.forces&&l.phase==='flat'&&l.v>0.02){
+          const F=frF(l.s);arrow(b.x,b.y-BH/2,b.x+F*16+8,b.y-BH/2,col.bad,`ق = ${F.toFixed(2)} N`);
+          arrow(b.x-BW/2,b.y-BH-10,b.x-BW/2-l.v*30-6,b.y-BH-10,col.glass,'ع');
+        }
+        // القراءات: تتبع القالب حتى تبقى ظاهرة على الجوال
+        const vv=l.phase==='ramp'||l.phase==='flat'?l.v:0;
+        if(l.phase!=='ready'){
+          const rx=Math.max(xEnd+100,Math.min(XB-100,b.x));
+          c.fillStyle=col.ink;c.font='600 12px "IBM Plex Sans Arabic",sans-serif';c.textAlign='center';
+          c.fillText(`ع = ${vv.toFixed(2)} m/s   ز = ${(l.phase==='stop'?l.tf:(l.tf||0)).toFixed(2)} s${opt.forces&&l.phase==='stop'?'   · متوقف: لا قوة محصلة':''}`,rx,l.phase==='stop'?y-54:y-44);
+        }
+        // المسطرة المكبّرة بعد التوقف
+        if(l.phase==='stop'){
+          const bx=Math.max(xEnd+70,Math.min(XB-70,b.x)),top=y-50,w=140,hh=28,sc=w/0.24;
+          c.fillStyle=col.paper;c.strokeStyle=col.ink;c.lineWidth=1.2;c.fillRect(bx-w/2,top,w,hh);c.strokeRect(bx-w/2,top,w,hh);
+          c.save();c.beginPath();c.rect(bx-w/2,top,w,hh);c.clip();
+          const d=l.d,from=Math.ceil((d-0.12)*100),to=Math.floor((d+0.12)*100);
+          c.strokeStyle=col.ink2;c.fillStyle=col.ink2;c.font='600 9px "IBM Plex Sans Arabic",sans-serif';c.textAlign='center';
+          for(let k=from;k<=to;k++){const x=bx-(k/100-d)*sc,big=k%5===0;c.beginPath();c.moveTo(x,top);c.lineTo(x,top+(big?10:5));c.stroke();if(big)c.fillText((k/100).toFixed(2),x,top+21)}
+          c.restore();c.strokeStyle=col.bad;c.lineWidth=2;c.beginPath();c.moveTo(bx,top-2);c.lineTo(bx,top+hh+2);c.stroke();
+          c.strokeStyle=col.ink2;c.setLineDash([2,3]);c.lineWidth=1;c.beginPath();c.moveTo(bx,top+hh);c.lineTo(b.x,y-BH-2);c.stroke();c.setLineDash([]);
+        }
+      }
+    });
+  }
+  function loop(now){const dt=Math.min(.05,Math.max(0,(now-last)/1000));last=now;step(dt);draw();raf=requestAnimationFrame(loop)}
+  return {mount,stop,place,release,hitTest,toCanvas,lanes:()=>L,setOpt:o=>Object.assign(opt,o),readColors};
+})();
+
+const FR_OBS={
+  far_glass:'قطع القالب أطول مسافة على الزجاج',
+  short_sand:'توقف القالب بعد أقصر مسافة على ورق الصنفرة',
+  same_start:'وصل القالب إلى السطح الأفقي بالسرعة نفسها في المسارات الثلاثة',
+  slow_down:'تباطأ القالب تدريجيًا حتى توقف',
+  same_dist:'قطع القالب المسافة نفسها على كل الأسطح',
+  speed_up:'زادت سرعة القالب على السطح الخشن',
+  heavier:'زادت كتلة القالب أثناء الحركة'
+};
+const FR_OBS_SET={ok:['far_glass','short_sand'],neutral:['same_start','slow_down']};
+Object.assign(CONCEPTS,{
+  fric:'قوة الاحتكاك وخشونة السطح', newton1:'القانون الأول لنيوتن (القصور الذاتي)',
+  newton2:'القانون الثاني لنيوتن (القوة والتسارع)', fair:'التجربة العادلة وضبط المتغيرات',
+  meas:'دقة القياس', speed:'السرعة ومسافة التوقف'
+});
+
+const FRICTION={
+  id:'friction', title:'قوة الاحتكاك', screen:'fric', practical:'challenge',
+  cycle:['التوقع','التجربة','الملاحظة','التفكير','التحدي العملي','الاستنتاج','التطبيق','التقييم'],
+  safety:['ثبّت المسارات على الطاولة قبل الإطلاق.','لا تضع يدك في طريق القالب أثناء حركته.','أطلق القالب دون دفعه، حتى تكون سرعته الابتدائية صفرًا.'],
+  questions(){
+    return [
+      {type:'order',concept:'fric',prompt:'رتّب الأسطح حسب مسافة توقف القالب، من الأطول إلى الأقصر.',
+       items:['زجاج أملس','خشب','ورق صنفرة خشن'],
+       hints:['ارجع إلى جدول قياساتك وقارن المسافات الثلاث.','السطح الأملس يترك القالب ينزلق مسافة أطول قبل أن يتوقف.'],
+       explain:'كلما كان السطح أنعم قطع القالب مسافة أطول: الزجاج ثم الخشب ثم ورق الصنفرة.'},
+      {type:'mcq',concept:'newton2',prompt:'لماذا توقف القالب على ورق الصنفرة بعد مسافة أقصر؟',
+       options:[{t:'لأن قوة الاحتكاك عليه أكبر، فتسبب تباطؤًا أكبر للقالب',ok:1},{t:'لأن الجاذبية فوق ورق الصنفرة أكبر'},{t:'لأن سرعة القالب عند بداية الصنفرة كانت أقل'},{t:'لأن كتلة القالب زادت على السطح الخشن'}],
+       hints:['هل كانت سرعة البداية مختلفة؟ تذكّر أنك أطلقت القالب من الارتفاع نفسه في المسارات الثلاثة.','على السطح الأفقي أثّرت في القالب قوة واحدة تعاكس حركته. كيف يتغير مقدارها مع خشونة السطح؟'],
+       explain:`بدأ القالب بالسرعة نفسها على الأسطح الثلاثة. لكن قوة الاحتكاك على الصنفرة (${frF('sand').toFixed(2)} N) أكبر منها على الزجاج (${frF('glass').toFixed(2)} N). وحسب القانون الثاني لنيوتن: التسارع = القوة ÷ الكتلة (ت = ق ÷ ك)، فيتباطأ القالب أسرع ويتوقف بعد مسافة أقصر.`},
+      {type:'mcq',concept:'newton1',prompt:'لو انزلق القالب على سطح أملس تمامًا بلا احتكاك ولا مقاومة هواء، فماذا يحدث له؟',
+       options:[{t:'يستمر في الحركة بسرعة ثابتة في خط مستقيم',ok:1},{t:'يتباطأ ببطء ثم يتوقف'},{t:'تزداد سرعته باستمرار'},{t:'يتوقف فورًا'}],
+       hints:['لاحظ: كلما قلّ الاحتكاك قطع القالب مسافة أطول. ماذا لو صار الاحتكاك صفرًا؟','القانون الأول لنيوتن: الجسم المتحرك يبقى متحركًا ما لم تؤثر فيه قوة غير متزنة.'],
+       explain:'بلا احتكاك لا توجد قوة غير متزنة تؤثر في القالب، فيبقى متحركًا بسرعته واتجاهه نفسيهما. هذا هو القانون الأول لنيوتن (القصور الذاتي). الاحتكاك هو ما يوقف الأجسام في حياتنا اليومية.'}
+    ];
+  },
+  apply(){
+    return {type:'mcq',concept:'fric',prompt:'موقف جديد: لماذا تحتاج السيارة مسافة أطول لتتوقف على الطريق المبلل بالمطر؟',
+      options:[{t:'لأن الماء يقلل الاحتكاك بين الإطارات والطريق',ok:1},{t:'لأن الماء يزيد كتلة السيارة'},{t:'لأن الماء يزيد الاحتكاك فتنزلق السيارة'},{t:'لأن المطر يزيد سرعة السيارة'}],
+      hints:['الطريق المبلل يشبه أي سطح في تجربتك؟','كلما قلّ الاحتكاك زادت مسافة التوقف.'],
+      explain:'الماء طبقة تقلل التلامس بين الإطارات والطريق، فتقل قوة الاحتكاك ويقل التباطؤ، فتحتاج السيارة مسافة أطول لتتوقف. لهذا نخفف السرعة ونترك مسافة أكبر في المطر.'};
+  },
+  learned(c,r){
+    const h=r&&r.fr?r.fr.hf:0.2,v=frV0(h||0.2);
+    return {
+      lead:'الاحتكاك قوة تعاكس حركة الجسم، وكلما زادت خشونة السطح زادت قوة الاحتكاك، فيتوقف الجسم بعد مسافة أقصر.',
+      happened:`أطلقت القالب من ${cm(h)} سم في المسارات الثلاثة، فوصل إلى السطح الأفقي بالسرعة نفسها تقريبًا (${v.toFixed(2)} m/s). على السطح الأفقي لم تدفعه أي قوة إلى الأمام، وأثّرت فيه قوة الاحتكاك عكس حركته، فتباطأ حتى توقف.`,
+      why:`القانون الأول لنيوتن: يبقى الجسم المتحرك متحركًا بسرعة ثابتة ما لم تؤثر فيه قوة غير متزنة، وهنا كانت قوة الاحتكاك هي القوة غير المتزنة. القانون الثاني: التسارع = القوة ÷ الكتلة (ت = ق ÷ ك). قوة الاحتكاك على القالب (0.5 kg) كانت ${frF('glass').toFixed(2)} N على الزجاج و${frF('wood').toFixed(2)} N على الخشب و${frF('sand').toFixed(2)} N على الصنفرة، فكان تباطؤه ${(SURF.glass.mu*FR.g).toFixed(1)} و${(SURF.wood.mu*FR.g).toFixed(1)} و${(SURF.sand.mu*FR.g).toFixed(1)} m/s² على الترتيب.`,
+      concept:'الاحتكاك: قوة تنشأ بين سطحين متلامسين وتعاكس الحركة، وتزداد بزيادة خشونة السطحين.'
+    };
+  },
+  score(r){
+    const f=a=>a&&a.correct?[0,1,.6,.3][a.attempts]:0,q=r.answers,fr=r.fr;
+    const meas=['glass','wood','sand'].reduce((s,k)=>{const L=fr.lanes.find(x=>x.s===k),d=frDist(k,fr.hf),m=(L&&L.meas)||[];
+      return s+(m.length&&Math.abs(m[0]-d)<=FR.tol?5:m.some(x=>Math.abs(x-d)<=FR.tol)?3:0)},0);
+    const unfair=fr.runs.filter(x=>Math.abs(x.h-fr.hf)>1e-6).length;
+    const ct=r.chal||[],ti=ct.findIndex(h=>Math.abs(h-0.30)<1e-6),tries=ti<0?0:ti+1;
+    const parts=[
+      ['تجربة عادلة',Math.max(0,15-5*unfair),15],
+      ['دقة القياس',meas,15],
+      ['دقة الملاحظة',15*r.obsScore,15],
+      ['الإجابات',10*f(q[0])+10*f(q[2]),20],
+      ['تفسير النتيجة',10*f(q[1]),10],
+      ['التحدي العملي',tries?[0,15,10,5][Math.min(3,tries)]:0,15],
+      ['التطبيق في موقف جديد',10*f(q[3]),10]
+    ];
+    const total=Math.round(parts.reduce((a,p)=>a+p[1],0));
+    const byC={};
+    q.forEach(a=>{if(!a)return;const ok=a.correct&&a.attempts===1;byC[a.concept]=byC[a.concept]===undefined?ok:byC[a.concept]&&ok});
+    byC.obs=r.obsScore>=.8;byC.fair=unfair===0;byC.meas=meas===15;byC.speed=tries===1;
+    return {parts,total,mastered:Object.keys(byC).filter(k=>byC[k]),reinforce:Object.keys(byC).filter(k=>!byC[k])};
+  },
+  log(r){
+    const meas={};r.fr.lanes.forEach(l=>meas[l.s]=(l.meas||[]).slice(0,3));
+    return {topic:'friction',runs:r.fr.runs.slice(0,30),meas,answers:r.answers.map(a=>({a:a&&a.log||[]})),obs:r.obs,chal:(r.chal||[]).slice(0,10),mistakes:r.log.slice(0,15)};
+  },
+  next(){return 'جرّب في التدريب الحر ارتفاعات مختلفة على السطح نفسه: كيف تتغير مسافة التوقف عندما تتضاعف سرعة الانطلاق؟'},
+  record(r,sc){
+    const fr=r.fr;
+    return {title:`${this.title}: إطلاق من ${cm(fr.hf)} سم`,materials:['قالب خشبي 0.5 kg','زجاج','خشب','ورق صنفرة'],
+      result:fr.lanes.map(l=>`${SURF[l.s].name} ${fx2(frDist(l.s,fr.hf))} m`).join('، '),
+      separation:fr.lanes.map(l=>`${SURF[l.s].name}: قاس ${l.meas&&l.meas.length?fx2(l.meas[l.meas.length-1]):'—'} m`)};
+  }
+};
+CONTENT.friction=FRICTION;
+
+/* ---------- شاشة تجربة الاحتكاك ---------- */
+function frTableHTML(r,lanesIdx){
+  return `<div class="tablewrap" style="margin-top:12px"><table class="frtab"><thead><tr><th>السطح</th><th>ارتفاع الإطلاق</th><th>الإطلاق</th><th>مسافة التوقف (اقرأها من المسطرة)</th><th>زمن التباطؤ</th></tr></thead><tbody>
+  ${lanesIdx.map(i=>{const l=r.fr.lanes[i];return `<tr data-row="${i}"><td><b>${SURF[l.s].name}</b></td><td id="fh${i}">—</td>
+    <td><button class="btn amber sm-btn" id="fgo${i}" disabled>أطلق</button></td>
+    <td><span style="display:inline-flex;gap:6px;align-items:center"><input type="text" inputmode="decimal" autocomplete="off" class="frin" id="fm${i}" disabled placeholder="٠٫٠٠"> م <button class="btn ghost sm-btn" id="frec${i}" disabled>سجّل</button><span id="fok${i}"></span></span></td>
+    <td class="num" id="ft${i}">—</td></tr>`}).join('')}
+  </tbody></table></div>`;
+}
+/* على الشاشات الضيقة تُعرض المسارات بعرض ثابت قابل للتمرير، والعرض يتبع القالب */
+function frScrollInit(){const sc=$('.frscroll');if(sc)sc.scrollLeft=sc.scrollWidth}
+function frFollow(x){const sc=$('.frscroll'),cv=$('#frc');if(!sc||!cv||sc.scrollWidth<=sc.clientWidth+2)return;
+  const k=cv.getBoundingClientRect().width/800;sc.scrollLeft=Math.max(0,x*k-sc.clientWidth/2)}
+function renderFric(){
+  const r=APP.run;
+  if(!r.fr) r.fr={lanes:['glass','wood','sand'].map(s=>({s,h:null,ran:false,stopped:false,meas:[],rec:false})),runs:[],hf:null,pred:null};
+  r.step=r.step==='safety'?'predict':r.step;
+  app.innerHTML=`<div id="cyc"></div>
+  <section class="bench" aria-label="مسارات الاحتكاك">
+    <div class="guide" role="status" aria-live="polite">
+      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3h8M13 3v9L5.5 25.5A2.4 2.4 0 0 0 7.6 29h16.8a2.4 2.4 0 0 0 2.1-3.5L19 12V3"/><path d="M8.5 21h15" stroke="var(--glass)"/></svg>
+      <div class="gt"><span class="who">المرشد</span><p id="gtext"></p><div class="gact" id="gact"></div></div>
+    </div>
+    <div class="gnote" id="gnote" role="alert"></div>
+    <div class="frbar">
+      <button class="item frblock" id="frblock" aria-label="قالب خشبي"><span class="blk"></span><span class="nm">قالب خشبي</span><span class="sub num">0.5 kg</span></button>
+      <p class="note" style="margin:0;flex:1">اسحب القالب إلى علامة ارتفاع على أحد المنحدرات، أو انقر العلامة مباشرة. المنحدرات الثلاثة متماثلة وملساء؛ الذي يختلف هو السطح الأفقي فقط.</p>
+      <label class="frforces"><input type="checkbox" id="frF" checked> إظهار القوى</label>
+    </div>
+    <div class="beakerzone frzone" data-zone="track" id="frz"><div class="frscroll" dir="ltr"><canvas id="frc" aria-label="ثلاثة مسارات بأسطح مختلفة الخشونة"></canvas></div></div><p class="swipe-hint">↔ اسحب المسارات يمينًا ويسارًا لرؤيتها كاملة</p>
+    ${frTableHTML(r,[0,1,2])}
+  </section>
+  <div id="obsPanel" class="frobs"></div>
+  <div class="panel safety" style="margin-top:12px"><h3>قواعد السلامة</h3><ul>${FRICTION.safety.map(x=>`<li>${x}</li>`).join('')}</ul></div>`;
+  FRSIM.mount($('#frc'),r.fr.lanes.map(l=>l.s),{forces:true},(ev,i,res)=>{if(ev==='stop')frStopped(i,res);else if(ev==='pos')frFollow(res)});
+  frScrollInit();
+  $('#frF').onchange=e=>FRSIM.setOpt({forces:e.target.checked});
+  const placeAt=(x,y)=>{const p=FRSIM.toCanvas(x,y),hit=FRSIM.hitTest(p.x,p.y);if(hit)frPlace(hit.lane,hit.h);else note('ضع القالب عند إحدى علامات الارتفاع على المنحدر.')};
+  draggable($('#frblock'),{zones:'#frz',onDrop:(z,x,y)=>placeAt(x,y),onTap:()=>note('اسحب القالب إلى علامة ارتفاع على المنحدر، أو انقر العلامة مباشرة.')});
+  $('#frc').addEventListener('click',e=>{if(r.step!=='run')return;const p=FRSIM.toCanvas(e.clientX,e.clientY),hit=FRSIM.hitTest(p.x,p.y);if(hit)frPlace(hit.lane,hit.h)});
+  $$('.frin').forEach(x=>x.addEventListener('input',()=>{const v=arNum(x.value.replace(/[,،]/g,'.'));if(v!==x.value)x.value=v}));
+  [0,1,2].forEach(i=>{
+    $('#fgo'+i).onclick=()=>frRelease(i);
+    $('#frec'+i).onclick=()=>frRecord(i);
+    $('#fm'+i).addEventListener('keydown',e=>{if(e.key==='Enter')frRecord(i)});
+  });
+  frGuide();
+}
+function frGuide(msg){
+  const r=APP.run,t=$('#gtext'),act=$('#gact');if(!t)return;act.innerHTML='';
+  const cyc=$('#cyc');if(cyc)cyc.innerHTML=cycleHTML(r.step==='predict'?0:r.step==='observe'?2:1);
+  if(r.step==='predict'){
+    t.textContent='قبل أن تجرّب: على أي سطح تتوقع أن يقطع القالب أطول مسافة قبل أن يتوقف؟';
+    act.innerHTML=[['glass','الزجاج الأملس'],['wood','الخشب'],['sand','ورق الصنفرة'],['same','المسافة نفسها']].map(([k,l])=>`<button class="btn amber" data-pred="${k}" style="padding:7px 14px">${l}</button>`).join('');
+    $$('[data-pred]',act).forEach(b=>b.onclick=()=>{r.fr.pred=b.dataset.pred;r.step='run';note('سجّلنا توقعك. الآن جرّب وتحقق منه.');frGuide()});
+    return;
+  }
+  if(r.step==='run'){t.textContent=msg||'ضع القالب عند علامة ارتفاع على كل منحدر، وأطلقه، ثم اقرأ مسافة توقفه من المسطرة المكبّرة وسجّلها. اجعل التجربة عادلة.';
+    const L=r.fr.lanes;
+    if(L.every(l=>l.rec)){const hs=new Set(L.map(l=>l.h));
+      if(hs.size===1){r.fr.hf=L[0].h;t.textContent='سجّلت المسارات الثلاثة من الارتفاع نفسه. قارن المسافات في الجدول، ثم سجّل ملاحظاتك.';
+        act.innerHTML='<button class="btn amber" id="frObsGo">سجّل ملاحظاتي</button>';$('#frObsGo').onclick=()=>{r.step='observe';frGuide();renderFrObs()}}
+      else t.textContent='المسارات أُطلقت من ارتفاعات مختلفة، فالمقارنة غير عادلة: اختلاف المسافة قد يكون بسبب الارتفاع لا السطح. أعد إطلاق ما يلزم من الارتفاع نفسه.';
+    }
+    return;
+  }
+  if(r.step==='observe')t.textContent='ماذا لاحظت؟ اختر ملاحظاتك تحت الجدول.';
+}
+function frPlace(i,h){
+  const r=APP.run;if(r.step!=='run')return note(r.step==='predict'?'اختر توقعك أولًا.':'أكمل الخطوة الحالية.');
+  const L=r.fr.lanes[i];
+  if(!FRSIM.place(i,h))return note('انتظر حتى يتوقف القالب.');
+  L.h=h;L.ran=false;L.stopped=false;L.rec=false;L.meas=[];
+  $('#fh'+i).textContent=`${cm(h)} سم`;$('#fgo'+i).disabled=false;$('#fm'+i).value='';$('#fm'+i).disabled=true;$('#frec'+i).disabled=true;$('#fok'+i).textContent='';$('#ft'+i).textContent='—';
+  frGuide(`وضعت القالب على منحدر «${SURF[L.s].name}» عند ${cm(h)} سم. اضغط «أطلق» في الجدول.`);
+}
+function frRelease(i){
+  const r=APP.run,L=r.fr.lanes[i];if(r.step!=='run'||!L.h)return;
+  const others=r.fr.lanes.filter((x,j)=>j!==i&&x.ran&&x.h!==null);
+  if(others.some(x=>x.h!==L.h)){r.mist.exec++;r.log.push(`إطلاق من ارتفاع مختلف (${cm(L.h)} سم) عن بقية المسارات`);
+    note(`انتبه: أطلقت هذا المسار من ${cm(L.h)} سم والمسارات الأخرى من ارتفاع مختلف. هل تبقى المقارنة عادلة؟`,true)}
+  FRSIM.release(i);L.ran=true;r.fr.runs.push({s:L.s,h:L.h});$('#fgo'+i).disabled=true;
+}
+function frStopped(i,res){
+  const r=APP.run;if(APP.run.screen==='chal')return frChalStopped(res);
+  const L=r.fr.lanes[i];L.stopped=true;L.tf=res.tf;
+  $('#ft'+i).textContent=`${res.tf.toFixed(2)} s`;$('#fm'+i).disabled=false;$('#frec'+i).disabled=false;$('#fm'+i).focus({preventScroll:true});
+}
+function frRecord(i){
+  const r=APP.run,L=r.fr.lanes[i];if(!L.stopped||L.rec)return;
+  const v=parseNum($('#fm'+i).value);
+  if(!isFinite(v)||v<0||v>FR.L)return note('اكتب المسافة بالأمتار، مثل ٠٫٦٧');
+  L.meas.push(Math.round(v*100)/100);const d=frDist(L.s,L.h);
+  if(Math.abs(v-d)<=FR.tol){L.rec=true;$('#fok'+i).textContent='✓';$('#fm'+i).disabled=true;$('#frec'+i).disabled=true}
+  else if(L.meas.length<3){r.log.push(`قراءة غير دقيقة على ${SURF[L.s].name}: ${fx2(v)} m`);note('قراءتك بعيدة عن موضع المؤشر الأحمر. انظر إلى المسطرة المكبّرة فوق القالب واقرأ الرقم عند الخط الأحمر.',true)}
+  else{L.rec=true;$('#fm'+i).value=arNum(fx2(d));$('#fok'+i).textContent=`القراءة الصحيحة ${fx2(d)} m`;$('#fm'+i).disabled=true;$('#frec'+i).disabled=true}
+  frGuide();
+}
+function renderFrObs(){
+  const r=APP.run,box=$('#obsPanel');
+  box.innerHTML=`<div class="obs"><h3>🔎 سجّل ملاحظاتك</h3><p>اختر كل ما شاهدته فعلًا أثناء التجربة.</p>
+    <div class="chips">${shuffle(Object.keys(FR_OBS)).map(k=>`<button class="chip" aria-pressed="false" data-obs="${k}">${FR_OBS[k]}</button>`).join('')}</div>
+    <button class="btn" id="obsDone" disabled>سجّلت ملاحظاتي</button></div>`;
+  $$('[data-obs]',box).forEach(ch=>ch.addEventListener('click',()=>{ch.setAttribute('aria-pressed',ch.getAttribute('aria-pressed')==='true'?'false':'true');$('#obsDone').disabled=!$$('[data-obs][aria-pressed="true"]',box).length}));
+  $('#obsDone').onclick=()=>{
+    r.obs=$$('[data-obs][aria-pressed="true"]',box).map(x=>x.dataset.obs);
+    const hits=r.obs.filter(o=>FR_OBS_SET.ok.includes(o)).length,wrong=r.obs.filter(o=>!FR_OBS_SET.ok.includes(o)&&!FR_OBS_SET.neutral.includes(o));
+    r.obsScore=Math.max(0,Math.min(1,hits/FR_OBS_SET.ok.length-.34*wrong.length));
+    if(wrong.length)r.log.push('ملاحظة غير دقيقة: '+wrong.map(o=>FR_OBS[o]).join('، '));
+    r.ctx={cls:'friction'};r.qi=0;go('think');
+  };
+  box.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+/* ---------- التحدي العملي: أوقف القالب عند العلم ---------- */
+function renderChal(){
+  const r=APP.run;r.screen='chal';r.chal=r.chal||[];r.chalDone=false;
+  app.innerHTML=`${cycleHTML(4)}
+  <section class="bench">
+    <div class="guide" role="status" aria-live="polite">
+      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 29V4M8 5h16l-5 5 5 5H8"/></svg>
+      <div class="gt"><span class="who">التحدي العملي</span><p id="gtext">اجعل القالب يتوقف عند العلم الأحمر (1.00 m) على سطح الخشب. اختر ارتفاع الإطلاق المناسب ثم أطلقه.</p><div class="gact" id="gact"></div></div>
+    </div>
+    <div class="gnote" id="gnote" role="alert"></div>
+    <div class="frbar"><button class="item frblock" id="frblock"><span class="blk"></span><span class="nm">قالب خشبي</span><span class="sub num">0.5 kg</span></button>
+      <p class="note" style="margin:0;flex:1">تذكّر نتائجك: على الخشب، من أي ارتفاع توقف القالب أقرب إلى المتر؟ وكيف تجعله يذهب أبعد؟</p>
+      <button class="btn amber" id="chGo" disabled>أطلق</button></div>
+    <div class="beakerzone frzone" data-zone="track" id="frz"><div class="frscroll" dir="ltr"><canvas id="frc"></canvas></div></div><p class="swipe-hint">↔ اسحب المسار يمينًا ويسارًا لرؤيته كاملًا</p>
+  </section>`;
+  FRSIM.mount($('#frc'),['wood'],{forces:true,flag:FR.flag},(ev,i,res)=>{if(ev==='stop')frChalStopped(res);else if(ev==='pos')frFollow(res)});
+  frScrollInit();
+  let placedH=null;
+  const put=h=>{if(r.chalDone)return;if(FRSIM.place(0,h)){placedH=h;$('#chGo').disabled=false;$('#gtext').textContent=`القالب عند ${cm(h)} سم. أطلقه.`}};
+  const placeAt=(x,y)=>{const p=FRSIM.toCanvas(x,y),hit=FRSIM.hitTest(p.x,p.y);if(hit)put(hit.h);else note('ضع القالب عند إحدى علامات الارتفاع.')};
+  draggable($('#frblock'),{zones:'#frz',onDrop:(z,x,y)=>placeAt(x,y),onTap:()=>note('اسحب القالب إلى علامة ارتفاع، أو انقر العلامة.')});
+  $('#frc').addEventListener('click',e=>{const p=FRSIM.toCanvas(e.clientX,e.clientY),hit=FRSIM.hitTest(p.x,p.y);if(hit)put(hit.h)});
+  $('#chGo').onclick=()=>{if(placedH===null)return;FRSIM.release(0);r.chal.push(placedH);$('#chGo').disabled=true};
+}
+function frChalStopped(res){
+  const r=APP.run,act=$('#gact'),t=$('#gtext');if(!t)return;
+  const d=res.d,ok=Math.abs(d-FR.flag)<=0.05;
+  if(ok){r.chalDone=true;r.screen='';t.textContent=`أحسنت! توقف القالب عند ${fx2(d)} m. الارتفاع الأكبر يعطي القالب سرعة أكبر عند أسفل المنحدر، فيحتاج الاحتكاك مسافة أطول لإيقافه.`;
+    act.innerHTML='<button class="btn amber" id="toLearn">إلى الخلاصة</button>';$('#toLearn').onclick=()=>go('learned');return}
+  const n_=r.chal.length;
+  t.textContent=`توقف القالب عند ${fx2(d)} m، ${d<FR.flag?'قبل':'بعد'} العلم. ${d<FR.flag?'كيف تجعله يصل أبعد؟':'كيف تجعله يتوقف أبكر؟'}${n_>=3?' تلميح: سرعة البداية تتحدد بارتفاع الإطلاق.':''} ضع القالب من جديد وأعد المحاولة.`;
+  if(n_>=4){act.innerHTML='<button class="btn" id="skipCh" style="background:transparent;border:1px solid currentColor;color:inherit;padding:6px 12px">تخطَّ التحدي</button>';
+    $('#skipCh').onclick=()=>{r.screen='';r.log.push('تخطى التحدي العملي');go('learned')}}
+}
+
+function renderFrLearned(){
+  const r=APP.run,L=FRICTION.learned(null,r),fr=r.fr;
+  const predName={glass:'الزجاج الأملس',wood:'الخشب',sand:'ورق الصنفرة',same:'المسافة نفسها على كل الأسطح'}[fr.pred]||'—';
+  const predOk=fr.pred==='glass';
+  const mine=r.obs.map(o=>`${FR_OBS_SET.ok.includes(o)||FR_OBS_SET.neutral.includes(o)?'✓':'✗'} ${FR_OBS[o]}`).join('، ');
+  app.innerHTML=`${cycleHTML(5)}<article class="learn">
+    <div class="lead"><h2>🎓 ماذا تعلمت من التجربة؟</h2><p>تعلمت أن ${L.lead}</p></div>
+    <section><h3>🔎 ماذا لاحظت؟</h3>
+      <div class="tablewrap"><table><thead><tr><th>السطح</th><th>معامل الاحتكاك</th><th>مسافة التوقف (قياسك)</th><th>قوة الاحتكاك</th></tr></thead><tbody>
+      ${fr.lanes.map(l=>`<tr><td>${SURF[l.s].name}</td><td class="num">${SURF[l.s].mu.toFixed(2)}</td><td class="num">${l.meas.length?fx2(l.meas[l.meas.length-1]):'—'} m</td><td class="num">${frF(l.s).toFixed(2)} N</td></tr>`).join('')}
+      </tbody></table></div>
+      <p style="margin-top:10px">توقعت قبل التجربة: «${predName}». ${predOk?'وتحقق توقعك.':'والنتيجة أن القالب قطع أطول مسافة على الزجاج الأملس. لا بأس؛ التجربة هي التي تحسم.'}</p>
+      ${mine?`<p class="note">ملاحظاتك: ${mine}.</p>`:''}</section>
+    <section><h3>🧠 ماذا حدث؟</h3><p>${bidi(L.happened)}</p></section>
+    <section><h3>💡 لماذا حدث ذلك؟</h3><p>${bidi(L.why)}</p></section>
+    <section><h3>🧪 لماذا كانت تجربتك عادلة؟</h3><p>غيّرت متغيرًا واحدًا فقط هو خشونة السطح، وثبّتّ الباقي: القالب نفسه، والمنحدر نفسه، وارتفاع الإطلاق نفسه. لذلك فاختلاف المسافة سببه السطح وحده.</p></section>
+    <div class="concept"><h3>🎯 المفهوم الذي تعلمته</h3><p>${L.concept}</p></div>
+    <div class="actions"><button class="btn" id="toApply">اختبر فهمك في موقف جديد</button></div>
+  </article>`;
+  $('#toApply').onclick=()=>go('apply');
+}
+
+/* =========================================================
+   🚗 تجربة القصور الذاتي
+   الجزء الأول: عربة وراكب تصطدم بحاجز (حزام الأمان).
+   الجزء الثاني: الدفعة نفسها لعربات مختلفة الكتلة على مسار شبه عديم الاحتكاك،
+   وبوابتان ضوئيتان تقيسان زمن قطع متر واحد. v = F × 0.25 s ÷ m
+   ========================================================= */
+const IN={PT:0.25,G1:0.6,G2:1.6,END:2.3,BAR:1.2,CART:0.5,W:0.5,forces:[2,4,6,8],mu:0.35,beltF:4,beltM:1.0};
+const inV=(F,m)=>F*IN.PT/m;
+const inT=(F,m)=>(IN.G2-IN.G1)/inV(F,m);
+const kg=m=>(Math.round(m*10)/10).toFixed(1);
+
+const INSIM=(()=>{
+  const W=800,XS=720,S=280,CW=.19*S,CH=17,WR=6;
+  let cv,c,raf=0,last=0,col={},L=[],mode='gates',onEvent=null,opt={};
+  const prand=i=>{const x=Math.sin(i*91.7+17.3)*43758.5453;return x-Math.floor(x)};
+  function readColors(){const cs=getComputedStyle(document.documentElement);
+    col={ink:cs.getPropertyValue('--ink').trim()||'#13324A',ink2:cs.getPropertyValue('--ink-2').trim()||'#4F6879',
+      paper:cs.getPropertyValue('--paper').trim()||'#fff',bad:cs.getPropertyValue('--bad').trim()||'#C3473E',
+      glass:cs.getPropertyValue('--glass').trim()||'#4FB3C8',ok:cs.getPropertyValue('--ok').trim()||'#1E8A5C',amber:cs.getPropertyValue('--amber').trim()||'#D98E1F'}}
+  const LH=()=>mode==='belt'?128:126;
+  const yb=i=>8+i*LH()+LH()-30;
+  function mount(canvas,m,lanes,o,ev){
+    cancelAnimationFrame(raf);cv=canvas;c=cv.getContext('2d');mode=m;opt=o||{};onEvent=ev;
+    L=lanes.map(x=>Object.assign({phase:'ready',x:0,v:0,t:0,F:null,g1:null,g2:null,timer:0,px:0,py:0,pv:0,pvy:0,pstate:'on'},x));
+    const H=8+lanes.length*LH()+4,dpr=Math.min(2,window.devicePixelRatio||1);
+    cv.width=W*dpr;cv.height=H*dpr;cv.style.aspectRatio=`${W}/${H}`;c.setTransform(dpr,0,0,dpr,0,0);
+    readColors();last=performance.now();raf=requestAnimationFrame(loop);
+  }
+  function stop(){cancelAnimationFrame(raf)}
+  function release(i,F){const l=L[i];if(!l||!(l.phase==='ready'||l.phase==='done'))return false;
+    Object.assign(l,{phase:'push',x:0,v:0,t:0,F,g1:null,g2:null,timer:0,px:0,py:0,pv:0,pvy:0,pstate:'on',pd:0});return true}
+  function reset(i){const l=L[i];if(l)Object.assign(l,{phase:'ready',x:0,v:0,t:0,g1:null,g2:null,timer:0,px:0,py:0,pstate:'on'})}
+  function laneAt(px,py){const H=LH();const i=Math.floor((py-8)/H);return i>=0&&i<L.length?i:-1}
+  function toCanvas(cx_,cy_){const r=cv.getBoundingClientRect();const H=cv.height/Math.min(2,window.devicePixelRatio||1);return {x:(cx_-r.left)*W/r.width,y:(cy_-r.top)*H/r.height}}
+  function stepLane(l,i,dt){
+    const m=l.m;
+    if(l.phase==='push'){const a=l.F/m;l.t+=dt;const tp=Math.min(l.t,IN.PT);l.v=a*tp;l.x=.5*a*tp*tp;if(l.t>=IN.PT){l.phase='coast';l.v=inV(l.F,m)}}
+    else if(l.phase==='coast'){l.t+=dt;l.x+=l.v*dt;}
+    else return;
+    if(mode==='gates'){
+      if(l.g1===null&&l.x>=IN.G1){l.g1=l.t-(l.x-IN.G1)/l.v}
+      if(l.g1!==null&&l.g2===null){l.timer=l.t-l.g1;if(l.x>=IN.G2){l.g2=l.g1+(IN.G2-IN.G1)/l.v;l.timer=l.g2-l.g1;onEvent&&onEvent('timer',i,{t:l.timer})}}
+      if(l.x>=IN.END){l.x=IN.END;l.v=0;l.phase='done';onEvent&&onEvent('done',i,{})}
+      onEvent&&onEvent('pos',i,XS-l.x*S);
+    }else{
+      // الحاجز: تتوقف العربة فجأة عند BAR (مقدمة العربة)
+      if(l.x>=IN.BAR-.16){l.x=IN.BAR-.16;const v=l.v;l.v=0;l.phase='hit';l.pv=l.belt?0:v;l.pstate=l.belt?'held':'slide';l.ht=0;onEvent&&onEvent('hit',i,{v})}
+      onEvent&&onEvent('pos',i,XS-l.x*S);
+    }
+  }
+  function stepPassenger(l,i,dt){
+    if(l.phase!=='hit')return;
+    l.ht+=dt;
+    if(l.pstate==='held'){if(l.ht>.6){l.phase='done';onEvent&&onEvent('done',i,{belt:true,d:0})}return}
+    const top=.16;   // طول سطح العربة
+    if(l.pstate==='slide'){l.px+=l.pv*dt;if(l.px>=top-.02){l.pstate='fly';l.pvy=0}}
+    else if(l.pstate==='fly'){l.px+=l.pv*dt;l.pvy+=9.8*dt;l.py+=l.pvy*dt;if(l.py>=.075){l.py=.075;l.pstate='ground'}}
+    else if(l.pstate==='ground'){l.pv-=IN.mu*9.8*dt;if(l.pv<=0){l.pv=0;l.pstate='rest';l.phase='done';onEvent&&onEvent('done',i,{belt:false,d:l.px})}else l.px+=l.pv*dt}
+  }
+  function rr(x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
+  function wheel(x,y,ang){c.fillStyle='#1E2A33';c.beginPath();c.arc(x,y,WR,0,7);c.fill();c.fillStyle='#C3CCD3';c.beginPath();c.arc(x,y,WR*.5,0,7);c.fill();
+    c.strokeStyle='#1E2A33';c.lineWidth=1.3;for(let k=0;k<3;k++){const a=ang+k*2.094;c.beginPath();c.moveTo(x,y);c.lineTo(x+Math.cos(a)*WR*.5,y+Math.sin(a)*WR*.5);c.stroke()}}
+  /* عربة المختبر: جسم مدرّج اللون، عجلات تدور مع المسافة، أثقال مشقوقة. تُرجع ارتفاع سطحها العلوي */
+  function trolley(x,y,m,dist,showW){
+    const top=y-WR*2+1,bodyY=top-CH;
+    c.fillStyle='rgba(0,0,0,.13)';c.beginPath();c.ellipse(x,y+1.5,CW*.55,3,0,0,7);c.fill();
+    const g=c.createLinearGradient(0,bodyY,0,top);g.addColorStop(0,'#4D95D6');g.addColorStop(1,'#22598F');
+    c.fillStyle=g;rr(x-CW/2,bodyY,CW,CH,4);c.fill();c.strokeStyle='#163B5F';c.lineWidth=1.2;c.stroke();
+    c.fillStyle='rgba(255,255,255,.28)';c.fillRect(x-CW/2+5,bodyY+3,CW-10,2);
+    c.fillStyle='#163B5F';c.fillRect(x-CW/2-3,bodyY+CH-8,4,7);c.fillRect(x+CW/2-1,bodyY+CH-8,4,7);
+    const ang=-(dist*S)/WR;wheel(x-CW/2+10,y-WR,ang);wheel(x+CW/2-10,y-WR,ang);
+    c.fillStyle='#fff';c.font='700 10px "IBM Plex Sans Arabic",sans-serif';c.textAlign='center';c.fillText(`${kg(m)} kg`,x,bodyY+CH-5);
+    let n=showW?Math.round((m-IN.CART)/IN.W):0;
+    for(let k=0;k<n;k++){const wy=bodyY-9-k*9;const gw=c.createLinearGradient(x-15,0,x+15,0);gw.addColorStop(0,'#61676F');gw.addColorStop(.5,'#ADB3BA');gw.addColorStop(1,'#565C64');
+      c.fillStyle=gw;rr(x-15,wy,30,8,2);c.fill();c.strokeStyle='#30343A';c.lineWidth=1;c.stroke();c.fillStyle='#30343A';c.fillRect(x-1,wy,2,4)}
+    return bodyY-n*9;
+  }
+  /* دمية اختبار التصادم */
+  function dummy(x,yBase,rot,belt){
+    c.save();c.translate(x,yBase);c.rotate(rot||0);
+    c.strokeStyle='#C99A2E';c.lineWidth=4;c.lineCap='round';c.beginPath();c.moveTo(-2,-3);c.lineTo(-11,-2);c.stroke();
+    c.fillStyle='#F2C14E';c.strokeStyle='#3B3320';c.lineWidth=1.2;rr(-6,-18,12,16,3);c.fill();c.stroke();
+    c.strokeStyle='#C99A2E';c.lineWidth=3.5;c.beginPath();c.moveTo(-3,-14);c.lineTo(-9,-9);c.stroke();
+    c.fillStyle='#F2C14E';c.strokeStyle='#3B3320';c.lineWidth=1.2;c.beginPath();c.arc(0,-24,6.5,0,7);c.fill();c.stroke();
+    c.fillStyle='#222';c.beginPath();c.moveTo(1,-24);c.arc(1,-24,3,0,Math.PI/2);c.closePath();c.fill();c.beginPath();c.moveTo(1,-24);c.arc(1,-24,3,Math.PI,Math.PI*1.5);c.closePath();c.fill();
+    if(belt){c.strokeStyle='#C3473E';c.lineWidth=3;c.lineCap='butt';c.beginPath();c.moveTo(6,-18);c.lineTo(-6,-3);c.stroke();c.fillStyle='#AEB6BD';c.fillRect(-8,-7,5,5)}
+    c.restore();
+  }
+  function seat(x,top){c.fillStyle='#6E4A2E';rr(x+5,top-21,5,21,2);c.fill();rr(x-8,top-4,18,4,1.5);c.fill()}
+  function barrier(bx,y){const w=11,h=28;c.save();rr(bx-w,y-h,w,h,2);c.clip();c.fillStyle='#fff';c.fillRect(bx-w,y-h,w,h);c.fillStyle='#D33A2C';
+    for(let k=-2;k<6;k++){c.beginPath();c.moveTo(bx-w,y-h+k*9);c.lineTo(bx,y-h+k*9-7);c.lineTo(bx,y-h+k*9-2);c.lineTo(bx-w,y-h+k*9+5);c.closePath();c.fill()}
+    c.restore();c.strokeStyle=col.ink;c.lineWidth=1.2;rr(bx-w,y-h,w,h,2);c.stroke();c.fillStyle=col.ink;c.fillRect(bx-w-4,y-2,w+8,3)}
+  function launcher(y,ext){ // مدفع نابضي: علبة + نابض + صفيحة دفع
+    const hx=XS+CW/2+30,px=XS+CW/2+3-ext;
+    c.fillStyle='#3C4A55';rr(hx,y-32,30,30,4);c.fill();c.fillStyle='#E9B949';c.beginPath();c.arc(hx+15,y-17,4,0,7);c.fill();
+    c.strokeStyle='#8A96A0';c.lineWidth=1.6;c.beginPath();const n=8,len=hx-(px+4);for(let k=0;k<=n;k++){const xx=hx-k*len/n,yy=y-17+(k%2?-5:5)*(k>0&&k<n?1:0);k?c.lineTo(xx,yy):c.moveTo(xx,yy)}c.stroke();
+    c.fillStyle='#3C4A55';rr(px,y-27,5,20,1.5);c.fill();
+  }
+  function arrow(x0,y0,x1,y1,color,label){
+    c.strokeStyle=color;c.fillStyle=color;c.lineWidth=3;c.lineCap='round';c.beginPath();c.moveTo(x0,y0);c.lineTo(x1,y1);c.stroke();
+    const a=Math.atan2(y1-y0,x1-x0);c.beginPath();c.moveTo(x1,y1);c.lineTo(x1-9*Math.cos(a-.45),y1-9*Math.sin(a-.45));c.lineTo(x1-9*Math.cos(a+.45),y1-9*Math.sin(a+.45));c.closePath();c.fill();
+    if(label){c.font='700 11px "IBM Plex Sans Arabic",sans-serif';c.direction='rtl';c.textAlign='center';c.fillText(label,(x0+x1)/2,y0-7)}
+  }
+  function rail(x0,x1,y,carpetTo){
+    const g=c.createLinearGradient(0,y,0,y+7);g.addColorStop(0,'#E3E9ED');g.addColorStop(1,'#A9B6BF');c.fillStyle=g;c.fillRect(x0,y,x1-x0,7);
+    c.strokeStyle='#6F7E89';c.lineWidth=1;c.strokeRect(x0,y,x1-x0,7);
+    c.fillStyle='rgba(60,75,85,.35)';for(let x=x0+12;x<x1;x+=40)c.fillRect(x,y+3,2,2);
+    if(carpetTo){c.fillStyle='#9C6B4A';c.fillRect(x0,y,carpetTo-x0,7);for(let k=0;k<180;k++){c.fillStyle='rgba(60,30,15,.4)';c.fillRect(x0+prand(k)*(carpetTo-x0),y+prand(k+77)*7,1.5,1.5)}}
+  }
+  function photogate(gx,y,blocked,label){
+    c.fillStyle='#46525C';c.fillRect(gx+16,y-62,4,62);c.fillRect(gx-2,y-64,22,6);
+    rr(gx-9,y-66,18,12,3);c.fillStyle='#2B353D';c.fill();
+    c.fillStyle=blocked?'#FF4A3D':'#7A2B26';c.beginPath();c.arc(gx,y-60,3,0,7);c.fill();
+    if(blocked){c.fillStyle='rgba(255,74,61,.25)';c.beginPath();c.arc(gx,y-60,7,0,7);c.fill()}
+    c.strokeStyle=blocked?'rgba(255,74,61,.9)':'rgba(255,74,61,.35)';c.lineWidth=blocked?2:1;c.setLineDash([3,3]);c.beginPath();c.moveTo(gx,y-54);c.lineTo(gx,y-1);c.stroke();c.setLineDash([]);
+    c.fillStyle=col.ink2;c.font='600 9px "IBM Plex Sans Arabic",sans-serif';c.direction='rtl';c.textAlign='center';c.fillText(label,gx,y-70);
+  }
+  function lcd(x,y,val,running){
+    c.fillStyle='#3C4A55';c.fillRect(x-2,y+20,4,10);rr(x-50,y-4,100,26,5);c.fillStyle='#1B252C';c.fill();
+    rr(x-45,y,90,18,3);c.fillStyle=running?'#0F2A1A':'#0C2016';c.fill();
+    c.fillStyle='#6CF59A';c.font='700 14px "IBM Plex Sans Arabic",monospace';c.textAlign='center';c.fillText(`${val.toFixed(2)} s`,x,y+14);
+  }
+  function draw(){
+    const H=8+L.length*LH()+4;c.clearRect(0,0,W,H);
+    L.forEach((l,i)=>{
+      const y=yb(i),xEnd=XS-IN.END*S-CW/2-10;
+      const bx=XS-IN.BAR*S;
+      rail(xEnd,XS+CW/2+62,y,mode==='belt'?bx-11:0);
+      // عنوان المسار
+      c.direction='rtl';c.textAlign='right';c.fillStyle=col.ink;c.font='700 12px "IBM Plex Sans Arabic",sans-serif';
+      c.fillText(mode==='belt'?(l.belt?'الراكب مربوط بحزام الأمان':'الراكب بلا حزام'):`العربة ${['أ','ب','ج'][i]}`,W-8,y-(mode==='belt'?92:74));
+      const cx=XS-l.x*S,moving=(l.phase==='push'||l.phase==='coast')&&l.v>.12;
+      if(mode==='belt'){
+        barrier(bx,y);
+        c.fillStyle=col.ink2;c.font='600 10px "IBM Plex Sans Arabic",sans-serif';c.textAlign='center';c.fillText('حاجز',bx-5,y-33);
+      }else{
+        [IN.G1,IN.G2].forEach((g,gi)=>{const gx=XS-g*S;photogate(gx,y,Math.abs(cx-gx)<CW/2&&l.phase!=='ready',gi?'بوابة 2':'بوابة 1')});
+        const ex=XS-IN.END*S-CW/2;c.fillStyle='#3C4A55';rr(ex-10,y-20,8,20,2);c.fill();
+        lcd(XS-1.1*S,y-92,l.g1===null?0:l.timer,l.g1!==null&&l.g2===null);
+        c.fillStyle=col.ink2;c.font='600 9px "IBM Plex Sans Arabic",sans-serif';c.direction='rtl';c.textAlign='center';c.textAlign='left';c.fillText('⏱ المؤقت',XS-1.1*S+54,y-80);
+        c.strokeStyle=col.ink2;c.fillStyle=col.ink2;c.lineWidth=1;c.font='600 9px "IBM Plex Sans Arabic",sans-serif';
+        for(let k=0;k<=IN.END*10+1e-6;k++){const x=XS-k/10*S,big=k%5===0;c.beginPath();c.moveTo(x,y+9);c.lineTo(x,y+(big?17:13));c.stroke();if(big)c.fillText(`${(k/10).toFixed(1)} m`,x,y+28)}
+      }
+      // المدفع النابضي
+      const pushEnd=.5*(l.F||0)/l.m*IN.PT*IN.PT;
+      const ext=l.phase==='push'?l.x*S:(l.phase==='ready'?0:Math.max(0,pushEnd*S*(1-Math.max(0,(l.t-IN.PT))/.4)));
+      launcher(y,Math.min(ext,60));
+      // خطوط السرعة
+      if(moving){c.strokeStyle='rgba(79,149,214,.45)';c.lineWidth=2;for(let k=0;k<3;k++){const len=8+l.v*10;c.beginPath();c.moveTo(cx+CW/2+6+k*4,y-14-k*5);c.lineTo(cx+CW/2+6+k*4+len,y-14-k*5);c.stroke()}}
+      // العربة
+      const topY=trolley(cx,y,l.m,l.x,mode!=='belt');
+      if(mode==='belt'){
+        seat(cx,topY);
+        let rot=0,px=cx,py=topY;
+        if(l.phase==='hit'||l.phase==='done'){
+          if(l.belt){rot=-.28*Math.sin(Math.PI*Math.min(1,l.ht/.45))}
+          else{px=cx-l.px*S;
+            if(l.pstate==='slide'){rot=-l.px*3}
+            else if(l.pstate==='fly'){py=topY+(l.py/.075)*(y-topY);rot=-.5-(l.px-.14)*9}
+            else{py=y;rot=-1.45}}
+        }
+        dummy(px,py,rot,l.belt);
+        if(l.phase==='hit'&&l.ht<.3){c.strokeStyle='#E8A23A';c.lineWidth=2;for(let k=0;k<6;k++){const a=Math.PI/2+(k-2.5)*.42;c.beginPath();c.moveTo(bx-11+Math.cos(a)*6,y-16-Math.sin(a)*6);c.lineTo(bx-11+Math.cos(a)*16,y-16-Math.sin(a)*16);c.stroke()}}
+        if(opt.forces&&l.phase==='hit'&&l.ht<.55){arrow(cx-CW/2-2,y-30,cx-CW/2+30,y-30,col.bad,'قوة الحاجز');if(l.belt)arrow(px+4,py-12,px+34,py-12,col.bad,'قوة الحزام')}
+        if(l.phase==='hit'||l.phase==='done'){c.fillStyle=col.ink2;c.font='600 11px "IBM Plex Sans Arabic",sans-serif';c.direction='rtl';c.textAlign='right';
+          c.fillText(l.belt?'توقفت العربة، والحزام أوقف الراكب معها':'توقفت العربة، لكن الراكب استمر في حركته',W-8,y-76)}
+      }
+      if(opt.forces&&l.phase==='push'){arrow(cx+CW/2+4,y-16,cx+CW/2-34,y-16,col.bad,`ق = ${l.F} N`)}
+    });
+  }
+  function loop(now){const dt=Math.min(.04,Math.max(0,(now-last)/1000));last=now;
+    for(let k=0;k<4;k++)L.forEach((l,i)=>{stepLane(l,i,dt/4);stepPassenger(l,i,dt/4)});draw();raf=requestAnimationFrame(loop)}
+  return {mount,stop,release,reset,laneAt,toCanvas,lanes:()=>L,setOpt:o=>Object.assign(opt,o)};
+})();
+
+const IN_OBS={
+  kept_moving:'اندفع الراكب غير المربوط إلى الأمام عندما توقفت العربة',
+  belt_held:'بقي الراكب المربوط في مكانه مع العربة',
+  heavy_slow:'تحركت العربة الأثقل ببطء أكبر بالدفعة نفسها',
+  time_longer:'احتاجت العربة الأثقل زمنًا أطول لقطع المتر',
+  const_speed:'حافظت العربة على سرعتها تقريبًا بين البوابتين',
+  back:'اندفع الراكب إلى الخلف عند الاصطدام',
+  heavy_fast:'تحركت العربة الأثقل أسرع'
+};
+const IN_OBS_SET={ok:['kept_moving','belt_held','heavy_slow'],neutral:['time_longer','const_speed']};
+Object.assign(CONCEPTS,{inertia:'القصور الذاتي والكتلة',calc:'حساب السرعة من المسافة والزمن',belt:'القصور الذاتي وحزام الأمان'});
+
+const INERTIA={
+  id:'inertia',title:'القصور الذاتي',screen:'inert',practical:'inchal',
+  cycle:['التوقع','التجربة','الملاحظة','التفكير','التحدي العملي','الاستنتاج','التطبيق','التقييم'],
+  safety:['لا تضع يدك أمام العربة أو الحاجز أثناء الإطلاق.','ثبّت الأثقال جيدًا على العربة قبل الدفع.','في السيارة الحقيقية: حزام الأمان دائمًا، حتى في المشاوير القصيرة.'],
+  questions(){
+    return [
+      {type:'order',concept:'inertia',prompt:'رتّب العربات حسب سرعتها بعد الدفعة نفسها، من الأسرع إلى الأبطأ.',
+       items:['العربة 0.5 kg','العربة 1.0 kg','العربة 1.5 kg'],
+       hints:['ارجع إلى عمود السرعة في جدولك.','العربة التي قطعت المتر في زمن أقل هي الأسرع.'],
+       explain:'بالدفعة نفسها: العربة 0.5 kg أسرع، ثم 1.0 kg، ثم 1.5 kg. كلما زادت الكتلة قلت السرعة التي تكتسبها العربة.'},
+      {type:'mcq',concept:'inertia',prompt:'لماذا تحركت العربة الأثقل ببطء أكبر مع أن الدفعة كانت واحدة؟',
+       options:[{t:'لأن قصورها الذاتي أكبر؛ فالكتلة الأكبر تقاوم التغيير في الحركة أكثر',ok:1},{t:'لأن الاحتكاك عليها أكبر بكثير'},{t:'لأن الدافع دفعها بقوة أقل'},{t:'لأن الأثقال تسحبها إلى الخلف'}],
+       hints:['هل تغيّرت قوة الدافع بين العربات؟ وهل المسار مختلف؟','الشيء الوحيد الذي غيّرته هو الكتلة. ماذا يعني أن جسمًا «يقاوم» تغيير حركته؟'],
+       explain:`القوة واحدة (والمسار شبه عديم الاحتكاك)، والذي تغيّر هو الكتلة فقط. الكتلة مقياس للقصور الذاتي: كلما زادت قاوم الجسم التغيير في حركته أكثر. وحسب القانون الثاني لنيوتن: التسارع = القوة ÷ الكتلة (ت = ق ÷ ك)، فبقوة 4 N يكون تسارع العربة 0.5 kg هو 8 m/s²، وتسارع العربة 1.5 kg هو 2.7 m/s² فقط.`},
+      {type:'mcq',concept:'belt',prompt:'لماذا اندفع الراكب غير المربوط إلى الأمام عندما توقفت العربة فجأة؟',
+       options:[{t:'لأنه يميل للاستمرار في حركته، ولم تؤثر فيه قوة توقفه مع العربة',ok:1},{t:'لأن الحاجز دفعه إلى الأمام'},{t:'لأن قوة اندفاع تولدت داخله عند الاصطدام'},{t:'لأن الجاذبية سحبته إلى الأمام'}],
+       hints:['قبل الاصطدام: هل كان الراكب ساكنًا أم متحركًا مع العربة؟','الحاجز أثّر في العربة. هل أثّر في الراكب غير المربوط؟'],
+       explain:'كان الراكب يتحرك مع العربة. الحاجز أوقف العربة، لكن لم تؤثر في الراكب قوة توقفه، فاستمر في حركته إلى الأمام (القانون الأول لنيوتن). حزام الأمان هو القوة التي توقف الراكب مع السيارة.'}
+    ];
+  },
+  apply(){
+    return {type:'mcq',concept:'inertia',prompt:'موقف جديد: عند ضرب السجادة المعلّقة بالعصا يتساقط منها الغبار. لماذا؟',
+      options:[{t:'تتحرك السجادة فجأة ويبقى الغبار في مكانه بسبب قصوره الذاتي فينفصل عنها',ok:1},{t:'العصا تضرب الغبار مباشرة فيسقط'},{t:'الضربة تجعل الغبار أثقل'},{t:'الهواء يدفع الغبار للخارج'}],
+      hints:['في لحظة الضربة: من الذي تحرك فجأة، السجادة أم الغبار؟','الجسم الساكن يميل لأن يبقى ساكنًا.'],
+      explain:'الضربة تحرّك السجادة فجأة، والغبار الساكن يميل للبقاء ساكنًا بسبب قصوره الذاتي، فتتحرك السجادة من تحته وينفصل ويسقط.'};
+  },
+  learned(c,r){
+    const F=r&&r.inr?r.inr.Ff:4;
+    return {
+      lead:'القصور الذاتي هو ميل الجسم لمقاومة أي تغيير في حالته الحركية: المتحرك يميل للاستمرار في حركته، والساكن يميل للبقاء ساكنًا. وكلما زادت كتلة الجسم زاد قصوره الذاتي.',
+      happened:`في الجزء الأول توقفت العربة عند الحاجز، والراكب غير المربوط استمر في حركته إلى الأمام، أما المربوط فأوقفه الحزام. في الجزء الثاني دفعت العربات الثلاث بالقوة نفسها (${F} N لمدة 0.25 s)، فاكتسبت العربة 0.5 kg سرعة ${inV(F,.5).toFixed(2)} m/s، والعربة 1.0 kg سرعة ${inV(F,1).toFixed(2)} m/s، والعربة 1.5 kg سرعة ${inV(F,1.5).toFixed(2)} m/s.`,
+      why:`القانون الأول لنيوتن: يبقى الجسم على حالته من السكون أو الحركة بسرعة ثابتة ما لم تؤثر فيه قوة غير متزنة. الحاجز أثّر في العربة لا في الراكب، فاستمر الراكب في حركته. والقانون الثاني: التسارع = القوة ÷ الكتلة (ت = ق ÷ ك)، فالقوة نفسها تغيّر حركة الجسم الأثقل بمقدار أقل؛ لهذا نقول إن الكتلة مقياس للقصور الذاتي.`,
+      concept:'القصور الذاتي: ميل الجسم لمقاومة التغيير في حالته الحركية، ويزداد بزيادة كتلته.'
+    };
+  },
+  score(r){
+    const f=a=>a&&a.correct?[0,1,.6,.3][a.attempts]:0,q=r.answers,x=r.inr;
+    const unfair=x.runs.filter(z=>z.F!==x.Ff).length;
+    const calc=x.lanes.reduce((s,l)=>{const v=inV(x.Ff,l.m),m=l.calc||[];return s+(m.length&&Math.abs(m[0]-v)<=.05?5:m.some(y=>Math.abs(y-v)<=.05)?3:0)},0);
+    const beltPts=(x.belt.includes('off')?5:0)+(x.belt.includes('on')?5:0);
+    const ct=r.chal||[],ti=ct.indexOf(8),tries=ti<0?0:ti+1;
+    const parts=[
+      ['تجربة حزام الأمان',beltPts,10],
+      ['تجربة عادلة',Math.max(0,10-5*unfair),10],
+      ['دقة حساب السرعة',calc,15],
+      ['دقة الملاحظة',15*r.obsScore,15],
+      ['الإجابات',10*f(q[0])+10*f(q[2]),20],
+      ['تفسير النتيجة',10*f(q[1]),10],
+      ['التحدي العملي',tries?[0,10,7,4][Math.min(3,tries)]:0,10],
+      ['التطبيق في موقف جديد',10*f(q[3]),10]
+    ];
+    const total=Math.round(parts.reduce((a,p)=>a+p[1],0));
+    const byC={};
+    q.forEach(a=>{if(!a)return;const ok=a.correct&&a.attempts===1;byC[a.concept]=byC[a.concept]===undefined?ok:byC[a.concept]&&ok});
+    byC.obs=r.obsScore>=.8;byC.fair=unfair===0;byC.calc=calc===15;byC.newton2=tries===1;
+    return {parts,total,mastered:Object.keys(byC).filter(k=>byC[k]),reinforce:Object.keys(byC).filter(k=>!byC[k])};
+  },
+  log(r){const x=r.inr;
+    return {topic:'inertia',belt:x.belt.slice(0,10),runs:x.runs.slice(0,30),lanes:x.lanes.map(l=>({m:l.m,calc:(l.calc||[]).slice(0,3)})),
+      answers:r.answers.map(a=>({a:a&&a.log||[]})),obs:r.obs,chal:(r.chal||[]).slice(0,10),mistakes:r.log.slice(0,15)}},
+  next(){return 'جرّب في التدريب الحر: ما الدفعة التي تجعل العربة 1.5 kg بسرعة العربة 0.5 kg؟ وماذا يحدث للراكب لو زادت سرعة العربة؟'},
+  record(r){const x=r.inr;return {title:`${this.title}: دفعة ${x.Ff} N`,materials:['عربة 0.5 kg','أثقال 0.5 kg','راكب','حاجز','بوابتان ضوئيتان'],
+    result:x.lanes.map(l=>`${kg(l.m)} kg ← ${inV(x.Ff,l.m).toFixed(2)} m/s`).join('، '),
+    separation:x.lanes.map(l=>`${kg(l.m)} kg: حسب ${l.calc&&l.calc.length?l.calc[l.calc.length-1].toFixed(2):'—'} m/s`)}}
+};
+CONTENT.inertia=INERTIA;
+
+/* ---------- شاشة تجربة القصور الذاتي ---------- */
+function inGuideBox(){return `<div class="guide" role="status" aria-live="polite">
+  <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3h8M13 3v9L5.5 25.5A2.4 2.4 0 0 0 7.6 29h16.8a2.4 2.4 0 0 0 2.1-3.5L19 12V3"/><path d="M8.5 21h15" stroke="var(--glass)"/></svg>
+  <div class="gt"><span class="who">المرشد</span><p id="gtext"></p><div class="gact" id="gact"></div></div></div><div class="gnote" id="gnote" role="alert"></div>`}
+function inForceBar(id){return `<div class="seg" role="group" aria-label="قوة الدافع"><span>قوة الدافع:</span>${IN.forces.map(F=>`<button class="chip" data-f="${F}" aria-pressed="${F===APP.run.inF?'true':'false'}"><span class="num">${F} N</span></button>`).join('')}</div>`}
+function renderInert(){
+  const r=APP.run;
+  if(!r.inr) r.inr={belt:[],runs:[],lanes:[0,1,2].map(()=>({m:IN.CART,ran:false,done:false,calc:[],rec:false,F:null,t:null})),Ff:null,pred:null,weights:3};
+  r.inF=r.inF||4;
+  if(r.step==='safety') r.step='predict';
+  app.innerHTML=`<div id="cyc"></div>
+  <section class="bench">${inGuideBox()}
+    <h3 class="inh">الجزء الأول: العربة والراكب</h3>
+    <div class="frbar"><label class="frforces"><input type="checkbox" id="inBelt"> ربط الراكب بحزام الأمان</label>
+      <label class="frforces"><input type="checkbox" id="inF1" checked> إظهار القوى</label>
+      <button class="btn amber" id="inGoBelt">أطلق العربة نحو الحاجز</button></div>
+    <div class="beakerzone frzone"><div class="frscroll" dir="ltr"><canvas id="inA" aria-label="عربة وراكب نحو حاجز"></canvas></div></div><p class="swipe-hint">↔ اسحب المسار يمينًا ويسارًا لرؤيته كاملًا</p>
+    <div id="inPartB" class="hide-b">
+      <h3 class="inh" style="margin-top:16px">الجزء الثاني: الكتلة والقصور الذاتي</h3>
+      <div class="frbar">
+        <button class="item frblock" id="inWeight" aria-label="ثقل 0.5 كيلوجرام"><span class="blk" style="background:#5A5F68;border-color:#2B2E33;height:16px"></span><span class="nm">ثقل</span><span class="sub num">0.5 kg × <b id="inWleft">3</b></span></button>
+        <p class="note" style="margin:0;flex:1">اسحب الأثقال إلى العربات لتصبح كتلها مختلفة، ثم ادفع كل عربة بالقوة نفسها واقرأ زمنها بين البوابتين، واحسب سرعتها: السرعة = المسافة ÷ الزمن (ع = ف ÷ ز) (المسافة بين البوابتين 1.00 m).</p>
+        ${inForceBar()}
+      </div>
+      <div class="beakerzone frzone" data-zone="track" id="inz"><div class="frscroll" dir="ltr"><canvas id="inB" aria-label="ثلاث عربات وبوابتان ضوئيتان"></canvas></div></div><p class="swipe-hint">↔ اسحب المسارات يمينًا ويسارًا لرؤيتها كاملة</p>
+      <div class="tablewrap" style="margin-top:12px"><table class="frtab"><thead><tr><th>العربة</th><th>الكتلة</th><th>الدفعة</th><th>الإطلاق</th><th>زمن قطع 1.00 m</th><th>السرعة (احسبها)</th></tr></thead><tbody>
+      ${[0,1,2].map(i=>`<tr><td><b>${['أ','ب','ج'][i]}</b></td><td><span style="display:inline-flex;gap:6px;align-items:center"><button class="btn ghost sm-btn" id="iwm${i}" aria-label="إزالة ثقل">−</button><b class="num" id="im${i}">0.5 kg</b><button class="btn ghost sm-btn" id="iwp${i}" aria-label="إضافة ثقل">+</button></span></td>
+        <td id="iF${i}">—</td><td><button class="btn amber sm-btn" id="igo${i}">ادفع</button></td><td id="it${i}">—</td>
+        <td><span style="display:inline-flex;gap:6px;align-items:center"><input type="text" inputmode="decimal" autocomplete="off" class="frin" id="iv${i}" disabled placeholder="٠٫٠٠"> م/ث <button class="btn ghost sm-btn" id="irec${i}" disabled>سجّل</button><span id="iok${i}"></span></span></td></tr>`).join('')}
+      </tbody></table></div>
+    </div>
+  </section>
+  <div id="obsPanel" class="frobs"></div>
+  <div class="panel safety" style="margin-top:12px"><h3>قواعد السلامة</h3><ul>${INERTIA.safety.map(x=>`<li>${x}</li>`).join('')}</ul></div>`;
+  const beltLane=[{m:IN.beltM,belt:false}];
+  INSIM.mount($('#inA'),'belt',beltLane,{forces:true},(ev,i,res)=>{if(ev==='done')inBeltDone(res);else if(ev==='pos')frFollowEl('#inA',res)});
+  $('#inBelt').onchange=e=>{const l=INSIM.lanes()[0];if(l.phase==='push'||l.phase==='coast'||l.phase==='hit'){e.target.checked=!e.target.checked;return}l.belt=e.target.checked;INSIM.reset(0)};
+  $('#inF1').onchange=e=>INSIM.setOpt({forces:e.target.checked});
+  $('#inGoBelt').onclick=()=>{if(r.step==='predict')return note('اختر توقعك أولًا.');const l=INSIM.lanes()[0];if(INSIM.release(0,IN.beltF)){r.inr.belt.push(l.belt?'on':'off');$('#inGoBelt').disabled=true}};
+  frScrollInitEl('#inA');
+  inGuide();
+}
+function frScrollInitEl(sel){const cv=$(sel);const sc=cv&&cv.closest('.frscroll');if(sc)sc.scrollLeft=sc.scrollWidth}
+function frFollowEl(sel,x){const cv=$(sel);const sc=cv&&cv.closest('.frscroll');if(!sc||sc.scrollWidth<=sc.clientWidth+2)return;const k=cv.getBoundingClientRect().width/800;sc.scrollLeft=Math.max(0,x*k-sc.clientWidth/2)}
+function inBeltDone(res){
+  const r=APP.run;$('#inGoBelt').disabled=false;
+  note(res.belt?'الحزام أثّر في الراكب بقوة أوقفته مع العربة.':`استمر الراكب في الحركة وانزلق نحو ${fx2(res.d)} m أمام العربة.`);
+  inGuide();
+}
+function inShowPartB(){
+  const r=APP.run,box=$('#inPartB');if(!box||box.dataset.on)return;box.dataset.on='1';box.classList.remove('hide-b');
+  INSIM.stop();
+  // محاكٍ واحد: لوحة الجزء الأول تبقى على آخر إطار، وأدواتها تُعطَّل
+  ['#inGoBelt','#inBelt'].forEach(s=>{const e=$(s);if(e)e.disabled=true});
+  INSIM.mount($('#inB'),'gates',r.inr.lanes.map(l=>({m:l.m})),{forces:true},(ev,i,res)=>{if(ev==='timer')inTimer(i,res);else if(ev==='pos')frFollowEl('#inB',res)});
+  frScrollInitEl('#inB');
+  $$('[data-f]').forEach(b=>b.onclick=()=>{r.inF=+b.dataset.f;$$('[data-f]').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'))});
+  const addW=i=>{const L=r.inr.lanes[i],sl=INSIM.lanes()[i];if(sl.phase==='push'||sl.phase==='coast')return note('انتظر حتى تتوقف العربة.');
+    if(r.inr.weights<=0)return note('لا توجد أثقال متبقية. أزل ثقلًا من عربة أخرى بالزر −.');
+    if(L.m>=IN.CART+2*IN.W-1e-9)return note('هذه العربة تحمل أقصى عدد من الأثقال (2).');
+    L.m=Math.round((L.m+IN.W)*10)/10;r.inr.weights--;inMassChanged(i)};
+  draggable($('#inWeight'),{zones:'#inz',onDrop:(z,x,y)=>{const p=INSIM.toCanvas(x,y),i=INSIM.laneAt(p.x,p.y);if(i<0)return note('أفلت الثقل فوق إحدى العربات.');addW(i)},onTap:()=>note('اسحب الثقل وأفلته فوق العربة، أو انقر العربة نفسها، أو استخدم زر + في الجدول.')});
+  $('#inB').addEventListener('click',e=>{if(r.step!=='mass')return;const p=INSIM.toCanvas(e.clientX,e.clientY),i=INSIM.laneAt(p.x,p.y);if(i>=0&&Math.abs(p.x-(720-INSIM.lanes()[i].x*280))<40)addW(i)});
+  $$('.frin').forEach(x=>x.addEventListener('input',()=>{const v=arNum(x.value.replace(/[,،]/g,'.'));if(v!==x.value)x.value=v}));
+  [0,1,2].forEach(i=>{
+    $('#iwp'+i).onclick=()=>addW(i);
+    $('#iwm'+i).onclick=()=>{const L=r.inr.lanes[i],sl=INSIM.lanes()[i];if(sl.phase==='push'||sl.phase==='coast')return;if(L.m<=IN.CART+1e-9)return;L.m=Math.round((L.m-IN.W)*10)/10;r.inr.weights++;inMassChanged(i)};
+    $('#igo'+i).onclick=()=>inPush(i);
+    $('#irec'+i).onclick=()=>inRecord(i);
+    $('#iv'+i).addEventListener('keydown',e=>{if(e.key==='Enter')inRecord(i)});
+  });
+}
+function inMassChanged(i){
+  const r=APP.run,L=r.inr.lanes[i];INSIM.lanes()[i].m=L.m;INSIM.reset(i);
+  Object.assign(L,{ran:false,done:false,calc:[],rec:false,F:null,t:null});
+  $('#im'+i).textContent=`${kg(L.m)} kg`;$('#inWleft').textContent=r.inr.weights;$('#iF'+i).textContent='—';$('#it'+i).textContent='—';
+  $('#iv'+i).value='';$('#iv'+i).disabled=true;$('#irec'+i).disabled=true;$('#iok'+i).textContent='';inGuide();
+}
+function inPush(i){
+  const r=APP.run,L=r.inr.lanes[i];if(r.step!=='mass')return;
+  const others=r.inr.lanes.filter((x,j)=>j!==i&&x.ran&&x.F!==null);
+  if(others.some(x=>x.F!==r.inF)){r.mist.exec++;r.log.push(`دفع العربة بقوة مختلفة (${r.inF} N) عن بقية العربات`);
+    note(`انتبه: دفعت هذه العربة بقوة ${r.inF} N والعربات الأخرى بقوة مختلفة. هل تبقى المقارنة عادلة؟`,true)}
+  if(!INSIM.release(i,r.inF))return note('انتظر حتى تتوقف العربة.');
+  Object.assign(L,{ran:true,done:false,calc:[],rec:false,F:r.inF,t:null});r.inr.runs.push({m:L.m,F:r.inF});
+  $('#iF'+i).textContent=`${r.inF} N`;$('#it'+i).textContent='…';$('#iv'+i).value='';$('#iv'+i).disabled=true;$('#irec'+i).disabled=true;$('#iok'+i).textContent='';
+}
+function inTimer(i,res){const L=APP.run.inr.lanes[i];L.t=res.t;L.done=true;$('#it'+i).textContent=`${res.t.toFixed(2)} s`;$('#iv'+i).disabled=false;$('#irec'+i).disabled=false}
+function inRecord(i){
+  const r=APP.run,L=r.inr.lanes[i];if(!L.done||L.rec)return;
+  const v=parseNum($('#iv'+i).value);
+  if(!isFinite(v)||v<=0)return note('اكتب السرعة بالمتر لكل ثانية، مثل ١٫٠٠');
+  L.calc.push(Math.round(v*100)/100);const tv=inV(L.F,L.m);
+  if(Math.abs(v-tv)<=.05){L.rec=true;$('#iok'+i).textContent='✓';$('#iv'+i).disabled=true;$('#irec'+i).disabled=true}
+  else if(L.calc.length<3){r.log.push(`حساب سرعة غير دقيق للعربة ${kg(L.m)} kg: ${fx2(v)} m/s`);note(`راجع الحساب: السرعة = 1.00 m ÷ ${L.t.toFixed(2)} s.`,true)}
+  else{L.rec=true;$('#iv'+i).value=arNum(fx2(tv));$('#iok'+i).textContent=`الصحيح ${fx2(tv)}`;$('#iv'+i).disabled=true;$('#irec'+i).disabled=true}
+  inGuide();
+}
+function inGuide(){
+  const r=APP.run,t=$('#gtext'),act=$('#gact');if(!t)return;act.innerHTML='';
+  const cyc=$('#cyc');if(cyc)cyc.innerHTML=cycleHTML(r.step==='predict'?0:r.step==='observe'?2:1);
+  if(r.step==='predict'){
+    t.textContent='قبل أن تجرّب: إذا اصطدمت العربة بالحاجز وتوقفت فجأة، ماذا سيحدث للراكب غير المربوط؟';
+    act.innerHTML=[['fwd','يندفع إلى الأمام'],['stop','يتوقف مع العربة'],['back','يندفع إلى الخلف'],['down','يسقط في مكانه']].map(([k,l])=>`<button class="btn amber" data-pred="${k}" style="padding:7px 14px">${l}</button>`).join('');
+    $$('[data-pred]',act).forEach(b=>b.onclick=()=>{r.inr.pred=b.dataset.pred;r.step='belt';note('سجّلنا توقعك. جرّب الآن وتحقق منه.');inGuide()});return;
+  }
+  if(r.step==='belt'){
+    const b=r.inr.belt;
+    if(b.includes('on')&&b.includes('off')){r.step='mass';inShowPartB();return inGuide()}
+    t.textContent=!b.length?'أطلق العربة والراكب غير مربوط، وراقب ماذا يحدث له عند الحاجز.':b.includes('off')?'الآن اربط الراكب بحزام الأمان وأطلق العربة مرة أخرى. ما الفرق؟':'جرّب أيضًا والراكب غير مربوط.';return;
+  }
+  if(r.step==='mass'){
+    const L=r.inr.lanes,ms=new Set(L.map(l=>l.m));
+    if(ms.size<3){t.textContent='اسحب الأثقال إلى العربات حتى تصبح كتلها مختلفة: 0.5 و1.0 و1.5 kg.';return}
+    if(!L.every(l=>l.rec)){t.textContent='اختر قوة الدافع، وادفع كل عربة، واقرأ زمنها بين البوابتين، ثم احسب سرعتها وسجّلها. اجعل الدفعة نفسها للعربات الثلاث.';return}
+    const Fs=new Set(L.map(l=>l.F));
+    if(Fs.size!==1){t.textContent='دفعت العربات بقوى مختلفة، فلا نعرف هل الفرق بسبب الكتلة أم القوة. أعد دفع ما يلزم بالقوة نفسها.';return}
+    r.inr.Ff=L[0].F;t.textContent='سجّلت العربات الثلاث بالدفعة نفسها. قارن السرعات في الجدول، ثم سجّل ملاحظاتك.';
+    act.innerHTML='<button class="btn amber" id="inObsGo">سجّل ملاحظاتي</button>';$('#inObsGo').onclick=()=>{r.step='observe';inGuide();renderInObs()};return;
+  }
+  if(r.step==='observe')t.textContent='ماذا لاحظت؟ اختر ملاحظاتك تحت الجدول.';
+}
+function renderInObs(){
+  const r=APP.run,box=$('#obsPanel');
+  box.innerHTML=`<div class="obs"><h3>🔎 سجّل ملاحظاتك</h3><p>اختر كل ما شاهدته فعلًا في الجزأين.</p>
+    <div class="chips">${shuffle(Object.keys(IN_OBS)).map(k=>`<button class="chip" aria-pressed="false" data-obs="${k}">${IN_OBS[k]}</button>`).join('')}</div>
+    <button class="btn" id="obsDone" disabled>سجّلت ملاحظاتي</button></div>`;
+  $$('[data-obs]',box).forEach(ch=>ch.addEventListener('click',()=>{ch.setAttribute('aria-pressed',ch.getAttribute('aria-pressed')==='true'?'false':'true');$('#obsDone').disabled=!$$('[data-obs][aria-pressed="true"]',box).length}));
+  $('#obsDone').onclick=()=>{
+    r.obs=$$('[data-obs][aria-pressed="true"]',box).map(x=>x.dataset.obs);
+    const hits=r.obs.filter(o=>IN_OBS_SET.ok.includes(o)).length,wrong=r.obs.filter(o=>!IN_OBS_SET.ok.includes(o)&&!IN_OBS_SET.neutral.includes(o));
+    r.obsScore=Math.max(0,Math.min(1,hits/IN_OBS_SET.ok.length-.34*wrong.length));
+    if(wrong.length)r.log.push('ملاحظة غير دقيقة: '+wrong.map(o=>IN_OBS[o]).join('، '));
+    r.ctx={cls:'inertia'};r.qi=0;go('think');
+  };
+  box.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+/* ---------- التحدي العملي ---------- */
+function renderInChal(){
+  const r=APP.run;r.chal=r.chal||[];r.chalDone=false;r.inF=r.inF||4;
+  const target=inT(4,.5);
+  app.innerHTML=`${cycleHTML(4)}<section class="bench">
+    <div class="guide" role="status" aria-live="polite"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 29V4M8 5h16l-5 5 5 5H8"/></svg>
+      <div class="gt"><span class="who">التحدي العملي</span><p id="gtext">العربة الخفيفة (0.5 kg) قطعت المتر في ${target.toFixed(2)} s بدفعة 4 N. اختر الدفعة التي تجعل العربة 1.0 kg تقطعه في الزمن نفسه.</p><div class="gact" id="gact"></div></div></div>
+    <div class="gnote" id="gnote" role="alert"></div>
+    <div class="frbar">${inForceBar()}<button class="btn amber" id="chGo">ادفع</button></div>
+    <div class="beakerzone frzone"><div class="frscroll" dir="ltr"><canvas id="inC"></canvas></div></div><p class="swipe-hint">↔ اسحب المسار يمينًا ويسارًا لرؤيته كاملًا</p>
+  </section>`;
+  INSIM.mount($('#inC'),'gates',[{m:1.0}],{forces:true},(ev,i,res)=>{if(ev==='timer')inChalTimer(res);else if(ev==='pos')frFollowEl('#inC',res)});
+  frScrollInitEl('#inC');
+  $$('[data-f]').forEach(b=>b.onclick=()=>{r.inF=+b.dataset.f;$$('[data-f]').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'))});
+  $('#chGo').onclick=()=>{if(r.chalDone)return;if(INSIM.release(0,r.inF)){r.chal.push(r.inF);$('#chGo').disabled=true}};
+}
+function inChalTimer(res){
+  const r=APP.run,t=$('#gtext'),act=$('#gact');if(!t)return;$('#chGo').disabled=false;
+  const target=inT(4,.5),F=r.chal[r.chal.length-1];
+  if(Math.abs(res.t-target)<.01){r.chalDone=true;t.textContent=bidi(`أحسنت! قطعت العربة 1.0 kg المتر في ${res.t.toFixed(2)} s. الكتلة تضاعفت، فاحتجنا ضعف القوة (8 N) لنحصل على التغيير نفسه في الحركة.`);
+    act.innerHTML='<button class="btn amber" id="toLearn">إلى الخلاصة</button>';$('#toLearn').onclick=()=>go('learned');return}
+  t.textContent=bidi(`بدفعة ${F} N قطعت العربة المتر في ${res.t.toFixed(2)} s، ${res.t>target?'أبطأ':'أسرع'} من المطلوب (${target.toFixed(2)} s).${r.chal.length>=3?' تلميح: الكتلة صارت الضعف؛ فكم ضعفًا تحتاج من القوة؟':''}`);
+  if(r.chal.length>=4){act.innerHTML='<button class="btn" id="skipCh" style="background:transparent;border:1px solid currentColor;color:inherit;padding:6px 12px">تخطَّ التحدي</button>';
+    $('#skipCh').onclick=()=>{r.log.push('تخطى التحدي العملي');go('learned')}}
+}
+function renderInLearned(){
+  const r=APP.run,L=INERTIA.learned(null,r),x=r.inr;
+  const predName={fwd:'يندفع إلى الأمام',stop:'يتوقف مع العربة',back:'يندفع إلى الخلف',down:'يسقط في مكانه'}[x.pred]||'—';
+  const mine=r.obs.map(o=>`${IN_OBS_SET.ok.includes(o)||IN_OBS_SET.neutral.includes(o)?'✓':'✗'} ${IN_OBS[o]}`).join('، ');
+  app.innerHTML=`${cycleHTML(5)}<article class="learn">
+    <div class="lead"><h2>🎓 ماذا تعلمت من التجربة؟</h2><p>تعلمت أن ${L.lead}</p></div>
+    <section><h3>🔎 ماذا لاحظت؟</h3>
+      <p>توقعت أن الراكب غير المربوط «${predName}». ${x.pred==='fwd'?'وتحقق توقعك.':'والنتيجة أنه اندفع إلى الأمام. التجربة هي التي تحسم.'}</p>
+      <div class="tablewrap"><table><thead><tr><th>الكتلة</th><th>الدفعة</th><th>زمن قطع 1.00 m</th><th>السرعة (حسابك)</th><th>التسارع أثناء الدفع</th></tr></thead><tbody>
+      ${x.lanes.slice().sort((a,b)=>a.m-b.m).map(l=>`<tr><td class="num">${kg(l.m)} kg</td><td class="num">${x.Ff} N</td><td class="num">${inT(x.Ff,l.m).toFixed(2)} s</td><td class="num">${l.calc.length?fx2(l.calc[l.calc.length-1]):'—'} m/s</td><td class="num">${(x.Ff/l.m).toFixed(1)} m/s²</td></tr>`).join('')}
+      </tbody></table></div>
+      ${mine?`<p class="note" style="margin-top:8px">ملاحظاتك: ${mine}.</p>`:''}</section>
+    <section><h3>🧠 ماذا حدث؟</h3><p>${bidi(L.happened)}</p></section>
+    <section><h3>💡 لماذا حدث ذلك؟</h3><p>${bidi(L.why)}</p></section>
+    <section><h3>🚗 وفي الحياة</h3><p>عند الفرملة المفاجئة تتوقف السيارة، وجسمك يستمر في الحركة إلى الأمام بسبب قصوره الذاتي. حزام الأمان هو القوة التي توقفك مع السيارة.</p></section>
+    <div class="concept"><h3>🎯 المفهوم الذي تعلمته</h3><p>${L.concept}</p></div>
+    <div class="actions"><button class="btn" id="toApply">اختبر فهمك في موقف جديد</button></div>
+  </article>`;
+  $('#toApply').onclick=()=>go('apply');
+}
+
+/* =========================================================
+   🔗 الربط مع مساعد المعلم (بوابة الطالب + الـ Worker)
+   ========================================================= */
+async function portalApi(path,opts){
+  const r=await fetch(PORTAL.api+path,Object.assign({cache:'no-store'},opts||{}));
+  let j=null;try{j=await r.json()}catch(e){}
+  return {status:r.status,j};
+}
+function portalScreen(html){app.innerHTML=`<div class="learn" style="padding-top:28px">${html}</div>`}
+async function portalBoot(){
+  $$('.nav button').forEach(b=>b.style.display='none');
+  $('.nav').insertAdjacentHTML('beforeend','<a class="btn ghost" href="../" style="padding:6px 12px">العودة لبوابة الطالب</a>');
+  {const br=$('.brand');const nb=br.cloneNode(true);nb.removeAttribute('data-go');br.replaceWith(nb);}
+  if(!PORTAL.sid&&!PORTAL.name){
+    portalScreen(`<div class="lead"><h2>ادخل من بوابة الطالب</h2><p>سجّل دخولك في بوابة الطالب أولًا، ثم افتح التجربة من «طبّق وجرّب».</p></div><div class="actions"><a class="btn" href="../">فتح بوابة الطالب</a></div>`);return;
+  }
+  portalScreen('<p class="note">جارٍ تحميل التجربة…</p>');
+  let res;
+  try{res=await portalApi(`/lab-status?hw=${encodeURIComponent(PORTAL.hw)}&sid=${encodeURIComponent(PORTAL.sid)}&name=${encodeURIComponent(PORTAL.name)}`)}catch(e){res=null}
+  if(!res||!res.j||!res.j.ok){
+    const err=res&&res.j&&res.j.error;
+    const msg=err==='student not allowed'?'هذه التجربة ليست مخصصة لفصلك.':err==='no such activity'?'هذه التجربة لم تعد منشورة.':err==='student not recognized'?'لم نتعرّف على حسابك. سجّل دخولك من بوابة الطالب ثم أعد المحاولة.':'تعذّر تحميل التجربة. تحقّق من اتصالك ثم أعد المحاولة.';
+    portalScreen(`<div class="lead"><h2>لا يمكن فتح التجربة</h2><p>${msg}</p></div><div class="actions"><button class="btn" onclick="location.reload()">إعادة المحاولة</button><a class="btn ghost" href="../">بوابة الطالب</a></div>`);return;
+  }
+  const s=PORTAL.status=res.j; PORTAL.cfg=s.cfg||{topic:'mixtures',pair:null};
+  APP.student=s.name||PORTAL.name;
+  PORTAL.graded=!s.done||s.extra>0;
+  const pr=PORTAL.cfg.pair;
+  const today=new Date(Date.now()+3*3600000).toISOString().slice(0,10);
+  const closed=PORTAL.graded&&s.due&&s.due<today&&!(s.extra>0);
+  if(closed)PORTAL.graded=false;
+  const head=PORTAL.graded
+    ?`<div class="lead"><h2>🔬 ${esc(s.title||'تجربة المختبر')}</h2><p>${PORTAL.cfg.topic==='friction'?'تجربة اليوم: أثر خشونة السطح في حركة الأجسام.':PORTAL.cfg.topic==='inertia'?'تجربة اليوم: القصور الذاتي، من حزام الأمان إلى أثر الكتلة.':pr?`تجربة اليوم: ${n(pr[0])} و${n(pr[1])}.`:'اختر بنفسك مادتين واكتشف ما يحدث.'} هذه محاولة مقيَّمة ${s.extra>0?'(سمح لك معلمك بمحاولة إضافية)':'واحدة'}، ودرجتك من ${s.mx}.</p></div>
+      <section><h3>قبل أن تبدأ</h3><p>تُحسب درجتك من: السلامة، وتنفيذ الخطوات، ودقة ملاحظتك، وإجاباتك، والفصل العملي، والتطبيق. الخطأ لا يُنهي التجربة؛ ستحصل على تلميحات.</p></section>`
+    :`<div class="lead"><h2>🔬 ${esc(s.title||'تجربة المختبر')}</h2><p>${closed?'انتهى موعد هذه التجربة.':`سلّمت هذه التجربة${s.score!=null?` ونتيجتك ${s.score} من 100`:''}.`} يمكنك التدريب بحرية${PORTAL.cfg.topic!=='mixtures'?'':' على أي مادتين'}، ولن تُحتسب درجة.</p></div>`;
+  portalScreen(`${head}<div class="actions"><button class="btn amber" id="pgo">${PORTAL.graded?'ابدأ التجربة':'ابدأ التدريب الحر'}</button><a class="btn ghost" href="../">العودة لبوابة الطالب</a></div>`);
+  $('#pgo').onclick=async()=>{
+    if(PORTAL.graded){try{await portalApi('/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hw:PORTAL.hw,sid:PORTAL.sid,name:PORTAL.name})})}catch(e){}}
+    startRun(PORTAL.cfg.topic||'mixtures');
+  };
+}
+function labLog(r){
+  if(CONTENT[r.topic].log) return CONTENT[r.topic].log(r);
+  return {pair:[r.ctx.first,r.ctx.second],answers:r.answers.map(a=>({a:a&&a.log||[]})),obs:r.obs,mist:r.mist,
+    mistakes:r.log.slice(0,15),sep:{done:!!(r.sep&&r.sep.done),wrong:r.sep?r.sep.wrong:0,actions:r.sep?r.sep.actions.slice(0,40):[],steps:r.sep?r.sep.steps.slice(0,12):[]}};
+}
+async function renderPortalResult(r,sc,L){
+  const key='lab_pending_'+PORTAL.hw;
+  const body={hw:PORTAL.hw,sid:PORTAL.sid,name:PORTAL.name,dev:PORTAL.dev,log:labLog(r)};
+  try{localStorage.setItem(key,JSON.stringify(body))}catch(e){}
+  app.innerHTML=`${cycleHTML(7)}<article class="learn"><div class="lead"><h2>اكتشافك اليوم</h2><p>${L.lead}</p></div><section><h3>جارٍ إرسال تجربتك لمعلمك…</h3></section></article>`;
+  let res=null;try{res=await portalApi('/lab-submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})}catch(e){}
+  const j=res&&res.j;
+  if(!j||!j.ok){
+    app.innerHTML=`${cycleHTML(7)}<article class="learn"><div class="lead"><h2>لم تُرسل التجربة بعد</h2><p>${j&&j.error==='bad_lab_log'?'حدث خطأ في بيانات التجربة. أبلغ معلمك.':'تعذّر الاتصال بالخادم. تجربتك محفوظة على هذا الجهاز؛ اضغط «أعد الإرسال» عند توفر الاتصال.'}</p></div>
+      <div class="actions"><button class="btn amber" id="resend">أعد الإرسال</button></div></article>`;
+    $('#resend').onclick=()=>renderPortalResult(r,sc,L);return;
+  }
+  try{localStorage.removeItem(key)}catch(e){}
+  PORTAL.graded=false;
+  if(j.already){
+    app.innerHTML=`${cycleHTML(7)}<article class="learn"><div class="lead"><h2>سبق أن سلّمت هذه التجربة</h2><p>المحاولة المقيَّمة واحدة${j.score!=null?`، ونتيجتك المسجّلة ${j.score} من 100`:''}. ما فعلته الآن تدريب لا يغيّر درجتك.</p></div>
+      <div class="actions"><button class="btn" id="again">تدريب حر</button><a class="btn ghost" href="../">العودة لبوابة الطالب</a></div></article>`;
+    $('#again').onclick=()=>startRun(r.topic);return;
+  }
+  const lab=j.lab||{};
+  app.innerHTML=`${cycleHTML(7)}<article class="learn">
+    <div class="lead"><h2>اكتشافك اليوم</h2><p>${L.lead}</p></div>
+    <section><h3>وصلت تجربتك لمعلمك ✓</h3>
+      <div class="score"><b class="num">${j.grade}</b><span>من ${j.mx} (${j.score} من 100)، ${gradeWord(j.score)}</span></div>
+      <p class="note">${j.gain>0?`أُضيفت ${j.gain} نقطة لرصيد المتجر${j.mult>1?' (مضاعفة)':''}. رصيدك الآن ${j.pts}.`:'لم تتغير نقاطك.'}</p>
+      <div class="bars">${(lab.parts||[]).map(p=>`<div class="bar"><span>${esc(p[0])}</span><span class="tr"><i style="width:${Math.round(p[1]/p[2]*100)}%"></i></span><span class="num">${p[1]}/${p[2]}</span></div>`).join('')}</div>
+    </section>
+    <section><h3>مفاهيم أتقنتها</h3><div class="tags">${(lab.mastered||[]).map(x=>`<span class="tag">${esc(x)}</span>`).join('')||'<span class="note">ستظهر هنا عندما تجيب من أول محاولة.</span>'}</div>
+      ${(lab.reinforce||[]).length?`<h3 style="margin-top:12px">تحتاج إلى تعزيز</h3><div class="tags">${lab.reinforce.map(x=>`<span class="tag rf">${esc(x)}</span>`).join('')}</div>`:''}
+    </section>
+    <section><h3>تابع الاكتشاف</h3><p>${suggestNext(r)} يمكنك الآن التدريب الحر بلا درجة.</p></section>
+    <div class="actions"><button class="btn" id="again">تدريب حر</button><a class="btn ghost" href="../">العودة لبوابة الطالب</a></div>
+  </article>`;
+  $('#again').onclick=()=>startRun(r.topic);
+}
+
+/* تحويل كل نص يظهر للطالب: نصوص اللوحات (canvas) وعُقد الصفحة */
+(function(){
+  const P=CanvasRenderingContext2D.prototype,orig=P.fillText;
+  P.fillText=function(t,x,y,mw){const s=arNum(t);
+    if(s!==String(t)){const d=this.direction;this.direction='rtl';const r=mw===undefined?orig.call(this,s,x,y):orig.call(this,s,x,y,mw);this.direction=d;return r}
+    return mw===undefined?orig.call(this,s,x,y):orig.call(this,s,x,y,mw)};
+  const SKIP={SCRIPT:1,STYLE:1,TEXTAREA:1};
+  /* كل جدول يأخذ عناوين أعمدته في data-label لتظهر داخل البطاقة على الجوال */
+  const cardify=el=>{const ts=el.tagName==='TABLE'?[el]:el.querySelectorAll?[...el.querySelectorAll('table')]:[];
+    ts.forEach(t=>{const hs=[...t.querySelectorAll('thead th')].map(x=>x.textContent.trim());if(!hs.length)return;t.classList.add('cards');
+      t.querySelectorAll('tbody tr').forEach(tr=>[...tr.children].forEach((td,i)=>{if(hs[i]!==undefined&&td.dataset.label!==hs[i])td.dataset.label=hs[i]}))})};
+  const conv=n=>{
+    if(n.nodeType===3){const p=n.parentNode;if(!p||SKIP[p.nodeName])return;const v=n.nodeValue;if(/\d/.test(v)){const a=arNum(v);if(a!==v)n.nodeValue=a}}
+    else if(n.nodeType===1){if(SKIP[n.nodeName])return;if(n.nodeName==='INPUT'){if(n.placeholder&&/\d/.test(n.placeholder))n.placeholder=arNum(n.placeholder);return}
+      for(const ch of n.childNodes)conv(ch)}
+  };
+  new MutationObserver(ms=>{for(const m of ms){if(m.type==='characterData')conv(m.target);else m.addedNodes.forEach(n=>{conv(n);if(n.nodeType===1)cardify(n)})}})
+    .observe(document.body,{subtree:true,childList:true,characterData:true});
+  conv(document.body);cardify(document.body);
+})();
+
+if(PORTAL.hw) portalBoot(); else go('home');
+</script>
+</body>
+</html>

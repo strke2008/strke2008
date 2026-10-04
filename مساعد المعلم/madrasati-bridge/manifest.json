@@ -1,0 +1,76 @@
+{
+  "manifest_version": 3,
+  "name": "المعلم الذكي — جسر مدرستي",
+  "short_name": "جسر مدرستي",
+  "version": "0.15.12",
+  "description": "سحب الواجبات من منصة مدرستي وعرضها حسب الأسابيع ونقل نتائج الطلاب إلى مساعد المعلم.",
+  "default_locale": "ar",
+  "permissions": [
+    "alarms",
+    "notifications",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://*.pages.dev/*",
+    "http://localhost/*",
+    "http://127.0.0.1/*",
+    "https://schools.madrasati.sa/*"
+  ],
+  "background": {
+    "service_worker": "src/background.js"
+  },
+  "action": {
+    "default_title": "جسر مدرستي",
+    "default_popup": "popup/popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.pages.dev/*",
+        "http://localhost/*",
+        "http://127.0.0.1/*"
+      ],
+      "js": [
+        "src/dashboard-bridge.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": false
+    },
+    {
+      "matches": [
+        "https://schools.madrasati.sa/*"
+      ],
+      "js": [
+        "src/page-hook.js"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN",
+      "all_frames": false
+    },
+    {
+      "matches": [
+        "https://schools.madrasati.sa/*"
+      ],
+      "js": [
+        "src/utils.js",
+        "src/redact.js",
+        "src/schema.js",
+        "src/adapters/base.js",
+        "src/adapters/madrasati.js",
+        "src/content.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": false
+    }
+  ],
+  "icons": {
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "madrasati-bridge@almuallim.local",
+      "strict_min_version": "128.0"
+    }
+  }
+}
