@@ -284,7 +284,6 @@ function rdkWorksheetHTML(act, opts){
 /* ═══ نهاية عُدّة الفهم القرائي المشتركة ═══ */
 
 const READING_STAGE_LABEL={pre:'قبل القراءة',during:'أثناء القراءة',post:'بعد القراءة',apply:'التطبيق'};
-const READING_TYPE_LABEL={quiz:'اختيار من متعدد',truefalse:'صح/خطأ',fillblank:'أكمل الفراغ'};
 
 /* طول النص وعدد فقراته حسب المرحلة: نص طويل على طالب ابتدائي يقتل الفهم قبل أن يبدأ */
 function readingAILengthRule(stage){
@@ -713,11 +712,6 @@ function gameAdapter(type) {
   return GAME_SOURCE_ADAPTERS[key] || null;
 }
 
-function gameSourceQuestionCount(type, requestedCount) {
-  const adapter = gameAdapter(type);
-  const count = Math.max(2, Number(requestedCount) || 2);
-  return adapter ? Math.min(adapter.max, count) : count;
-}
 
 function buildGameFromQuestionBank(type, questions, requestedCount) {
   const adapter = gameAdapter(type);
@@ -743,17 +737,6 @@ function normalizeGameType(type) {
   return GAME_SOURCE_ADAPTERS[key] ? key : 'memory';
 }
 
-function quizQuestionsFromBank(questions) {
-  return (Array.isArray(questions) ? questions : [])
-    .filter(q => q && q.t === 'q' && Array.isArray(q.o) && q.o.length === 4 &&
-      Number.isInteger(q.a) && q.a >= 0 && q.a < q.o.length)
-    .map(q => ({
-      type: 'quiz',
-      q: q.q,
-      opts: q.o.slice(),
-      answer: q.o[q.a]
-    }));
-}
 
 function normalAIPdfTextHealthy(text){
   if(!text) return {ok:false,reason:'فارغ'};

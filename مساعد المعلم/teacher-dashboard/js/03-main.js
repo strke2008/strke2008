@@ -74,9 +74,8 @@ const CARDS = [
 
 /* ═══════════════ أدوات واجهة ═══════════════ */
 let toastT;
-/* استيراد الأسماء من نسخة تطبيق الألعاب */
-let pendingGamesImport = null;
 
+/* استيراد الأسماء من نسخة تطبيق الألعاب */
 function importFromGames(ev){
   const file=ev.target.files?.[0];
   ev.target.value='';
@@ -398,45 +397,7 @@ function openGamesImportReview(pending,duplicates,missingClass){
 }
 
 
-function cancelGamesImport() {
-  pendingGamesImport = null;
-  closeModal();
-  toast('تم إلغاء الاستيراد');
-}
 
-function confirmGamesImport() {
-  if (!pendingGamesImport) return;
-
-  const importData = pendingGamesImport;
-  pendingGamesImport = null;
-  closeModal();
-
-  if (!importData.students.length) {
-    toast('لا يوجد طلاب جدد للإضافة');
-    return;
-  }
-
-  const existingKeys = new Set(
-    STUDENTS.map(student => `${normAr(student.name)}|${normAr(student.cls || '')}`)
-  );
-
-  const studentsToAdd = importData.students.filter(student => {
-    const key = `${normAr(student.name)}|${normAr(student.cls || '')}`;
-    if (existingKeys.has(key)) return false;
-    existingKeys.add(key);
-    return true;
-  });
-
-  if (!studentsToAdd.length) {
-    toast('كل الطلاب موجودون مسبقاً', '');
-    return;
-  }
-
-  STUDENTS.push(...studentsToAdd);
-  save(K.st, STUDENTS);
-  renderAll();
-  toast(`تمت إضافة ${studentsToAdd.length} طالب بعد موافقتك`, 'good');
-}
 
 function toast(msg, kind) {
   const t = document.getElementById('toast');
@@ -553,19 +514,6 @@ document.querySelectorAll('.tab,.mobile-nav button[data-tab]').forEach(t => t.on
 function compToday(){
   const d=new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
-function compClamp(v,min,max){ return Math.max(min,Math.min(max,v)); }
-function compRate(obj,sid,goodStatus){
-  let total=0,good=0;
-  Object.keys(obj||{}).forEach(d=>{
-    const r=obj?.[d]?.[sid];
-    if(!r) return;
-    const status=typeof r==='string'?r:r.status;
-    if(status==null || status==='') return;
-    total++;
-    if(String(status)===goodStatus) good++;
-  });
-  return {total,good,rate:total?good/total:0};
 }
 /* ═══════════════════════════════════════════════════════════════
    الدرجات لم تعد تُحسب هنا. تصل جاهزة من الـ Worker عبر /grades،
@@ -1964,7 +1912,6 @@ async function renderComprehensive(force=false){
    وهذا يريك ماذا حدث هذا الأسبوع بالضبط. الأسبوع يبدأ الأحد.
    ══════════════════════════════════════════ */
 let WK_OFFSET = 0;
-const WK_DAYS = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
 
 function wkStartSunday(offset){
   const d = new Date();
@@ -2188,10 +2135,6 @@ function setCaMode(m){
 const CA_LEVELS = ['ممتاز','جيد جدًا','جيد','يحتاج متابعة','يحتاج دعم'];
 const CA_COLOR  = { 'ممتاز':'#0E5B4E','جيد جدًا':'#2E7D64','جيد':'#7A8B45','يحتاج متابعة':'#B4740E','يحتاج دعم':'#B3261E' };
 
-function caBar(pct, color){
-  return `<div style="background:#EEF2F1;border-radius:6px;height:9px;overflow:hidden">
-    <div style="width:${Math.max(0,Math.min(100,pct))}%;height:100%;background:${color}"></div></div>`;
-}
 
 async function renderCompAnalysis(force=false){
   const state=document.getElementById('ca-state'), body=document.getElementById('ca-body');
@@ -2395,8 +2338,6 @@ function labelTableCells(root){
     });
   });
 }
-/* تُنادى بعد كل رسم تقرير — نقطة واحدة تكفي لكل الكشوف */
-function labelAllReports(){ setTimeout(()=>labelTableCells(document), 0); }
 
 /* 🖨️ محرك موحّد للكشوف الثلاثة فقط: نفس المسار في الجوال والكمبيوتر.
    يعزل اللوحة المطلوبة، يلغي تصغير الجوال، ويحدد A4 والاتجاه وقت الطباعة. */
@@ -3014,13 +2955,6 @@ const EX_PAGE_H = 297 * EX_MM;
 const EX_PAD_TOP = 8 * EX_MM, EX_PAD_BOTTOM = 7 * EX_MM;
 const EX_INNER_H = EX_PAGE_H - EX_PAD_TOP - EX_PAD_BOTTOM;
 
-const EX_FONTS = {
-  trad:   `"Traditional Arabic","Simplified Arabic","Sakkal Majalla","Noto Naskh Arabic","Times New Roman",serif`,
-  naskh:  `"Noto Naskh Arabic","Traditional Arabic","Scheherazade New",serif`,
-  modern: `"Tajawal","Readex Pro",Tahoma,sans-serif`
-};
-/* الخط التقليدي يرسم أصغر من غيره بفارق ملحوظ، فيُعوَّض بمقاس أعلى */
-const EX_SCALE = { trad:{s:1.18,m:1.30,l:1.44}, naskh:{s:0.96,m:1.06,l:1.18}, modern:{s:0.9,m:1.0,l:1.1} };
 
 function examDigits(v, hindi){
   return hindi ? String(v).replace(/[0-9]/g, d => '٠١٢٣٤٥٦٧٨٩'[d]) : String(v);
@@ -4127,23 +4061,6 @@ function printComprehensive(){
   });
 }
 
-function openHwMore(id){
-  const h = HW.find(x=>x.id===id); if(!h) return;
-  const hasSubs=Object.keys(h.subs||{}).length>0;
-  openModal(`
-    <div class="activity-report-head">
-      <div class="activity-report-heading">
-        <span class="activity-report-kicker">📊 تقرير النشاط</span>
-        <h2>${esc(h.title)}</h2>
-    <div class="quick-actions">
-      <button class="btn ghost" onclick="closeModal();pullResults('${id}')">🔄 تحديث النتائج</button>
-      ${hasSubs ? `<button class="btn ghost" onclick="closeModal();remedialHw('${id}')">🩹 نشاط علاجي من الأخطاء</button>` : ''}
-      <button class="btn ghost" onclick="closeModal();dupHw('${id}')">نسخ النشاط لفصل آخر</button>
-      <button class="btn ghost" onclick="closeModal();openHwForm('${id}')">تعديل النشاط</button>
-      <button class="btn pen" onclick="closeModal();delHw('${id}')">حذف النشاط</button>
-    </div>
-    <div class="modal-foot"><button class="btn" onclick="closeModal()">إغلاق</button></div>`);
-}
 
 /* ═══════════════ الطلاب ═══════════════ */
 function classes() {
@@ -4182,11 +4099,6 @@ function filtered() {
   });
 }
 
-// يحدّث عرض الطلاب أياً كانت الواجهة المستخدمة
-function refreshStudents(){
-  if(typeof renderStudentsCenter === 'function') renderStudentsCenter();
-  if(typeof renderStudents === 'function') renderStudents();
-}
 
 function clearSearch(){
   const box = document.getElementById('students-center-search') || document.getElementById('st-search');
@@ -4379,17 +4291,6 @@ function renderDevWarn(){
     </div>`;
 }
 
-function award(id, n) {
-  const s = byId(id); if (!s) return;
-  s.points = Math.max(0, (s.points || 0) + n);
-  save(K.st, STUDENTS); renderStudents(); updateMeta();
-  // زامن الخادم ليرى الطالب رصيده الصحيح
-  const api = getApi(), tok = getTok();
-  if(api && tok){
-    fetch(api + '/adjust', { method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ t: tok, name: s.name, delta: n }) }).catch(()=>{});
-  }
-}
 
 function refreshCurrentViewAfterStudentChange(){
   // ⚡ تحديث أخف: نعيد رسم الواجهة الحالية فقط.
@@ -4717,19 +4618,6 @@ const looksLikeName = v => {
   return letters >= 4 && t.split(/\s+/).length >= 2; // كلمتان فأكثر
 };
 
-// يختار عمود الأسماء من جدول
-function pickNameColumn(rows){
-  if(!rows.length) return [];
-  const width = Math.max(...rows.map(r=>r.length));
-  let best = -1, bestScore = 0;
-  for(let c=0;c<width;c++){
-    let score = 0;
-    rows.forEach(r=>{ if(looksLikeName(r[c])) score++; });
-    if(score > bestScore){ bestScore = score; best = c; }
-  }
-  if(best < 0) return [];
-  return rows.map(r=>String(r[best]||'').trim()).filter(looksLikeName);
-}
 
 async function importStudentsFile(ev){
   const f = ev.target.files && ev.target.files[0];
@@ -4786,9 +4674,6 @@ async function importStudentsFile(ev){
   }
 }
 
-async function readExcelNames(file){
-  return (await readExcelStudentRecords(file)).map(x=>x.name);
-}
 
 async function readExcelStudentRecords(file){
   await loadLib('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
@@ -5746,14 +5631,6 @@ async function doDelHw(id) {
   }
 }
 
-/* رصد التسليم — يمنح النقاط تلقائياً */
-/* 📄 تقرير نشاط واحد (زر «التقرير» على البطاقة) */
-function actTitle(q, i){
-  const k=q.t||'q';
-  const t = (k==='a') ? ('رتّب: '+(q.w||'')) : (k==='s') ? ('رتّب جملة: '+String(q.s||'').slice(0,30))
-          : (k==='m') ? ('وصّل: '+((q.p||[])[0]||[''])[0]) : (q.q||'');
-  return (i+1) + '. ' + t;
-}
 
 /* 🔎 مهمة التصحيح من تقرير النشاط: من نتيجته أقل من 50% أو أنهى بسرعة مريبة.
    الطالب يعيد حل أخطائه فقط بمهلة قراءة يفرضها الخادم، وتظهر نتيجته هنا وتصلك إشعارًا. */
@@ -6020,20 +5897,6 @@ function copyLate(id){
     .then(()=>toast(`نُسخ ${late.length} اسم`,'good')).catch(()=>toast('تعذّر النسخ','bad'));
 }
 
-function copyReport(id){
-  const h = HW.find(x=>x.id===id); if(!h) return;
-  const qs = h.qs||[];
-  const lines = ['تقرير: '+h.title, ''];
-  Object.entries(h.subs||{}).forEach(([sid,v])=>{
-    const st = byId(sid); if(!st) return;
-    const d = String(v.d||''); const bad=[];
-    if(d.length===qs.length) for(let i=0;i<d.length;i++) if(d[i]==='0') bad.push(i+1);
-    lines.push(`${st.name}: ${v.correct||0}/${v.total||qs.length}` + (bad.length?` — أخطأ في ${bad.join('، ')}`:' — كامل'));
-  });
-  const txt = lines.join('\n');
-  navigator.clipboard.writeText(txt).then(()=>toast('نُسخ التقرير','good'))
-    .catch(()=>toast('تعذّر النسخ','bad'));
-}
 
 /* ═══════════════ إعدادات الاتصال ═══════════════ */
 /* عدّل العنوانين هنا فقط عند تغيير الروابط */
@@ -6601,26 +6464,6 @@ function renderDiagPanel(){
     </div>`;
 }
 
-/* نسخ أسماء مجموعة */
-function copyDiagReport(){
-  const cls = (document.getElementById('dg-class')||{}).value || '__all__';
-  const hid = (document.getElementById('dg-hw')||{}).value || '';
-  const D = diagBuild(hid, cls);
-  if(!D || !D.done){ toast('لا بيانات','bad'); return; }
-  const L = [`التقرير التشخيصي — ${D.h.title}`, `الفصل: ${hwClsLabel(D.h)}`,
-             `أجاب ${D.done} من ${D.pool.length} · متوسط ${D.avg}%`, '', 'مجموعات المستوى:'];
-  DIAG_BANDS.forEach(b=>{
-    const c = D.counts[b.name]||0;
-    if(c) L.push(`- ${b.name}: ${c} طالب — ${b.act}`);
-  });
-  const weak = D.gaps.filter(g=>g.pct<50);
-  if(weak.length){
-    L.push('', 'فجوات حادّة (ابدأ بها):');
-    weak.forEach(g=>L.push(`- ${g.title} — ${g.pct}% (${g.missed} أخفقوا)`));
-  }
-  navigator.clipboard.writeText(L.join('\n')).then(()=>toast('نُسخ التقرير','good'))
-    .catch(()=>toast('تعذّر النسخ','bad'));
-}
 
 /* 🧠 لوحة تقرير أنماط التعلّم */
 function styFill(){
@@ -6835,12 +6678,6 @@ function styFilterList(){
   });
 }
 
-function copyStylesReport(){
-  const hid = (document.getElementById('sty-hw')||{}).value || '';
-  const h = styleHW().find(x=>x.id===hid);
-  if(!h){ toast('لا اختبار مختار','bad'); return; }
-  copyStyles(h.id);
-}
 
 /* 🧠 حساب نمط الطالب من إجاباته */
 function normalizeLearningStyle(value){
@@ -6966,24 +6803,6 @@ function openStylesReport(id){
     </div>`);
 }
 
-function copyStyles(id){
-  const h = HW.find(x=>x.id===id); if(!h) return;
-  const pool = hwPool(h);
-  const L = [`أنماط التعلّم — ${h.title}`, `الفصل: ${hwClsLabel(h)}`, ''];
-  const counts = Object.fromEntries(STYLE_ORDER.map(k=>[k,0]));
-  pool.forEach(s=>{
-    const t = styleTally(h, s.id);
-    if(!t) return;
-    counts[t.top] = (counts[t.top]||0)+1;
-    L.push(`${s.name}: ${t.top} (${t.topPct}%)`);
-  });
-  const n = Object.values(counts).reduce((a,b)=>a+b,0);
-  L.push('', 'التوزيع:');
-  Object.entries(counts).sort((a,b)=>b[1]-a[1])
-    .forEach(([k,c])=>L.push(`- ${k}: ${c} طالب (${Math.round(c/n*100)}%)`));
-  navigator.clipboard.writeText(L.join('\n'))
-    .then(()=>toast('نُسخ التقرير','good')).catch(()=>toast('تعذّر النسخ','bad'));
-}
 
 /* 🧠 ملف أنماط التعلّم: كل خيار يمثّل نمطاً بترتيب ثابت */
 const STYLE_ORDER = ['بصري','سمعي','حركي','قرائي/كتابي'];
@@ -8077,11 +7896,6 @@ async function republishSelectedHw(){
   await republishHwBatch(items);
 }
 
-async function republishAllHw(){
-  const items=HW.filter(h=>h.published && activityReady(h));
-  if(!items.length){ toast('لا توجد أنشطة منشورة قابلة للتحديث','bad'); return; }
-  await republishHwBatch(items);
-}
 
 function deleteSelectedHw(){
   const items=HW.filter(h=>HW_REPUBLISH_SELECTED.has(h.id));
@@ -9440,41 +9254,7 @@ function liveRowKey(hw, row){
   return liveSubmissionId(hw, row);
 }
 
-function liveRowTime(row){
-  const at = row?.at;
-  if(at !== undefined && at !== null && at !== ''){
-    const numeric = Number(at);
-    if(Number.isFinite(numeric)){
-      return numeric < 1e12 ? numeric * 1000 : numeric;
-    }
 
-    const parsed = Date.parse(String(at));
-    if(Number.isFinite(parsed)) return parsed;
-  }
-
-  const d = row?.d;
-  const parsed = Date.parse(String(d || ''));
-  if(Number.isFinite(parsed)) return parsed;
-
-  return Date.now();
-}
-
-function liveBuildLocalSubmission(hw, row){
-  const total = Math.max(1, Number(row?.total) || 1);
-  const correct = Math.max(0, Number(row?.correct) || 0);
-  const pts = Math.round((hw.pts || 0) * correct / total);
-
-  return {
-    online:true,
-    correct,
-    total,
-    pts,
-    d:row?.d || '',
-    dev:row?.dev || '',
-    secs:Number(row?.secs) || 0,
-    at:liveRowTime(row)
-  };
-}
 
 function addLiveRowToLocal(hw, row){
   const name = String(row?.name || '').trim();
@@ -9555,82 +9335,9 @@ function liveSaveKnown(){
 }
 
 
-function submissionIdentity(hw, row){
-  const explicit =
-    row?.submissionId ??
-    row?.submission_id ??
-    row?.attemptId ??
-    row?.attempt_id ??
-    row?.resultId ??
-    row?.result_id;
 
-  if(explicit !== undefined && explicit !== null && String(explicit).trim()){
-    return `${hw.id}|submission:${String(explicit).trim()}`;
-  }
 
-  const name = String(row?.name || '').trim();
-  const time = normalizeSubmissionTime(row?.at ?? row?.d);
 
-  return `${hw.id}|student:${name}|time:${time}`;
-}
-
-function normalizeSubmissionTime(value){
-  if(value === undefined || value === null || value === '') return '';
-
-  const numeric = Number(value);
-  if(Number.isFinite(numeric)){
-    const ms = numeric < 1e12 ? numeric * 1000 : numeric;
-    return String(Math.floor(ms / 60000));
-  }
-
-  const parsed = Date.parse(String(value));
-  if(Number.isFinite(parsed)){
-    return String(Math.floor(parsed / 60000));
-  }
-
-  return String(value).trim().replace(/\s+/g, ' ');
-}
-
-function submissionTimestamp(row, fallback){
-  const value = row?.at;
-
-  if(value !== undefined && value !== null && value !== ''){
-    const numeric = Number(value);
-    if(Number.isFinite(numeric)){
-      const ms = numeric < 1e12 ? numeric * 1000 : numeric;
-      return ms;
-    }
-
-    const parsed = Date.parse(String(value));
-    if(Number.isFinite(parsed)) return parsed;
-  }
-
-  const parsedDate = Date.parse(String(row?.d || ''));
-  if(Number.isFinite(parsedDate)) return parsedDate;
-
-  return Number(fallback) || 0;
-}
-
-function submissionFingerprint(hw, row){
-  const explicit =
-    row?.submissionId ??
-    row?.submission_id ??
-    row?.attemptId ??
-    row?.attempt_id ??
-    row?.resultId ??
-    row?.result_id;
-
-  if(explicit !== undefined && explicit !== null && String(explicit).trim()){
-    return `${hw.id}|id:${String(explicit).trim()}`;
-  }
-
-  const name = String(row?.name || '').trim();
-  const time = normalizeSubmissionTime(row?.at ?? row?.d);
-  const correct = Number(row?.correct ?? 0);
-  const total = Number(row?.total ?? 0);
-
-  return `${hw.id}|${name}|${time}|${correct}/${total}`;
-}
 
 // 🔔 يقرأ عدّاد التغيير — قراءة واحدة بدل مئات
 let _lastRev = null;
@@ -9815,7 +9522,6 @@ const fmtDate = ts => { try{ const d=new Date(ts);
   return d.getFullYear()+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0'); }catch(e){ return ''; } };
 const fmtTime = ts => { try{ const d=new Date(ts); return d.toLocaleTimeString('ar-SA-u-nu-latn',{hour:'2-digit',minute:'2-digit'}); }catch(e){ return ''; } };   // أرقام موحّدة مع التاريخ
 
-let _gClassInit = false;
 function gFillClasses(){
   const sel = document.getElementById('g-class');
   if(!sel) return;
@@ -9960,16 +9666,6 @@ function pinOf(name){
   if(sid && PINS[sid]) return PINS[sid];
   if(PINS[name]) return PINS[name];
   const k = ix.byPinKey.get(nn);
-  return k ? PINS[k] : '';
-}
-function pinOfLegacy(name){
-  // الرموز الجديدة تُخزّن بمعرّف الطالب، مع دعم الرموز القديمة المخزنة بالاسم.
-  const st = STUDENTS.find(s => normAr(s.name) === normAr(name));
-  const sid = st ? String(st.id || '').trim() : '';
-  if(sid && PINS[sid]) return PINS[sid];
-  if(PINS[name]) return PINS[name];
-  const nn = normAr(name);
-  const k = Object.keys(PINS).find(x=>normAr(x)===nn);
   return k ? PINS[k] : '';
 }
 
@@ -10514,22 +10210,6 @@ function printStudentReport(sid){
   setTimeout(()=>{ window.print(); setTimeout(done2, 1500); }, 120);
 }
 
-function copyStudentReport(sid){
-  const st = byId(sid); if(!st) return;
-  const hws = gradedHW().filter(h => hwFor(h, st.cls)).slice().sort((a,b)=>(a.at||0)-(b.at||0));
-  const L = [`تقرير الطالب: ${st.name}`, `الفصل: ${st.cls||'—'}`, ''];
-  let got=0, max=0;
-  hws.forEach(h=>{
-    const hMax = h.max||20; max += hMax;
-    const v = (h.subs||{})[st.id];
-    if(!v){ L.push(`${h.title}: لم يسلّم`); return; }
-    const g = Math.round(hMax*(v.correct||0)/Math.max(1,v.total||1)); got += g;
-    L.push(`${h.title}: ${g}/${hMax} (${v.correct}/${v.total} مهمة)${v.at?' — '+fmtDate(v.at):''}`);
-  });
-  L.push('', `المجموع: ${got} من ${max} (${max?Math.round(got/max*100):0}%)`);
-  navigator.clipboard.writeText(L.join('\n'))
-    .then(()=>toast('نُسخ تقرير الطالب','good')).catch(()=>toast('تعذّر النسخ','bad'));
-}
 
 /* ↕️ حالة الفرز في كشف الدرجات */
 let GSORT = { key:'grade', dir:'desc' };   // grade | name | pct | coins | done | h:<id>
@@ -10634,39 +10314,6 @@ function gData(){
 
 let GSELECTED = new Set();
 
-function gVisibleIds(){
-  return [...document.querySelectorAll('.g-student-check')].map(x=>x.value);
-}
-function gSelectAllVisible(){
-  gVisibleIds().forEach(id=>GSELECTED.add(id));
-  updateGradeSelection();
-}
-function gToggleAllVisible(checked){
-  gVisibleIds().forEach(id=>checked ? GSELECTED.add(id) : GSELECTED.delete(id));
-  updateGradeSelection();
-}
-function gClearSelection(){
-  GSELECTED.clear();
-  updateGradeSelection();
-}
-function updateGradeSelection(){
-  document.querySelectorAll('.g-student-check').forEach(x=>x.checked=GSELECTED.has(x.value));
-  const n=GSELECTED.size;
-  const el=document.getElementById('g-selected-count');
-  if(el) el.textContent=`${n} محدد`;
-  const all=document.getElementById('g-check-all');
-  const ids=gVisibleIds();
-  if(all) all.checked=ids.length>0 && ids.every(id=>GSELECTED.has(id));
-}
-function openSelectedStudentReports(){
-  const ids=[...GSELECTED];
-  if(!ids.length){toast('حدد طالبًا واحدًا على الأقل','bad');return;}
-  if(ids.length===1){openStudentReport(ids[0]);return;}
-  const names=ids.map(id=>byId(id)?.name).filter(Boolean);
-  navigator.clipboard.writeText(names.join('\n'))
-    .then(()=>toast(`نُسخت أسماء ${names.length} طلاب`,'good'))
-    .catch(()=>toast('تعذّر النسخ','bad'));
-}
 
 function renderGrades(){
   gFillClasses();
@@ -12571,13 +12218,6 @@ async function grantExtraAttemptAllClasses(hwId){
   openMissingSummary(hwId);
 }
 
-function toggleMissingNames(button){
-  const row=button.closest('.missing-class-row');
-  const names=row?.querySelector('.missing-class-names');
-  if(!names) return;
-  const opened=names.classList.toggle('on');
-  button.textContent=opened ? 'إخفاء الطلاب' : 'عرض الطلاب';
-}
 
 function renderDashboardAlerts(alerts){
   const box=document.getElementById('dash-alerts');
@@ -13821,7 +13461,6 @@ function createDefaultGoal(){
   openGoals();
 }
 
-function openGoalsFromDashboard(){ openGoals(); }
 
 function toggleUiTheme(){
   UI_THEME=UI_THEME==='dark'?'light':'dark';
