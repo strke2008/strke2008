@@ -1248,7 +1248,6 @@ function askConfirm(msg, opts){
     setTimeout(()=>el.querySelector('[data-ask="1"]')?.focus(), 40);
   });
 }
-function askAlert(msg, title){ return askConfirm(msg, {title:title||'تنبيه', yes:'حسنًا', no:null}).then(()=>{}); }
 const KSA_TZ='Asia/Riyadh';
 const today=()=>{
   try{
@@ -1257,11 +1256,6 @@ const today=()=>{
     const d=new Date(Date.now()+3*3600*1000);      // بديل: غرينتش + ٣ ساعات
     return d.toISOString().slice(0,10);
   }
-};
-const ksaNow=()=>{
-  try{
-    return new Intl.DateTimeFormat('ar-SA-u-ca-gregory',{timeZone:KSA_TZ,dateStyle:'medium',timeStyle:'short'}).format(new Date());
-  }catch(e){ return today(); }
 };
 function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(window.__tt);window.__tt=setTimeout(()=>e.classList.remove('show'),1600)}
 function ensure(){data.participation=data.participation||{};data.homework=data.homework||{};data.learning=data.learning||{};data.behavior=Array.isArray(data.behavior)?data.behavior:[];data.certificates=Array.isArray(data.certificates)?data.certificates:[];data.behaviorTemplates=Array.isArray(data.behaviorTemplates)?data.behaviorTemplates:[];data.academic=data.academic&&typeof data.academic==='object'?data.academic:{year:'',currentSemester:1,semesters:{}};data.academic.year=String(data.academic.year||'');data.academic.currentSemester=Number(data.academic.currentSemester)===2?2:1;data.academic.semesters=data.academic.semesters&&typeof data.academic.semesters==='object'?data.academic.semesters:{};for(const sn of ['1','2']){const sem=data.academic.semesters[sn]=data.academic.semesters[sn]&&typeof data.academic.semesters[sn]==='object'?data.academic.semesters[sn]:{};sem.status=sem.status==='closed'?'closed':'open';sem.closedAt=Number(sem.closedAt)||0;sem.activePeriod=Number(sem.activePeriod)===2?2:1;sem.periodStatus=sem.periodStatus&&typeof sem.periodStatus==='object'?sem.periodStatus:{};sem.periodSnapshots=sem.periodSnapshots&&typeof sem.periodSnapshots==='object'?sem.periodSnapshots:{};sem.periods=sem.periods&&typeof sem.periods==='object'?sem.periods:{};for(const pn of ['1','2']){const v=sem.periods[pn]&&typeof sem.periods[pn]==='object'?sem.periods[pn]:{};sem.periods[pn]={start:String(v.start||''),end:String(v.end||''),startAt:Number(v.startAt)||0,endAt:Number(v.endAt)||0}}}data.examGrades=data.examGrades&&typeof data.examGrades==='object'?data.examGrades:{1:{},2:{}};if(data.examGrades['1']&&data.examGrades['1']['1']){}else{data.examGrades={1:{1:data.examGrades['1']||{},2:data.examGrades['2']||{}},2:{1:{},2:{}}}}data.examBooks=data.examBooks&&typeof data.examBooks==='object'?data.examBooks:{};for(const sn of ['1','2']){data.examBooks[sn]=data.examBooks[sn]&&typeof data.examBooks[sn]==='object'?data.examBooks[sn]:{};for(const pn of ['1','2']){const b=data.examBooks[sn][pn];if(!b||typeof b!=='object'){data.examBooks[sn][pn]={tests:[],scores:{}};}else{b.tests=Array.isArray(b.tests)?b.tests:[];b.scores=b.scores&&typeof b.scores==='object'?b.scores:{};}}}if((!data.examBooks['1']['1'].tests.length)&&data.examGrades&&typeof data.examGrades==='object'){for(const sn of ['1','2'])for(const pn of ['1','2']){const legacy=data.examGrades?.[sn]?.[pn]??((sn==='1')?data.examGrades?.[pn]:null);if(legacy&&typeof legacy==='object'&&Object.keys(legacy).length){const testId='legacy-exam';data.examBooks[sn][pn]={tests:[{id:testId,title:'الاختبار',max:20}],scores:{}};for(const sid of Object.keys(legacy)){const v=legacy[sid];const sc=v&&typeof v==='object'?Number(v.score):Number(v);if(Number.isFinite(sc))data.examBooks[sn][pn].scores[String(sid)]={[testId]:{score:Math.max(0,Math.min(20,sc)),at:Number(v?.at)||Date.now()}};}}}}
@@ -1553,77 +1547,6 @@ function vrMsgPhrases(){
   return out.sort((a,b)=> b.t.length - a.t.length);
 }
 
-/* يفصل نوع الرصد عن الاسم. يُعيد {kind, rest} — kind=null إن لم يُفهم النوع */
-function vrParse(text){
-  let toks = vrTokens(text);
-  if(!toks.length) return { kind:null, rest:[] };
-  // «رسالة» تحسم القصد: لا نمرّ على قوالب السلوك أصلًا، فأغلب الكلمات مشتركة.
-  if(toks.some(w => VR_MSG_LEAD.includes(w))){
-    for(const p of vrMsgUnified().sort((a,b)=> b.t.length - a.t.length)){
-      for(let i=0;i<toks.length;i++){
-        if(p.t.every((w,j)=> toks[i+j]===w)){
-          const rest = toks.slice(0,i).concat(toks.slice(i+p.t.length));
-          return { kind:p.kind, rest };
-        }
-      }
-    }
-    // قال «رسالة» ولم يذكر نوعًا مفهومًا: لا نخمّن
-    return { kind:null, rest:toks.filter(w=>!VR_MSG_LEAD.includes(w)), msgLead:true };
-  }
-
-  // ١) السلوك أولًا: عباراته أطول، ولو بدأنا بالكلمات المفردة لابتلعت «مشاركة فعالة»
-  let best = null;
-  for(const b of vrBehaviors()){
-    const bt = vrTokens(b.title);
-    if(!bt.length) continue;
-    const hit = bt.filter(x => toks.some(y => y===x || (x.length>=4 && y.length>=4 && (x.includes(y)||y.includes(x)))));
-    if(hit.length === bt.length && (!best || bt.length > best.len)){
-      best = { kind:{ type:'behavior', beh:b }, used:hit, len:bt.length };
-    }
-  }
-  // كلمة واحدة مميّزة تكفي إن لم يطابقها إلا قالب واحد — «تميز» ⟵ «إنجاز متميز».
-  // شرط التفرّد يمنع التخمين: لو طابقت قالبين تُركت للمسار التالي.
-  // ولا يُلجأ إليها إن كانت الكلمة نفسها حالةً مباشرة: «مشاركة» رصدُ مشاركة،
-  // لا القالب «مشاركة فعالة». الأولوية للحالة الصريحة دائمًا.
-  const directWords = new Set();
-  VR_KINDS.forEach(k => k.ph.forEach(p => vrTokens(p).forEach(w => directWords.add(w))));
-  if(!best && !toks.some(y => directWords.has(y))){
-    const cands = [];
-    for(const b of vrBehaviors()){
-      const bt = vrTokens(b.title);
-      const hit = bt.filter(x => x.length>=4 && toks.some(y => y.length>=4 && (x.includes(y)||y.includes(x))));
-      if(hit.length) cands.push({b, hit});
-    }
-    if(cands.length === 1){
-      const {b, hit} = cands[0];
-      best = { kind:{ type:'behavior', beh:b }, used:hit, len:hit.length };
-    }
-  }
-  if(best){
-    const used = new Set(best.used);
-    return { kind:best.kind,
-             rest: toks.filter(y => !best.used.some(x => y===x || (x.length>=4 && y.length>=4 && (x.includes(y)||y.includes(x))))) };
-  }
-
-  // ٢) الحالات المباشرة — الأطول أولًا («لم يشارك» قبل «شارك»)
-  const flat = [];
-  VR_KINDS.forEach(k => k.ph.forEach(p => flat.push({p, k})));
-  flat.sort((a,b)=> vrTokens(b.p).length - vrTokens(a.p).length);
-  for(const {p,k} of flat){
-    const pt = vrTokens(p);
-    if(!pt.length) continue;
-    let i = toks.findIndex((_,ix)=> pt.every((w,j)=> toks[ix+j]===w));
-    if(i<0 && pt.length===1) i = toks.findIndex(y => y===pt[0]);
-    if(i>=0){
-      const rest = toks.slice(0,i).concat(toks.slice(i+pt.length));
-      return { kind:{ type:'status', m:k.m, st:k.st }, rest };
-    }
-  }
-  // ٣) كلمة «سلوك» وحدها: الطالب معروف والنوع لا
-  const si = toks.findIndex(y => y==='سلوك' || y==='ملاحظه' || y==='مخالفه');
-  if(si>=0) return { kind:null, rest: toks.filter((_,i)=>i!==si), askBeh:true };
-  return { kind:null, rest: toks };
-}
 
 /* مطابقة الاسم مع طلاب الفصل الحالي (نفس list() المستعملة في الرصد اليدوي) */
 function vrMatch(nameToks){
@@ -2281,16 +2204,6 @@ async function setTerm(start,end){
  }catch(e){toast('تعذّر الاتصال بالخادم');renderGrades();return}
  try{localStorage.setItem('teacher_term_v1',JSON.stringify(v))}catch(e){}
  await loadGrades(); renderStudents();
-}
-function setTermLegacy(start,end){
- const v={start:String(start||''),end:String(end||'')};
- data.academic=data.academic||{year:'',currentSemester:gradeSemester,semesters:{}};data.academic.semesters=data.academic.semesters||{};
- const sem=data.academic.semesters[String(gradeSemester)]=data.academic.semesters[String(gradeSemester)]||{status:'open',closedAt:0,periods:{}};
- if(sem.status==='closed'){toast('الفصل مغلق. افتحه للضرورة أولًا.');renderGrades();return}
- sem.periods=sem.periods||{};sem.periods[String(gradePeriod)]=v;
- if(gradeSemester===1 && gradePeriod===1)data.term=v;
- try{localStorage.setItem('teacher_term_v1',JSON.stringify(v))}catch(e){}
- save().then(loadGrades); renderStudents();
 }
 function gradeClass(score,measured){if(!measured||score==null)return 'none';return score>=8?'good':score>=5?'mid':'low'}
 function gchip(label,g){return `<span class="gchip ${gradeClass(g.score,g.measured)}">${label} <b>${g.score==null?'—':fmt(g.score)}</b><small>/${GRADE.max}</small></span>`}

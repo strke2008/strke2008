@@ -1010,7 +1010,6 @@ function sepTargets(c){
 const ctComps=ct=>[...(ct.water>3.1?['water']:[]),...(ct.oil>3.1?['oil']:[]),...Object.keys(ct.solids).filter(k=>ct.solids[k].g>0.05)];
 function ctText(ct){const p=[];if(ct.water>0.5)p.push(`ماء ${ct.water.toFixed(0)} mL`);if(ct.oil>0.5)p.push(`زيت ${ct.oil.toFixed(0)} mL`);
   for(const k in ct.solids){const s=ct.solids[k];if(s.g>0.05)p.push(`${n(k)} ${s.g.toFixed(1)} g${s.dis?' (ذائب)':''}`)}return p.join('، ')||'فارغ'}
-const compName=k=>k==='water'?'الماء':k==='oil'?'الزيت':n(k);
 
 function startSeparation(){
   const r=APP.run,c=r.ctx,ct={water:0,oil:0,solids:{}};

@@ -2667,7 +2667,6 @@ function narrowMsg(count, typedCount){
             : 'اكتب اسمك كاملاً كما هو في الكشف';
   return `يوجد ${count} طلاب بهذا الاسم — ${ask}`;
 }
-function candidates(typed){ return resolveName(typed,HW.s||[]).hits || []; }
 function hideWhoMatches(){ const e=$('who-matches'); if(e){ e.classList.add('hide'); e.innerHTML=''; } }
 function renderWhoMatches(idxs, note){
   const box=$('who-matches'); if(!box) return;
@@ -3382,18 +3381,6 @@ function rtSummary(){
     <button class="btn tick rt-confirm" onclick="rtClose(true)">إنهاء</button>`;
 }
 
-async function completeReviewRequest(hwId, nm){
-  try{
-    const api=(API||'').replace(/\/+$/,'');
-    const r=await fetch(api+'/review-request/complete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:nm,sid:mySid||'',hwId})});
-    const j=await r.json().catch(()=>({}));
-    if(!r.ok || !j.ok) throw new Error(j.error||'failed');
-    await gateLoad(nm);
-  }catch(e){
-    const box=document.getElementById('gate-list');
-    if(box) { const old=box.querySelector('.review-error'); if(old) old.remove(); box.insertAdjacentHTML('afterbegin','<div class="review-error" style="padding:.6rem;color:#B4232F">تعذّر تسجيل المراجعة، حاول مرة أخرى.</div>'); }
-  }
-}
 
 /* ═══════════════════════════════════════════════════════════════
    💬 رسائل المعلم — مصدر واحد يخدم البوابة والرابط المباشر معًا.
@@ -3608,16 +3595,6 @@ function wkParse(body){
   if(i<0) return { d:null, text:t };
   try{ return { d:JSON.parse(t.slice(i+4)), text:t.slice(0,i).trim() }; }
   catch(e){ return { d:null, text:t.slice(0,i).trim() }; }  // فشل القراءة لا يُظهر شيفرة للطالب
-}
-function wkBar(val,total,cls){
-  const p = total>0 ? Math.round(val/total*100) : 0;
-  return `<div class="wk-bar"><span class="${cls}" style="width:${p}%"></span></div>`;
-}
-function wkStat(icon,label,val,total,cls,note){
-  return `<div class="wk-stat">
-    <div class="wk-stat-top"><span>${icon} ${esc(label)}</span><b>${val}${total!==null?` / ${total}`:''}</b></div>
-    ${total!==null?wkBar(val,total,cls):''}
-    ${note?`<small>${esc(note)}</small>`:''}</div>`;
 }
 /* 📊 تقرير الأسبوع — بطاقة مختصرة قابلة للفعل:
    حكم الأسبوع ← ثلاث دوائر (مشاركة/واجبات/أنشطة) ← ما لوحظ ← خطوة واحدة بزر يفتحها.
@@ -4276,9 +4253,6 @@ function playableGames(h){
   }).filter(Boolean);
 }
 
-/* توافق مع بقية الكود القديم */
-function gameDataOf(h){ const e=playableGames(h).find(x=>x.type==='memory'); return e?e.words:[]; }
-function lockGameDataOf(h){ const e=playableGames(h).find(x=>isMcqGame(x.type)); return e?e.questions:[]; }
 function isGameRow(h){ return playableGames(h).length>0; }
 /* «نشاط ألعاب خالص»: لا أسئلة فيه. النشاط العادي المرفق به لعبة يبقى في قائمة الأنشطة
    وتظهر لعبته في قسم الألعاب أيضًا — كان يختفي بأسئلته كلها. */
@@ -6808,7 +6782,6 @@ function rdkBlocks(text, title){
   if(out[0] && out[0].type === 'h' && tn && rdkNorm(out[0].text) === tn) out.shift();   // العنوان مكررًا في أول النص
   return out;
 }
-function rdkParagraphs(text){ return rdkBlocks(text).filter(b => b.type === 'p').map(b => b.text); }
 
 /* الترقيم القديم (قبل التعرف على العناوين) — لأنشطة حُفظ دليلها به */
 function rdkParagraphsLegacy(text){
@@ -7088,12 +7061,6 @@ function readingStageDone(stage, groups){
     groups[stage].every(i => ans[i] !== null && ans[i] !== undefined);
 }
 
-function readingStagePercent(stage, groups){
-  const items = groups[stage];
-  if(!items.length) return null;
-  const correct = items.reduce((n,i)=>n+(grade(HW.q[i],ans[i],built[i])?1:0),0);
-  return Math.round(correct/items.length*100);
-}
 
 function renderReadingJourney(){
   const host=$('reading-journey');

@@ -43,12 +43,9 @@
   .ask-card p{margin:0 0 1rem;font-size:.86rem;line-height:1.8;color:var(--ui-muted,#5B6B7F);white-space:pre-wrap}
   .ask-row{display:flex;gap:.5rem}
   .ask-row .btn{flex:1;min-height:44px;font-size:.9rem}
-  .ask-box{text-align:right;max-width:420px}
   .ask-ic{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;
     font-size:1.25rem;background:rgba(27,156,107,.12);margin-bottom:.35rem}
   .ask-ic.danger{background:rgba(190,40,40,.12)}
-  .ask-actions{display:flex;gap:.5rem;justify-content:flex-start}
-  .ask-actions .btn{min-height:42px;padding-inline:1.1rem;font-size:.9rem}
   .btn.danger{background:#B3261E;color:#fff;border-color:#B3261E}
 
 /* ── project-view-image-fallback ── */
@@ -114,14 +111,14 @@
 .app-sidebar .tab.on,.app-sidebar .tab.on:hover{background:var(--app-nav-active)!important;color:var(--app-nav-active-text)!important;box-shadow:0 2px 9px rgba(0,0,0,.12)}
 .app-sidebar .tab:focus-visible{outline:2px solid #8EB7DD;outline-offset:2px}
 .app-nav-icon{width:25px;flex:0 0 25px;text-align:center;font-size:1rem;line-height:1}
-.app-sidebar .tab>span:last-child{min-width:0;flex:1 1 auto;overflow:visible;text-overflow:clip;white-space:normal;overflow-wrap:anywhere;word-break:normal;line-height:1.45}
+.app-sidebar .tab>span:last-child{overflow:visible;overflow-wrap:anywhere;word-break:normal}
 .app-nav-scrim{display:none}
 @media (min-width:701px){
   html,body{min-width:0!important;overflow-x:hidden!important}
   body{padding-right:var(--app-nav-w)!important;padding-left:0!important;box-sizing:border-box!important}
   .masthead{width:100%!important;max-width:none!important;margin:0!important;box-sizing:border-box!important}
   .masthead-in{width:min(1320px,calc(100% - 32px))!important;max-width:1320px!important;margin-inline:auto!important;box-sizing:border-box!important}
-  .wrap{width:min(1320px,calc(100% - 32px))!important;max-width:1320px!important;margin-inline:auto!important;box-sizing:border-box!important;min-width:0!important}
+  .wrap{width:min(1320px,calc(100% - 32px))!important;max-width:1320px!important;margin-inline:auto!important;box-sizing:border-box!important}
   .app-sidebar{transform:none!important}
   #nav-drawer-toggle{display:none!important}
   .app-sidebar-close{display:none!important}
@@ -133,7 +130,7 @@
   body{padding:0!important}
   .masthead{width:100%!important;max-width:none!important;margin:0!important;position:sticky!important;top:0!important;z-index:1100!important;box-sizing:border-box!important}
   .masthead-in{width:100%!important;max-width:none!important;margin:0!important;padding:8px!important;min-height:58px!important;flex-wrap:nowrap!important;box-sizing:border-box!important}
-  #nav-drawer-toggle{display:inline-flex!important;align-items:center;justify-content:center;width:42px;height:42px;flex:0 0 42px;margin:0;border-radius:11px;box-sizing:border-box}
+  #nav-drawer-toggle{align-items:center;justify-content:center;width:42px;height:42px;flex:0 0 42px;margin:0;border-radius:11px;box-sizing:border-box}
   .brand{min-width:0;flex:1;font-size:1rem!important;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .masthead .meta{max-width:42%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .wrap{width:100%!important;max-width:none!important;margin:0!important;padding:12px 9px calc(24px + env(safe-area-inset-bottom,0px))!important;box-sizing:border-box!important;min-width:0!important}
@@ -148,7 +145,7 @@
   .app-nav-scrim.is-open{display:block;position:fixed;inset:0;z-index:1190;background:rgba(8,16,29,.46);backdrop-filter:blur(1.5px);-webkit-backdrop-filter:blur(1.5px)}
   body.nav-drawer-open{overflow:hidden!important;touch-action:none}
 }
-@media print{.app-sidebar,#nav-scrim,#nav-drawer-toggle{display:none!important}body{padding:0!important;overflow:visible!important}}
+@media print{.app-sidebar,#nav-scrim,#nav-drawer-toggle{display:none!important}}
 /* منع قص أسماء عناصر القائمة مهما كانت قواعد المشروع القديمة */
 .app-sidebar .tab,.app-sidebar .tab *{overflow:visible!important}
 .app-sidebar .tab>span:last-child{flex:1 1 auto!important;min-width:0!important;white-space:normal!important;text-overflow:clip!important;line-height:1.45!important}
@@ -255,9 +252,6 @@
   }
   .modal-mobile-close{
     display:flex!important;
-    position:absolute;
-    top:.55rem;
-    inset-inline-start:.55rem;
     width:40px;
     height:40px;
     align-items:center;

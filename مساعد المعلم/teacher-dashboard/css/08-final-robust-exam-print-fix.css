@@ -76,7 +76,6 @@
   }
 
   /* التذييل لا يدخل في التدفق إطلاقًا، حتى لا يصنع صفحة ثانية. */
-  body.printing-exam #exam-paper .ex-slogan{display:none!important}
   body.printing-exam #exam-paper .exam-page::after{content:none!important;display:none!important}
 
   body.printing-exam #exam-paper .ex-pager{display:none!important}
