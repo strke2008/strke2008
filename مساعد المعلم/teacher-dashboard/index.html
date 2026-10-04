@@ -6372,7 +6372,7 @@ body{
 <button aria-controls="main-nav" aria-expanded="false" aria-label="فتح قائمة التنقل" class="nav-drawer-toggle no-print" id="nav-drawer-toggle" type="button">☰</button>
 <div class="brand brand-refresh" role="button" tabindex="0" title="اضغط لتحديث الصفحة" aria-label="تحديث الصفحة"><span class="mark"></span> مساعد المعلم</div>
 <div class="meta" id="meta-line">—</div>
-<button class="sync-chip no-print" id="sync-chip" type="button" hidden aria-live="polite"><i aria-hidden="true"></i><span>محفوظ</span></button>
+<button class="sync-chip no-print" id="sync-chip" type="button" hidden aria-live="polite"><i aria-hidden="true"></i><span>محفوظ</span><em></em></button>
 <button class="btn ghost sm no-print" id="portal-link-btn" onclick="openPortal()" style="display:none;margin-inline-start:auto" type="button">🧭 بوابة المعلم</button>
 </div>
 </header>
@@ -12849,15 +12849,20 @@ function renderHw() {
         <button class="btn ${(!h.published || h.dirty) ? 'pen' : 'tick'} sm" onclick="openLink('${h.id}')"
           ${!activityReady(h)?`disabled title="${esc(activityEmptyMsg(h))}"`:''}>${
             !h.published ? '📤 انشر' : h.dirty ? '🔄 أعد النشر' : '🔗 الرابط'}</button>
-        ${h.kind==='reading' && (h.qs||[]).length ? `<button class="btn ghost sm hw-icon-btn" onclick="openReadingPrint('${h.id}')" title="طباعة ورقة الفهم القرائي" aria-label="طباعة ورقة الفهم القرائي">🖨️</button>` : ''}
         <button class="btn ghost sm hw-icon-btn" onclick="openReport('${h.id}')" title="تقرير النشاط" aria-label="تقرير النشاط">📊</button>
         <button class="btn ghost sm hw-icon-btn" onclick="pullResults('${h.id}')" title="تحديث النتائج" aria-label="تحديث النتائج">🔄</button>
-        <button class="btn ghost sm" type="button" onclick="openActivityMessage('${h.id}')" title="رسالة جاهزة للإرسال">💬 الرسالة</button>
         ${subs && h.kind==='style' ? `<button class="btn ghost sm" onclick="openStylesReport('${h.id}')" title="تقرير أنماط التعلّم">🧠 التقرير</button>` : ''}
-        ${subs && h.kind!=='style' && h.kind!=='lab' ? `<button class="btn ghost sm hw-icon-btn" onclick="remedialHw('${h.id}')" title="نشاط علاجي من الأخطاء" aria-label="نشاط علاجي من الأخطاء">🩹</button>` : ''}
-        <button class="btn ghost sm hw-icon-btn" onclick="dupHw('${h.id}')" title="نسخ النشاط لفصل آخر" aria-label="نسخ النشاط لفصل آخر">📋</button>
         <button class="btn ghost sm hw-icon-btn" onclick="openHwForm('${h.id}')" title="تعديل النشاط" aria-label="تعديل النشاط">✏️</button>
-        <button class="btn ghost sm hw-icon-btn danger-icon" onclick="delHw('${h.id}')" title="حذف النشاط" aria-label="حذف النشاط">🗑️</button>
+        <details class="hw-more">
+          <summary class="btn ghost sm hw-icon-btn" title="إجراءات أخرى" aria-label="إجراءات أخرى">⋯</summary>
+          <div class="hw-more-menu" role="menu">
+            <button type="button" role="menuitem" onclick="openActivityMessage('${h.id}')">💬 رسالة جاهزة للإرسال</button>
+            ${h.kind==='reading' && (h.qs||[]).length ? `<button type="button" role="menuitem" onclick="openReadingPrint('${h.id}')">🖨️ طباعة ورقة الفهم القرائي</button>` : ''}
+            ${subs && h.kind!=='style' && h.kind!=='lab' ? `<button type="button" role="menuitem" onclick="remedialHw('${h.id}')">🩹 نشاط علاجي من الأخطاء</button>` : ''}
+            <button type="button" role="menuitem" onclick="dupHw('${h.id}')">📋 نسخ النشاط لفصل آخر</button>
+            <button type="button" role="menuitem" class="danger" onclick="delHw('${h.id}')">🗑️ حذف النشاط</button>
+          </div>
+        </details>
       </div>
     </div>`;
   }).join('')
@@ -19320,23 +19325,22 @@ function renderPubWarn(){
   const ready = HW.filter(h => activityReady(h) && !h.published);
   const stale = HW.filter(h => activityReady(h) && h.published && h.dirty);
   if(!ready.length && !stale.length){ box.innerHTML = ''; return; }
+  const all = [...ready, ...stale];
+  // سطر واحد يُطوى: كان الصندوق الكبير يدفع قائمة الأنشطة للأسفل (خصوصًا على الجوال)
   box.innerHTML = `
-    <div class="sheet" style="background:rgba(214,69,91,.07);border:1.5px solid var(--pen);margin-bottom:.9rem">
-      <div class="row" style="gap:.6rem;flex-wrap:wrap">
-        <b style="color:var(--pen)">📤 ${
+    <details class="pub-warn-bar"${all.length<=3?' open':''}>
+      <summary>
+        <b>📤 ${
           ready.length && stale.length ? `${ready.length} نشاط لم يُنشر · ${stale.length} بحاجة إعادة نشر`
           : ready.length ? `${ready.length} نشاط جاهز لم يُنشر بعد`
           : `${stale.length} نشاط عدّلته ولم تُعد نشره`}</b>
-      </div>
-      <p style="margin:.4rem 0 0;color:var(--ink-soft);font-size:.83rem">
-        ${stale.length ? 'الطلاب يرون النسخة القديمة حتى تُعيد النشر. ' : ''}اضغط زر النشر على النشاط.
-      </p>
-      <div class="row" style="gap:.35rem;margin-top:.5rem;flex-wrap:wrap">
-        ${[...ready,...stale].slice(0,6).map(h=>
+        <span class="pub-warn-hint">${stale.length ? 'الطلاب يرون النسخة القديمة حتى تُعيد النشر · ' : ''}اضغط اسم النشاط لنشره</span>
+      </summary>
+      <div class="row" style="gap:.35rem;margin-top:.55rem;flex-wrap:wrap">
+        ${all.map(h=>
           `<button class="btn pen sm" onclick="openLink('${h.id}')">${esc(h.title)}</button>`).join('')}
-        ${ready.length+stale.length>6 ? `<span class="pill quiet" style="align-self:center">+${ready.length+stale.length-6} أخرى في القائمة أدناه</span>` : ''}
       </div>
-    </div>`;
+    </details>`;
 }
 
 /* 💾 تذكير النسخ الاحتياطي — يظهر بعد 7 أيام أو 3 أنشطة جديدة */
@@ -28315,7 +28319,38 @@ button,.tab,.btn,[onclick]{touch-action:manipulation;-webkit-tap-highlight-color
 .sync-chip[data-state="offline"]{background:rgba(232,176,75,.18);border-color:rgba(232,176,75,.5)}
 .sync-chip[data-state="offline"] i{background:#E8B04B}
 @keyframes sync-pulse{50%{opacity:.35}}
-@media (max-width:700px){.sync-chip:not([data-state="error"]) span{display:none}.sync-chip{padding:.45rem;margin-inline-start:auto}}
+/* طيّ تنبيهات الرئيسية بعد أول 3 */
+#dash-alerts .alert-folded{display:none!important}
+.alerts-more-btn{display:block;width:100%;margin-top:.6rem;padding:.65rem;border:1.5px dashed var(--line,#CBD5E1);border-radius:12px;
+  background:transparent;color:var(--ink,#16233A);font:inherit;font-weight:700;font-size:.85rem;cursor:pointer}
+.alerts-more-btn:hover{background:rgba(46,107,184,.06);border-color:#2E6BB8}
+/* قائمة «⋯» في بطاقة النشاط */
+.hw-more{position:relative;display:inline-block}
+.hw-more>summary{list-style:none;cursor:pointer;user-select:none}
+.hw-more>summary::-webkit-details-marker{display:none}
+.hw-more[open]>summary{background:rgba(46,107,184,.1);border-color:#2E6BB8}
+.hw-more-menu{position:absolute;inset-inline-end:0;top:calc(100% + 6px);z-index:30;min-width:230px;padding:.35rem;border-radius:12px;
+  background:var(--paper-2,#fff);border:1px solid var(--line,#D8E0EA);box-shadow:0 12px 32px rgba(15,30,55,.18);display:grid;gap:2px}
+.hw-more-menu button{all:unset;box-sizing:border-box;display:block;width:100%;padding:.6rem .75rem;border-radius:8px;font-size:.86rem;
+  font-weight:600;color:var(--ink,#16233A);cursor:pointer;text-align:start;white-space:nowrap}
+.hw-more-menu button:hover,.hw-more-menu button:focus-visible{background:rgba(46,107,184,.1);outline:none}
+.hw-more-menu button.danger{color:#C2334D}
+.hw-more-menu button.danger:hover{background:rgba(214,69,91,.1)}
+:root[data-ui-theme="dark"] .hw-more-menu{background:#182337;border-color:#2A3A55}
+:root[data-ui-theme="dark"] .hw-more-menu button{color:#EEF2F7}
+.hw-more-menu.flip{inset-inline-end:auto;inset-inline-start:0}
+@media (max-width:700px){.hw-more-menu{min-width:210px;max-width:calc(100vw - 32px)}}
+/* شريط «لم يُنشر» المطويّ */
+.pub-warn-bar{background:rgba(214,69,91,.07);border:1.5px solid var(--pen,#D6455B);border-radius:14px;padding:.6rem .9rem;margin-bottom:.9rem}
+.pub-warn-bar>summary{display:flex;flex-wrap:wrap;align-items:baseline;gap:.25rem .7rem;cursor:pointer;list-style:none}
+.pub-warn-bar>summary::-webkit-details-marker{display:none}
+.pub-warn-bar>summary b{color:var(--pen,#D6455B)}
+.pub-warn-bar>summary::after{content:'▾';margin-inline-start:auto;color:var(--pen,#D6455B);transition:transform .2s}
+.pub-warn-bar[open]>summary::after{transform:rotate(180deg)}
+.pub-warn-hint{color:var(--ink-soft,#5A6B84);font-size:.8rem}
+.sync-chip em{font-style:normal}
+@media (max-width:440px){.masthead:has(.sync-chip[data-state="error"]) #meta-line{display:none}}
+@media (max-width:700px){.sync-chip:not([data-state="error"]) span{display:none}.sync-chip em{display:none}.sync-chip{padding:.45rem;margin-inline-start:auto}}
 @media (prefers-reduced-motion:reduce){.sync-chip i{animation:none!important}}
 
 </style>
@@ -28400,7 +28435,7 @@ button,.tab,.btn,[onclick]{touch-action:manipulation;-webkit-tap-highlight-color
   if(chip && typeof window.pushStateNow==='function' && typeof window.pushState==='function'){
     let state='saved', lastOk=0, retryT=0;
     const fmt=t=>new Date(t).toLocaleTimeString('ar-SA-u-nu-latn',{hour:'2-digit',minute:'2-digit'});
-    const TEXT={saved:'محفوظ',pending:'تعديلات لم تُرفع',saving:'جارٍ الحفظ…',error:'لم يُحفظ — أعد المحاولة',offline:'بلا اتصال'};
+    const TEXT={saved:'محفوظ',pending:'تعديلات لم تُرفع',saving:'جارٍ الحفظ…',error:'لم يُحفظ',offline:'بلا اتصال'};
     const TITLE={saved:()=>lastOk?`كل التعديلات محفوظة في الخادم (آخر حفظ ${fmt(lastOk)})`:'البيانات متزامنة مع الخادم',
       pending:()=>'سيُرفع التعديل خلال لحظات',saving:()=>'يُرفع التعديل إلى الخادم',
       error:()=>'لم يصل آخر تعديل إلى الخادم. بياناتك محفوظة على هذا الجهاز — اضغط لإعادة المحاولة',
@@ -28410,6 +28445,7 @@ button,.tab,.btn,[onclick]{touch-action:manipulation;-webkit-tap-highlight-color
       chip.hidden=!getTok();
       chip.dataset.state=st;
       chip.querySelector('span').textContent=TEXT[st];
+      chip.querySelector('em').textContent=st==='error'?' — أعد المحاولة':'';
       chip.title=TITLE[st]();
       chip.setAttribute('aria-label',TITLE[st]());
     };
@@ -28449,6 +28485,50 @@ button,.tab,.btn,[onclick]{touch-action:manipulation;-webkit-tap-highlight-color
     window.addEventListener('offline',()=>set('offline'));
     set(navigator.onLine?'saved':'offline');
   }
+
+  /* 6) «يحتاج انتباهك»: الأهم أولًا (عاجل ← متابعة ← غيره) وأول 3 حالات فقط،
+        والباقي خلف «عرض الكل» — بدل 10 بطاقات كبيرة تملأ الصفحة. لا يُحذف شيء. */
+  if(typeof window.renderDashboardAlerts==='function'){
+    const SHOW=3; let expanded=false;
+    const rank=k=>k==='danger'?0:k==='warn'?1:2;
+    const _rda=window.renderDashboardAlerts;
+    const collapse=()=>{
+      const box=document.getElementById('dash-alerts'); if(!box) return;
+      box.querySelector('.alerts-more-btn')?.remove();
+      const items=[...box.children].filter(x=>x.matches('article.alert'));
+      items.forEach((x,i)=>x.classList.toggle('alert-folded',!expanded && i>=SHOW));
+      if(items.length<=SHOW) return;
+      const b=document.createElement('button');
+      b.type='button'; b.className='alerts-more-btn';
+      b.setAttribute('aria-expanded',String(expanded));
+      b.textContent=expanded?'إظهار أقل':`عرض كل الحالات (${items.length})`;
+      b.onclick=()=>{ expanded=!expanded; collapse(); if(!expanded) box.closest('.sheet')?.scrollIntoView({block:'nearest'}); };
+      box.appendChild(b);
+    };
+    window.renderDashboardAlerts=function(alerts){
+      const sorted=Array.isArray(alerts)?alerts.map((a,i)=>[a,i]).sort((x,y)=>rank(x[0].kind)-rank(y[0].kind)||x[1]-y[1]).map(x=>x[0]):alerts;
+      const r=_rda.call(this,sorted);
+      collapse();
+      return r;
+    };
+    // الرسم الأول حدث قبل تحميل هذا السكربت: أعد رسم التنبيهات وحدها مرة (دالة نقية بلا طلبات شبكة)
+    try{ if(typeof dashboardAlerts==='function' && document.getElementById('dash-alerts')) window.renderDashboardAlerts(dashboardAlerts()); }catch(_){}
+  }
+
+  /* 7) قائمة «⋯»: واحدة مفتوحة فقط، وتُغلق بالنقر خارجها أو بـ Esc أو بعد اختيار إجراء */
+  document.addEventListener('click',e=>{
+    const inMenu=e.target.closest('details.hw-more');
+    document.querySelectorAll('details.hw-more[open]').forEach(d=>{ if(d!==inMenu) d.open=false; });
+    if(inMenu && e.target.closest('.hw-more-menu button')) inMenu.open=false;
+  });
+  document.addEventListener('toggle',e=>{
+    const d=e.target; if(!(d instanceof HTMLDetailsElement) || !d.classList.contains('hw-more') || !d.open) return;
+    const m=d.querySelector('.hw-more-menu'); if(!m) return;
+    m.classList.remove('flip');
+    const r=m.getBoundingClientRect();
+    if(r.left<8 || r.right>innerWidth-8) m.classList.add('flip');
+  },true);
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') document.querySelectorAll('details.hw-more[open]').forEach(d=>{ d.open=false; d.querySelector('summary')?.focus(); }); });
 
   // أظهر التلميح مرة عند فتح تبويب فيه بحث، ثم أخفه
   document.addEventListener('click',e=>{
