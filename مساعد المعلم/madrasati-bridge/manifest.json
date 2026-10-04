@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "المعلم الذكي — جسر مدرستي",
   "short_name": "جسر مدرستي",
-  "version": "0.15.12",
+  "version": "0.15.13",
   "description": "سحب الواجبات من منصة مدرستي وعرضها حسب الأسابيع ونقل نتائج الطلاب إلى مساعد المعلم.",
   "default_locale": "ar",
   "permissions": [

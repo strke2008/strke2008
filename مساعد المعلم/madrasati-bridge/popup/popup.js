@@ -203,3 +203,19 @@ $('open-report').onclick = async () => {
     $('open-report').title = 'فتح تقرير الواجبات باستخدام صفحة مدرستي الحالية';
   }
 })();
+
+
+/* 🔒 اللوحة المربوطة + رقم الإصدار الفعلي من manifest */
+try { document.querySelector('.version').textContent = 'v' + chrome.runtime.getManifest().version; } catch {}
+async function renderDashLink() {
+  const { mb_dash_origin } = await chrome.storage.local.get('mb_dash_origin');
+  $('dash-origin').textContent = mb_dash_origin ? mb_dash_origin.replace(/^https:\/\//, '') : 'لم تُربط بعد — تُربط تلقائيًا عند فتح لوحة المعلم.';
+  $('dash-origin').style.direction = mb_dash_origin ? 'ltr' : '';
+  $('dash-unlink').hidden = !mb_dash_origin;
+}
+$('dash-unlink').onclick = async () => {
+  if (!confirm('فك ربط لوحة المعلم؟ ستُربط أول لوحة تُفتح بعد ذلك.')) return;
+  await chrome.storage.local.remove('mb_dash_origin');
+  renderDashLink();
+};
+renderDashLink();

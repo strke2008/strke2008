@@ -33,14 +33,50 @@ async function openMadrasatiAndReport() {
   });
   return { ok: true, tabId: tab.id };
 }
+/* 🔒 لوحة المعلم الموثوقة: سكربت الجسر يعمل على كل نطاقات *.pages.dev، وأي موقع
+   هناك كان يستطيع تغيير عنوان الخادم ثم طلب مزامنة فتُرسل أسماء الطلاب إليه.
+   أول لوحة تربط الإضافة تُحفظ أصلها، وبعدها تُرفض أوامر أي أصل آخر.
+   localhost مسموح دائمًا للتطوير. يمكن فك الربط من نافذة الإضافة. */
+const senderOrigin = sender => {
+  try { return sender.origin || new URL(sender.url || (sender.tab && sender.tab.url) || '').origin; } catch { return ''; }
+};
+const isLocalOrigin = o => /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(o);
+async function dashboardOriginAllowed(sender, pairing) {
+  const o = senderOrigin(sender);
+  if (!o) return false;
+  if (isLocalOrigin(o)) return true;
+  if (!/^https:\/\/[^/]+\.pages\.dev$/.test(o)) return false;
+  const { mb_dash_origin } = await chrome.storage.local.get('mb_dash_origin');
+  if (mb_dash_origin) return mb_dash_origin === o;
+  if (!pairing) return false;
+  await chrome.storage.local.set({ mb_dash_origin: o });
+  return true;
+}
+const UNTRUSTED_DASH = 'هذه الصفحة غير مربوطة بالإضافة. إن نقلت لوحة المعلم لعنوان جديد: افتح نافذة الإضافة ← «فك ربط لوحة المعلم» ثم أعد المحاولة.';
 chrome.runtime.onMessage.addListener((msg, sender, reply) => {
   if (msg && msg.type === 'mb:dashboardAction') {
     const action = String(msg.action || '');
     const p = msg.payload || {};
+    // القراءة فقط (getAuto/progress) لا تحتاج ربطًا؛ ما يغيّر الإعداد أو يرسل بيانات يحتاجه
+    if (action !== 'getAuto' && action !== 'progress') {
+      dashboardOriginAllowed(sender, action === 'setConfig').then(ok => {
+        if (!ok) { reply({ ok: false, error: UNTRUSTED_DASH }); return; }
+        handleDashboardAction(action, p, reply);
+      }).catch(e => reply({ ok: false, error: String(e && e.message || e) }));
+      return true;
+    }
+    return handleDashboardAction(action, p, reply);
+  }
+  return handleOtherMessage(msg, sender, reply);
+});
+function handleDashboardAction(action, p, reply) {
+  {
     if (action === 'setConfig') {
+      const api = String(p.api || API_DEFAULT_BG).replace(/\/+$/, '');
+      if (!/^https:\/\//i.test(api) && !/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(api)) { reply({ ok: false, error: 'عنوان الخادم يجب أن يبدأ بـ https://' }); return true; }
       chrome.storage.local.get('mb_cfg').then(x => {
         const old = x.mb_cfg || {};
-        return chrome.storage.local.set({ mb_cfg: { ...old, token: String(p.token || ''), api: String(p.api || API_DEFAULT_BG).replace(/\/+$/, '') } });
+        return chrome.storage.local.set({ mb_cfg: { ...old, token: String(p.token || ''), api } });
       }).then(() => reply({ok:true})).catch(e => reply({ok:false,error:String(e&&e.message||e)}));
       return true;
     }
@@ -91,6 +127,8 @@ chrome.runtime.onMessage.addListener((msg, sender, reply) => {
     }
     reply({ok:false,error:'إجراء غير معروف'}); return;
   }
+}
+function handleOtherMessage(msg, sender, reply) {
   if (msg && msg.type === 'mb:dashboardPull') {
     openMadrasatiAndReport()
       .then(r => reply({ ok: true, ...r }))
@@ -107,7 +145,7 @@ chrome.runtime.onMessage.addListener((msg, sender, reply) => {
     return;
   }
   if (msg && msg.type === 'mb:readGrade') { readGradeInHiddenTab(msg.url).then(reply, e => reply({ available: false, reason: String(e && e.message || e) })); return true; }
-});
+}
 
 
 /* ═══ ⏰ المزامنة التلقائية — في متصفح المعلم وبجلسته فقط (لا تسجيل دخول نيابة عنه) ═══ */

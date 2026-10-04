@@ -12746,8 +12746,11 @@ function renderHw() {
       </div>
     </div>` : '';
   document.getElementById('hw-list').innerHTML = bulkBar + (list.length ? list.map(h => {
-    const subs = Object.keys(h.subs || {}).length;
-    const pool = hwPool(h).length;
+    /* التسليمات تُعدّ لطلاب النشاط الحاليين فقط — طالب نُقل لفصل آخر أو حُذف
+       كان يجعل العداد «سلّم 12 من 9». */
+    const poolList = hwPool(h);
+    const pool = poolList.length;
+    const subs = poolList.filter(s => h.subs && h.subs[s.id]).length;
     const late = h.due && new Date(h.due) < new Date(new Date().toDateString());
     const isFiles = h.kind === 'files' || h.kind === 'lab';
     const isLab = h.kind === 'lab';
@@ -19285,6 +19288,7 @@ function renderPubWarn(){
       <div class="row" style="gap:.35rem;margin-top:.5rem;flex-wrap:wrap">
         ${[...ready,...stale].slice(0,6).map(h=>
           `<button class="btn pen sm" onclick="openLink('${h.id}')">${esc(h.title)}</button>`).join('')}
+        ${ready.length+stale.length>6 ? `<span class="pill quiet" style="align-self:center">+${ready.length+stale.length-6} أخرى في القائمة أدناه</span>` : ''}
       </div>
     </div>`;
 }
@@ -19741,9 +19745,13 @@ function activityStats(){
     const scope = hwPool(h);
     const total = scope.length;
     const done = scope.filter(s=>h.subs && h.subs[s.id]).length;
-    const scores = scope.map(s=>activityGrade(h,h.subs&&h.subs[s.id])).filter(v=>Number.isFinite(v));
+    /* avg نسبة مئوية (0–100): كانت تُجمع الدرجة الخام (من 20) وتُعرض كأنها %.
+       الأنواع غير المقيسة (أنماط/ألعاب/تشخيصي) لا تدخل متوسط الأداء. */
+    const hMax = Math.max(1, Number(h.max||20));
+    const perf = activityKindPolicy(h).perf;
+    const scores = perf ? scope.map(s=>activityGrade(h,h.subs&&h.subs[s.id])).filter(v=>Number.isFinite(v)).map(v=>Math.max(0,Math.min(100,v/hMax*100))) : [];
     const avg = scores.length ? Math.round(scores.reduce((a,b)=>a+b,0)/scores.length) : 0;
-    all.push({h,total,done,avg});
+    all.push({h,total,done,avg,scored:scores.length>0});
   });
   return all;
 }
@@ -20711,7 +20719,7 @@ function renderDashboard(){
   const totalSubs=stats.reduce((n,x)=>n+x.done,0);
   const totalExpected=stats.reduce((n,x)=>n+x.total,0);
   const completion=pct(totalSubs,totalExpected);
-  const scored=stats.filter(x=>x.done).map(x=>x.avg);
+  const scored=stats.filter(x=>x.done&&x.scored).map(x=>x.avg);
   const avg=scored.length?Math.round(scored.reduce((a,b)=>a+b,0)/scored.length):0;
   const active=HW.filter(h=>activityReady(h)).length;
   const alerts=dashboardAlerts();
@@ -21527,6 +21535,8 @@ function switchReportView(view){
   const analysis=document.getElementById('p-analysis');
   const styles=document.getElementById('p-styles');
   const diag=document.getElementById('p-diag');
+  // إن استُدعيت من خارج تبويب التقارير لا تبقى لوحة أخرى ظاهرة تحت التقرير
+  document.querySelectorAll('.panel').forEach(p=>{ if(![grades,analysis,styles,diag].includes(p)) p.classList.remove('on'); });
   document.getElementById('p-reports')?.classList.remove('on');
   mainReports?.classList.remove('on');
   document.getElementById('p-comprehensive')?.classList.remove('on');
@@ -26543,7 +26553,7 @@ async function experimentAIGenerate(){
 }
 </style>
 <!-- Final A4 print alignment fix -->
-<style id="final-exam-print-fix">
+<style id="final-exam-print-fix-2">
 @media print{
   @page{size:A4 portrait;margin:0!important}
   html,body{width:210mm!important;min-width:210mm!important;max-width:210mm!important;margin:0!important;padding:0!important;background:#fff!important;overflow:visible!important}
@@ -28226,3 +28236,106 @@ async function srepWithdraw(){
 }
 
 </script>
+
+<style id="ux-polish-final">
+/* طبقة أخيرة: تحسينات سلاسة الاستخدام فقط — لا تغيّر أي سلوك أو ميزة */
+:where(button,a,[role="button"],.tab,select,input,textarea):focus-visible{
+  outline:2.5px solid #2E6BB8;outline-offset:2px;border-radius:10px
+}
+:root[data-ui-theme="dark"] :where(button,a,[role="button"],.tab,select,input,textarea):focus-visible{outline-color:#7FB2F0}
+/* نقرات أوضح على اللمس وبلا تأخير */
+button,.tab,.btn,[onclick]{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.btn:disabled,button:disabled{cursor:not-allowed}
+/* تمرير أنعم للقوائم الطويلة داخل اللوحات */
+.modal,.app-sidebar,#main-nav{overscroll-behavior:contain}
+/* الأرقام في البطاقات والجداول بعرض ثابت فلا «تقفز» عند التحديث */
+.stat-value,.kpi-box b,table td,.score{font-variant-numeric:tabular-nums}
+/* تلميح اختصار البحث */
+.ux-kbd-hint{position:fixed;inset-inline-start:16px;bottom:16px;z-index:50;background:var(--ink,#16233A);color:#fff;
+  font-size:.78rem;padding:.35rem .6rem;border-radius:8px;opacity:0;transform:translateY(6px);transition:.2s;pointer-events:none}
+.ux-kbd-hint.on{opacity:.92;transform:none}
+@media (max-width:700px){.ux-kbd-hint{display:none}}
+@media print{.ux-kbd-hint{display:none!important}}
+</style>
+<script id="ux-polish-final-js">
+(function(){
+  'use strict';
+  /* 1) عند الانتقال لتبويب أو تقرير: ابدأ من أعلى الصفحة بدل منتصف الصفحة السابقة
+     2) احفظ التبويب الحالي للجلسة: إعادة التحميل (أو سحب التحديث على الجوال) تعيدك لمكانك
+        وفتح التطبيق من جديد يبدأ دائمًا من الرئيسية. */
+  const K_LAST='hwapp_ui_last_tab_session_v1';
+  const toTop=()=>{ try{ window.scrollTo({top:0,behavior:'instant'}); }catch(_){ window.scrollTo(0,0); } };
+  const remember=tab=>{ try{ sessionStorage.setItem(K_LAST,tab); }catch(_){} };
+  document.addEventListener('click',e=>{
+    const t=e.target.closest('.tab[data-tab], .mobile-nav button[data-tab]');
+    if(t){ remember(t.dataset.tab); requestAnimationFrame(toTop); return; }
+    const r=e.target.closest('[onclick*="switchReportView("], [onclick*="openDedicatedReport("]');
+    if(r) requestAnimationFrame(toTop);
+  });
+  function restore(){
+    let tab=''; try{ tab=sessionStorage.getItem(K_LAST)||''; }catch(_){}
+    if(!tab || tab==='dashboard') return;
+    const btn=document.querySelector(`.tab[data-tab="${CSS.escape(tab)}"]`);
+    if(btn && !btn.classList.contains('on')) btn.click();
+  }
+  if(document.readyState==='complete') setTimeout(restore,60);
+  else window.addEventListener('load',()=>setTimeout(restore,60),{once:true});
+
+  /* 3) اختصار «/» يركّز مربع البحث في التبويب الظاهر (على الحاسب فقط) */
+  let hintT=0;
+  const hint=document.createElement('div'); hint.className='ux-kbd-hint no-print'; hint.textContent='اضغط / للبحث';
+  document.body.appendChild(hint);
+  const visibleSearch=()=>{
+    const panel=document.querySelector('.panel.on'); if(!panel) return null;
+    return [...panel.querySelectorAll('input[type="search"], input[id*="search"], input[placeholder*="ابحث"]')]
+      .find(i=>i.offsetParent && !i.disabled) || null;
+  };
+  document.addEventListener('keydown',e=>{
+    if(e.key!=='/' || e.ctrlKey || e.metaKey || e.altKey) return;
+    const a=document.activeElement;
+    if(a && (a.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))) return;
+    if(document.querySelector('#veil.on, .ask-veil')) return;
+    const inp=visibleSearch(); if(!inp) return;
+    e.preventDefault(); inp.focus(); inp.select && inp.select();
+  });
+  document.addEventListener('focusin',e=>{
+    const i=e.target;
+    if(!(i instanceof HTMLInputElement) || i!==visibleSearch() || matchMedia('(max-width:700px)').matches) return;
+    clearTimeout(hintT); hint.classList.remove('on');
+  });
+  /* 4) النوافذ المنبثقة: دور dialog للقارئات الصوتية، ونقل التركيز إليها عند الفتح
+        وإعادته للزر الذي فتحها عند الإغلاق — فلا يضيع المستخدم بلوحة المفاتيح. */
+  const modal=document.getElementById('modal');
+  if(modal){ modal.setAttribute('role','dialog'); modal.setAttribute('aria-modal','true'); if(!modal.hasAttribute('tabindex')) modal.tabIndex=-1; }
+  let returnFocus=null;
+  if(typeof window.openModal==='function' && typeof window.closeModal==='function'){
+    const _open=window.openModal, _close=window.closeModal;
+    window.openModal=function(){
+      const veil=document.getElementById('veil');
+      if(!(veil && veil.classList.contains('on'))) returnFocus=document.activeElement;
+      const r=_open.apply(this,arguments);
+      requestAnimationFrame(()=>{
+        if(!modal) return;
+        const fine=matchMedia('(pointer:fine)').matches;
+        const first=fine && modal.querySelector('.field input:not([type=hidden]):not([disabled]):not([readonly]), .field textarea:not([disabled])');
+        try{ (first||modal).focus({preventScroll:true}); }catch(_){}
+      });
+      return r;
+    };
+    window.closeModal=function(){
+      const veil=document.getElementById('veil'); const wasOpen=veil && veil.classList.contains('on');
+      const r=_close.apply(this,arguments);
+      if(wasOpen && returnFocus && returnFocus.isConnected && typeof returnFocus.focus==='function'){ try{ returnFocus.focus({preventScroll:true}); }catch(_){} }
+      if(wasOpen) returnFocus=null;
+      return r;
+    };
+  }
+
+  // أظهر التلميح مرة عند فتح تبويب فيه بحث، ثم أخفه
+  document.addEventListener('click',e=>{
+    if(!e.target.closest('.tab[data-tab]')) return;
+    setTimeout(()=>{ if(!visibleSearch()) return; hint.classList.add('on'); clearTimeout(hintT); hintT=setTimeout(()=>hint.classList.remove('on'),1800); },350);
+  });
+})();
+</script>
+
