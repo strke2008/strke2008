@@ -1869,16 +1869,16 @@ body{
 
 /* ── dark-mode-complete-fix ── */
 :root[data-ui-theme="dark"]{
-  --paper:#0D1522 !important;
-  --paper-2:#182337 !important;
-  --ink:#EEF2F7 !important;
-  --ink-soft:#A9B8CC !important;
-  --rule:#304158 !important;
-  --ui-bg:#0D1522 !important;
-  --ui-surface:#182337 !important;
-  --ui-surface-2:#111A2A !important;
-  --ui-border:#304158 !important;
-  --ui-border-strong:#40536D !important;
+  --paper:var(--ds-bg) !important;
+  --paper-2:var(--ds-surface) !important;
+  --ink:var(--ds-ink) !important;
+  --ink-soft:var(--ds-muted) !important;
+  --rule:var(--ds-border) !important;
+  --ui-bg:var(--ds-bg) !important;
+  --ui-surface:var(--ds-surface) !important;
+  --ui-surface-2:var(--ds-surface-2) !important;
+  --ui-border:var(--ds-border) !important;
+  --ui-border-strong:var(--ds-border-strong) !important;
   --ui-shadow:0 4px 18px rgba(0,0,0,.28) !important;
   --ui-shadow-hover:0 8px 26px rgba(0,0,0,.36) !important;
 }
@@ -1965,7 +1965,7 @@ body{
 }
 
 :root[data-ui-theme="dark"] table:not(.gt) th{
-  background:#0F1A2A !important;
+  background:var(--ds-surface-2) !important;
   color:var(--ink) !important;
   border-color:var(--rule) !important;
 }
@@ -2036,11 +2036,11 @@ body{
 :root[data-ui-theme="dark"] .student-list-item:hover,
 :root[data-ui-theme="dark"] .student-row-click:hover td,
 :root[data-ui-theme="dark"] .feature-item:hover{
-  background:#202E43 !important;
+  background:var(--ds-surface-3) !important;
 }
 
 :root[data-ui-theme="dark"] .student-list-item.selected{
-  background:#263750 !important;
+  background:var(--ds-surface-3) !important;
   border-color:var(--ui-border-strong) !important;
 }
 
@@ -2061,11 +2061,11 @@ body{
 }
 
 :root[data-ui-theme="dark"] .student-activity .sa-bar{
-  background:#263750 !important;
+  background:var(--ds-surface-3) !important;
 }
 
 :root[data-ui-theme="dark"] .student-badges>div{
-  background:#202E43 !important;
+  background:var(--ds-surface-3) !important;
 }
 
 :root[data-ui-theme="dark"] .attention-box{
@@ -2119,7 +2119,7 @@ body{
 }
 
 :root[data-ui-theme="dark"] .report-switch-btn:hover{
-  background:#202E43 !important;
+  background:var(--ds-surface-3) !important;
   color:#FFFFFF !important;
 }
 
@@ -2148,11 +2148,11 @@ body{
 }
 
 :root[data-ui-theme="dark"] .grades-pro th{
-  background:#0F1A2A !important;
+  background:var(--ds-surface-2) !important;
 }
 
 :root[data-ui-theme="dark"] .grades-pro tfoot td{
-  background:#202E43 !important;
+  background:var(--ds-surface-3) !important;
 }
 
 :root[data-ui-theme="dark"] .gcell.g-good{
@@ -2176,7 +2176,7 @@ body{
 }
 
 :root[data-ui-theme="dark"] .gt th{
-  background:#0F1A2A !important;
+  background:var(--ds-surface-2) !important;
   color:var(--ink) !important;
 }
 
@@ -2188,11 +2188,11 @@ body{
 }
 
 :root[data-ui-theme="dark"] .gt tr:hover td{
-  background:#202E43 !important;
+  background:var(--ds-surface-3) !important;
 }
 
 :root[data-ui-theme="dark"] .gt .tot{
-  background:#202E43 !important;
+  background:var(--ds-surface-3) !important;
 }
 
 :root[data-ui-theme="dark"] .rep,
@@ -2237,7 +2237,7 @@ body{
 }
 
 :root[data-ui-theme="dark"] .hb .tr{
-  background:#263750 !important;
+  background:var(--ds-surface-3) !important;
 }
 
 :root[data-ui-theme="dark"] .feature-empty,
@@ -2250,12 +2250,12 @@ body{
 :root[data-ui-theme="dark"] .stat-card .stat-icon,
 :root[data-ui-theme="dark"] .card .ic,
 :root[data-ui-theme="dark"] .feature-item .fi-icon{
-  background:#202E43 !important;
+  background:var(--ds-surface-3) !important;
   color:var(--ink) !important;
 }
 
 :root[data-ui-theme="dark"] .progress-track{
-  background:#263750 !important;
+  background:var(--ds-surface-3) !important;
 }
 
 :root[data-ui-theme="dark"] .btn.ghost{
@@ -2265,7 +2265,7 @@ body{
 }
 
 :root[data-ui-theme="dark"] .btn.ghost:hover{
-  background:#202E43 !important;
+  background:var(--ds-surface-3) !important;
 }
 
 :root[data-ui-theme="dark"] .modal{
@@ -2304,7 +2304,7 @@ body{
 }
 
 :root[data-ui-theme="dark"] .attention-request-avatar{
-  background:#263750 !important;
+  background:var(--ds-surface-3) !important;
   color:var(--ink) !important;
 }
 
@@ -2317,7 +2317,7 @@ body{
 }
 
 :root[data-ui-theme="dark"] .pill.quiet{
-  background:#202E43 !important;
+  background:var(--ds-surface-3) !important;
   color:var(--ink-soft) !important;
   border-color:var(--ui-border-strong) !important;
 }

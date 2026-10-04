@@ -256,7 +256,7 @@
 .rem-h{display:flex;flex-direction:column;gap:.1rem;margin-bottom:.45rem}.rem-h b{font-size:.92rem}.rem-h small{font-size:.74rem;color:var(--ink-soft)}
 .rem-area{display:block;width:100%;min-height:9.5rem;padding:.7rem .8rem;border:1px solid #D9E2EC;border-radius:12px;background:#F8FAFC;color:#243447;
   font:inherit;font-size:.84rem;line-height:1.8;direction:rtl;resize:vertical;box-sizing:border-box}
-:root[data-ui-theme="dark"] .rem-area{background:#101A2B;color:#E6EDF6;border-color:#2A3A55}
+:root[data-ui-theme="dark"] .rem-area{background:var(--ds-surface-2);color:var(--ds-ink);border-color:var(--ds-border)}
 .rem-btn{width:100%;min-height:46px;margin-top:.5rem}
 .rem-row{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
 .rem-status{font-size:.78rem;margin-top:.4rem;line-height:1.6}.rem-status.ok{color:var(--tick)}.rem-status.bad{color:var(--pen)}

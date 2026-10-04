@@ -5103,7 +5103,7 @@ function renderHw() {
       <div class="row" style="font-size:.85rem;color:var(--ink-soft)">
         <span>${esc(hwClsLabel(h))}</span>
         <span>·</span>
-        <span>سلّم ${subs} من ${pool}</span>
+        <span class="ds-prog ${!subs?'zero':(pool&&subs/pool<.5)?'low':''}" title="${pool?Math.round(subs/pool*100):0}% سلّموا"><i style="--p:${pool?Math.round(subs/pool*100):0}%"></i>سلّم ${subs} من ${pool}</span>
         <span class="spacer"></span>
         ${isLab
           ? `<button class="btn ghost sm" onclick="openHwForm('${h.id}')">${esc(labSummary(h))}</button>`
@@ -13472,12 +13472,7 @@ function injectUiTheme(){
   const st=document.createElement('style');
   st.id='ui-theme-style';
   st.textContent=`
-    :root[data-ui-theme="dark"]{
-      --paper:#111A2A;--paper-2:#182337;--ink:#EEF2F7;--ink-soft:#A9B8CC;
-      --rule:#304158;--ui-bg:#0D1522;--ui-surface:#182337;--ui-surface-2:#111A2A;
-      --ui-border:#304158;--ui-border-strong:#40536D;
-    }
-    :root[data-ui-theme="dark"] body{background:#0D1522;color:#EEF2F7}
+    :root[data-ui-theme="dark"] body{background:var(--ds-bg);color:var(--ds-ink)}
     :root[data-ui-theme="dark"] .sheet,
     :root[data-ui-theme="dark"] .stat-card,
     :root[data-ui-theme="dark"] .feature-item,
@@ -13485,15 +13480,15 @@ function injectUiTheme(){
     :root[data-ui-theme="dark"] .badge,
     :root[data-ui-theme="dark"] .alert,
     :root[data-ui-theme="dark"] .mini-stat,
-    :root[data-ui-theme="dark"] .profile-head{background:#182337;border-color:#304158}
-    :root[data-ui-theme="dark"] .inp{background:#111A2A;color:#EEF2F7}
+    :root[data-ui-theme="dark"] .profile-head{background:var(--ds-surface);border-color:var(--ds-border)}
+    :root[data-ui-theme="dark"] .inp{background:var(--ds-surface-2);color:var(--ds-ink)}
     :root[data-ui-theme="dark"] .empty,
-    :root[data-ui-theme="dark"] .feature-empty{background:#111A2A;border-color:#40536D}
-    :root[data-ui-theme="dark"] .gt td.nm{background:#182337}
-    :root[data-ui-theme="dark"] .gt tr:hover td{background:#202E43}
+    :root[data-ui-theme="dark"] .feature-empty{background:var(--ds-surface-2);border-color:var(--ds-border-strong)}
+    :root[data-ui-theme="dark"] .gt td.nm{background:var(--ds-surface)}
+    :root[data-ui-theme="dark"] .gt tr:hover td{background:var(--ds-surface-3)}
     :root[data-ui-theme="dark"] .stat-card .stat-icon,
     :root[data-ui-theme="dark"] .feature-item .fi-icon,
-    :root[data-ui-theme="dark"] .profile-head{background:#111A2A}
+    :root[data-ui-theme="dark"] .profile-head{background:var(--ds-surface-2)}
   `;
   document.head.appendChild(st);
   applyUiTheme();
