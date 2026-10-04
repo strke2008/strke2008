@@ -6372,6 +6372,7 @@ body{
 <button aria-controls="main-nav" aria-expanded="false" aria-label="فتح قائمة التنقل" class="nav-drawer-toggle no-print" id="nav-drawer-toggle" type="button">☰</button>
 <div class="brand brand-refresh" role="button" tabindex="0" title="اضغط لتحديث الصفحة" aria-label="تحديث الصفحة"><span class="mark"></span> مساعد المعلم</div>
 <div class="meta" id="meta-line">—</div>
+<button class="sync-chip no-print" id="sync-chip" type="button" hidden aria-live="polite"><i aria-hidden="true"></i><span>محفوظ</span></button>
 <button class="btn ghost sm no-print" id="portal-link-btn" onclick="openPortal()" style="display:none;margin-inline-start:auto" type="button">🧭 بوابة المعلم</button>
 </div>
 </header>
@@ -7532,6 +7533,51 @@ body{
 <div class="veil" id="veil" onclick="if(event.target===this)closeModal()">
 <div class="modal" id="modal"></div>
 </div>
+<script id="auth-header-fetch">
+/* 🔐 كلمة سر المعلم في ترويسة X-Teacher-Token بدل ?t= في الرابط:
+   الروابط تُحفظ في سجلات Cloudflare وأدوات الشبكة، والترويسة لا.
+   لا تُفعَّل إلا بعد أن يؤكد الخادم دعمها (/version → authHeader)، فلو كان الخادم
+   المنشور قديمًا يبقى كل شيء يعمل بالطريقة القديمة. روابط التنزيل المباشرة تبقى كما هي. */
+(function(){
+  'use strict';
+  const K='hwapp_auth_hdr_v1';
+  const apiBase=()=>{
+    try{
+      if(typeof getApi==='function') return String(getApi()||'').replace(/\/+$/,'');
+      if(typeof API==='string') return API.replace(/\/+$/,'');
+    }catch(_){}
+    return '';
+  };
+  let supported=null;
+  try{ supported=localStorage.getItem(K)||null; }catch(_){}
+  const nativeFetch=window.fetch.bind(window);
+  window.fetch=function(input,init){
+    try{
+      const href=typeof input==='string'?input:(input instanceof URL?input.href:'');
+      if(href && supported){
+        const u=new URL(href,location.href);
+        const tok=u.searchParams.get('t');
+        if(u.origin===supported && tok){
+          u.searchParams.delete('t');
+          const h=new Headers((init&&init.headers)||undefined);
+          h.set('X-Teacher-Token',tok);
+          return nativeFetch(u.href,Object.assign({},init||{},{headers:h}));
+        }
+      }
+    }catch(_){}
+    return nativeFetch(input,init);
+  };
+  function detect(){
+    const api=apiBase(); if(!/^https?:\/\//.test(api)) return;
+    nativeFetch(api+'/version',{cache:'no-store'}).then(r=>r.json()).then(j=>{
+      const o=new URL(api).origin;
+      if(j && j.authHeader){ supported=o; try{ localStorage.setItem(K,o); }catch(_){} }
+      else { supported=null; try{ localStorage.removeItem(K); }catch(_){} }
+    }).catch(()=>{});
+  }
+  if(document.readyState==='complete') setTimeout(detect,0); else window.addEventListener('load',()=>setTimeout(detect,0),{once:true});
+})();
+</script>
 <script id="right-sidebar-navigation-js">
 (function(){
   function initRightSidebar(){
@@ -28256,6 +28302,22 @@ button,.tab,.btn,[onclick]{touch-action:manipulation;-webkit-tap-highlight-color
 .ux-kbd-hint.on{opacity:.92;transform:none}
 @media (max-width:700px){.ux-kbd-hint{display:none}}
 @media print{.ux-kbd-hint{display:none!important}}
+/* مؤشر حالة المزامنة في الشريط العلوي */
+.sync-chip{display:inline-flex;align-items:center;gap:.4rem;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);
+  color:#E6EDF7;font:inherit;font-size:.78rem;font-weight:700;padding:.32rem .7rem;border-radius:999px;cursor:default;white-space:nowrap;
+  margin-inline-start:.5rem;transition:background .2s,border-color .2s}
+.sync-chip[hidden]{display:none}
+.sync-chip i{width:8px;height:8px;border-radius:50%;background:#3CC48A;flex:0 0 8px}
+.sync-chip[data-state="pending"] i{background:#E8B04B}
+.sync-chip[data-state="saving"] i{background:#7FB2F0;animation:sync-pulse 1s ease-in-out infinite}
+.sync-chip[data-state="error"]{background:#B4233A;border-color:#E25A70;color:#fff;cursor:pointer}
+.sync-chip[data-state="error"] i{background:#fff}
+.sync-chip[data-state="offline"]{background:rgba(232,176,75,.18);border-color:rgba(232,176,75,.5)}
+.sync-chip[data-state="offline"] i{background:#E8B04B}
+@keyframes sync-pulse{50%{opacity:.35}}
+@media (max-width:700px){.sync-chip:not([data-state="error"]) span{display:none}.sync-chip{padding:.45rem;margin-inline-start:auto}}
+@media (prefers-reduced-motion:reduce){.sync-chip i{animation:none!important}}
+
 </style>
 <script id="ux-polish-final-js">
 (function(){
@@ -28329,6 +28391,63 @@ button,.tab,.btn,[onclick]{touch-action:manipulation;-webkit-tap-highlight-color
       if(wasOpen) returnFocus=null;
       return r;
     };
+  }
+
+
+  /* 5) مؤشر حالة المزامنة: كان فشل الحفظ في الخادم يظهر في سجل المتصفح فقط،
+        فقد يظن المعلم أن تعديله وصل وهو لم يصل. */
+  const chip=document.getElementById('sync-chip');
+  if(chip && typeof window.pushStateNow==='function' && typeof window.pushState==='function'){
+    let state='saved', lastOk=0, retryT=0;
+    const fmt=t=>new Date(t).toLocaleTimeString('ar-SA-u-nu-latn',{hour:'2-digit',minute:'2-digit'});
+    const TEXT={saved:'محفوظ',pending:'تعديلات لم تُرفع',saving:'جارٍ الحفظ…',error:'لم يُحفظ — أعد المحاولة',offline:'بلا اتصال'};
+    const TITLE={saved:()=>lastOk?`كل التعديلات محفوظة في الخادم (آخر حفظ ${fmt(lastOk)})`:'البيانات متزامنة مع الخادم',
+      pending:()=>'سيُرفع التعديل خلال لحظات',saving:()=>'يُرفع التعديل إلى الخادم',
+      error:()=>'لم يصل آخر تعديل إلى الخادم. بياناتك محفوظة على هذا الجهاز — اضغط لإعادة المحاولة',
+      offline:()=>'لا يوجد اتصال بالإنترنت. التعديلات محفوظة على هذا الجهاز وتُرفع تلقائيًا عند عودة الاتصال'};
+    const set=st=>{
+      state=st;
+      chip.hidden=!getTok();
+      chip.dataset.state=st;
+      chip.querySelector('span').textContent=TEXT[st];
+      chip.title=TITLE[st]();
+      chip.setAttribute('aria-label',TITLE[st]());
+    };
+    // رقم تسلسلي لكل تعديل: «محفوظ» لا تظهر إلا إذا وصل آخر تعديل فعلًا
+    let editSeq=0, savedSeq=0;
+    const settle=()=>{
+      if(!navigator.onLine) return set('offline');
+      if(savedSeq>=editSeq) return set('saved');
+      set('pending');
+      clearTimeout(retryT); retryT=setTimeout(()=>{ if(state==='pending' && navigator.onLine) retry(); },5000);
+    };
+    const retry=()=>{ if(!getTok()) return; window.pushStateNow().catch(()=>{}); };
+    const _now=window.pushStateNow;
+    window.pushStateNow=function(){
+      const seq=editSeq;
+      set(navigator.onLine?'saving':'offline');
+      const p=_now.apply(this,arguments);
+      Promise.resolve(p).then(ok=>{
+        if(ok===false){ if(getTok()) set('error'); else set('saved'); return; }
+        lastOk=Date.now(); savedSeq=Math.max(savedSeq,seq); settle();
+      },()=>{
+        if(!navigator.onLine) return set('offline');
+        set('error');
+        clearTimeout(retryT); retryT=setTimeout(()=>{ if(state==='error') retry(); },30000);   // محاولة تلقائية بعد 30 ثانية
+      });
+      return p;
+    };
+    const _push=window.pushState;
+    window.pushState=function(){
+      editSeq++;
+      const r=_push.apply(this,arguments);
+      if(getTok() && state!=='saving' && state!=='error') settle();
+      return r;
+    };
+    chip.addEventListener('click',()=>{ if(state==='error'||state==='offline'||state==='pending') retry(); });
+    window.addEventListener('online',()=>{ if(savedSeq<editSeq || state==='error') retry(); else settle(); });
+    window.addEventListener('offline',()=>set('offline'));
+    set(navigator.onLine?'saved':'offline');
   }
 
   // أظهر التلميح مرة عند فتح تبويب فيه بحث، ثم أخفه

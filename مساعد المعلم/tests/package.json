@@ -3,8 +3,9 @@
   "private": true,
   "description": "اختبار دخان للوحة المعلم والبوابات",
   "scripts": {
-    "test": "node smoke.js",
-    "test:quick": "QUICK=1 node smoke.js",
+    "test": "node worker-test.mjs && node smoke.js",
+    "test:quick": "node worker-test.mjs && QUICK=1 node smoke.js",
+    "test:worker": "node worker-test.mjs",
     "shots": "SHOTS=shots node smoke.js"
   },
   "devDependencies": {

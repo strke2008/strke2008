@@ -589,7 +589,8 @@ function nameTokens(s) {
 const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
+  'Access-Control-Allow-Headers': 'Content-Type, X-Teacher-Token',
+  'Access-Control-Max-Age': '86400',
 };
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -3673,6 +3674,12 @@ export default {
 
     if (request.method === 'OPTIONS') return new Response(null, { headers: CORS });
 
+    /* 🔐 كلمة سر المعلم في الترويسة بدل الرابط: الروابط تُحفظ في سجلات الخادم والمتصفح.
+       نضعها في url حتى تعمل كل المسارات القديمة التي تقرأ ?t= كما هي.
+       ?t= في الرابط ما زال مقبولًا (روابط التنزيل، والنسخ القديمة من الواجهة). */
+    const hdrTok = request.headers.get('X-Teacher-Token');
+    if (hdrTok && !url.searchParams.has('t')) url.searchParams.set('t', hdrTok);
+
     if (!env.HW) return json({ error: 'KV binding HW is missing' }, 500);
 
     /* 🔎 بصمة النسخة: تكشف فورًا إن كان الخادم المنشور قديمًا.
@@ -3681,6 +3688,7 @@ export default {
       return json({
         ok: true,
         build: 'worker-v15-live',
+        authHeader: true,
         live: true, liveNotify: true,
         push: pushConfigured(env),
         storeLocks: !!env.DB,
