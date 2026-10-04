@@ -10,28 +10,28 @@
 
 /* ── 1) الرموز (Tokens) ── */
 :root{
-  --ds-bg:#F3F5F9;
-  --ds-surface:#FFFFFF;
-  --ds-surface-2:#F8FAFC;
-  --ds-surface-3:#EEF2F7;
-  --ds-border:#E3E8EF;
-  --ds-border-strong:#CDD5E0;
-  --ds-ink:#0F1B2D;
-  --ds-ink-2:#334256;
-  --ds-muted:#647489;
-  --ds-faint:#97A3B3;
+  --ds-bg:#E9EEF5;
+  --ds-surface:#F7FAFD;
+  --ds-surface-2:#F1F5FA;
+  --ds-surface-3:#E6EDF5;
+  --ds-border:#D5E0EC;
+  --ds-border-strong:#C9D6E5;
+  --ds-ink:#16233A;
+  --ds-ink-2:#2E3F5A;
+  --ds-muted:#5A6B84;
+  --ds-faint:#8697AE;
 
-  --ds-primary:#172B4D;          /* هوية اللوحة: الكحلي */
-  --ds-primary-hover:#0F203D;
+  --ds-primary:#16233A;          /* هوية اللوحة: الكحلي */
+  --ds-primary-hover:#0E1829;
   --ds-on-primary:#FFFFFF;
-  --ds-brand:#0E8A6C;            /* لون الإنجاز/التمييز */
-  --ds-brand-hover:#0B7359;
-  --ds-brand-50:#E8F6F1;
-  --ds-brand-100:#CFEDE3;
-  --ds-danger:#D0384E;
-  --ds-danger-hover:#B42C40;
+  --ds-brand:#1B9C6B;            /* لون الإنجاز/التمييز */
+  --ds-brand-hover:#168559;
+  --ds-brand-50:#E4F4EC;
+  --ds-brand-100:#C6E8D6;
+  --ds-danger:#D6455B;
+  --ds-danger-hover:#BE3A4F;
   --ds-danger-50:#FDEEF0;
-  --ds-warn:#B36A00;
+  --ds-warn:#C88A2E;
   --ds-warn-50:#FFF5E3;
   --ds-info:#2563EB;
   --ds-info-50:#EBF2FF;
@@ -346,6 +346,49 @@ html body .report-hub-arrow{color:var(--ds-brand) !important}
 /* ── 15) الرسائل المنبثقة ── */
 html body .toast{border-radius:12px !important;box-shadow:var(--ds-shadow-3) !important;font-weight:600}
 
+
+
+/* ═══ ألوان الهوية الأصلية: شريط علوي وقائمة جانبية بالكحلي (طلب المعلم) ═══ */
+:root:not([data-ui-theme="dark"]) body .masthead{
+  background:rgba(22,35,58,.98) !important;color:#F7FAFD !important;border-bottom:0 !important;
+  box-shadow:0 8px 28px rgba(22,35,58,.18) !important;
+}
+:root:not([data-ui-theme="dark"]) body .masthead .brand{color:#fff !important}
+:root:not([data-ui-theme="dark"]) body .masthead .brand .mark{display:inline-block}
+:root:not([data-ui-theme="dark"]) body .masthead .meta{background:rgba(255,255,255,.08) !important;color:#9FB2CC !important}
+:root:not([data-ui-theme="dark"]) body .ds-title b{color:#fff}
+:root:not([data-ui-theme="dark"]) body .ds-title small{color:#9FB2CC}
+:root:not([data-ui-theme="dark"]) body .ds-search{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.14);color:#9FB2CC}
+:root:not([data-ui-theme="dark"]) body .ds-search:hover{background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.24)}
+:root:not([data-ui-theme="dark"]) body .ds-search kbd{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.18);color:#C9D6E5}
+:root:not([data-ui-theme="dark"]) body .masthead .ds-icon-btn{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.14);color:#fff}
+:root:not([data-ui-theme="dark"]) body .masthead .ds-icon-btn:hover{background:rgba(255,255,255,.16)}
+:root:not([data-ui-theme="dark"]) body .sync-chip{background:rgba(255,255,255,.08) !important;border-color:rgba(255,255,255,.18) !important;color:#E6EDF7 !important}
+:root:not([data-ui-theme="dark"]) body .sync-chip[data-state="error"]{background:#B4233A !important;border-color:#E25A70 !important;color:#fff !important}
+:root:not([data-ui-theme="dark"]) body .sync-chip[data-state="offline"]{background:rgba(232,176,75,.18) !important;color:#F3D08F !important}
+:root:not([data-ui-theme="dark"]) body .sync-chip i{background:#3CC48A}
+:root:not([data-ui-theme="dark"]) body #portal-link-btn{background:rgba(255,255,255,.08) !important;color:#fff !important;border-color:rgba(255,255,255,.18) !important}
+
+:root:not([data-ui-theme="dark"]) body .app-sidebar{background:#16233A !important;color:#DCE6F1 !important;border-left:1px solid rgba(255,255,255,.08) !important;
+  box-shadow:-8px 0 28px rgba(13,24,40,.12) !important}
+:root:not([data-ui-theme="dark"]) body .app-sidebar-head{border-bottom-color:rgba(255,255,255,.08) !important}
+:root:not([data-ui-theme="dark"]) body .app-sidebar-brand{color:#fff !important}
+:root:not([data-ui-theme="dark"]) body .ds-brand-txt small{color:#91A4BD}
+:root:not([data-ui-theme="dark"]) body .app-nav-title{color:#91A4BD !important}
+:root:not([data-ui-theme="dark"]) body .app-sidebar .tab{color:#DCE6F1 !important}
+:root:not([data-ui-theme="dark"]) body .app-sidebar .tab:hover{background:rgba(255,255,255,.075) !important;color:#fff !important}
+:root:not([data-ui-theme="dark"]) body .app-sidebar .tab.on,
+:root:not([data-ui-theme="dark"]) body .app-sidebar .tab.on:hover{background:#F1F5F9 !important;color:#16233A !important;box-shadow:0 2px 9px rgba(0,0,0,.12) !important}
+:root:not([data-ui-theme="dark"]) body .app-sidebar .tab.on::before{background:#3CC48A}
+:root:not([data-ui-theme="dark"]) body .ds-nav-foot{border-top-color:rgba(255,255,255,.08)}
+:root:not([data-ui-theme="dark"]) body .ds-nav-foot .ds-icon-btn{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.12);color:#DCE6F1}
+:root:not([data-ui-theme="dark"]) body .ds-nav-foot .ds-icon-btn:hover{background:rgba(255,255,255,.16)}
+:root:not([data-ui-theme="dark"]) body .ds-nav-foot small{color:#91A4BD}
+:root:not([data-ui-theme="dark"]) body .app-sidebar-close{background:rgba(255,255,255,.08) !important;color:#fff !important}
+:root:not([data-ui-theme="dark"]) body.ds-nav-collapsed .app-nav-group{border-bottom-color:rgba(255,255,255,.08) !important}
+:root:not([data-ui-theme="dark"]) body .app-sidebar *{scrollbar-color:rgba(255,255,255,.22) transparent}
+/* الخلفية كما كانت: تدرّج خفيف في الزاوية */
+:root:not([data-ui-theme="dark"]) body{background:radial-gradient(circle at 100% 0,rgba(201,214,229,.20),transparent 28rem),var(--ds-bg) !important}
 
 /* ── 17) لوحة الأوامر (Ctrl+K) ── */
 .ds-palette{position:fixed;inset:0;z-index:5000;background:rgba(10,18,32,.42);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
