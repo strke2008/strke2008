@@ -192,6 +192,21 @@ async function dashboard(browser, base, viewport, label) {
     const fv = await page.evaluate(() => document.getElementById('hw-filter').value);
     fv === 'overdue' ? pass('فلتر «منتهٍ» السريع يعمل') : fail('فلاتر الأنشطة', `القيمة ${fv}`);
     await page.click('.ds-chip[data-v="all"]');
+    // «الكشوف» مدموجة في «التقارير والكشوف»
+    await page.evaluate(() => goTab('reports')); await page.waitForTimeout(300);
+    const merged = await page.evaluate(() => document.querySelector('.panel.on')?.id === 'p-reports-main'
+      && !!document.querySelector('#p-reports-main [onclick*="openDedicatedReport(\'comprehensive\')"]')
+      && document.querySelector('.tab[data-tab="grades"]').classList.contains('on'));
+    merged ? pass('«الكشوف» تفتح الصفحة الموحّدة وفيها الكشف الشامل') : fail('دمج التقارير', 'لم تُفتح الصفحة الموحدة');
+    await page.evaluate(() => switchReportView('comprehensive')); await page.waitForTimeout(300);
+    const hl = await page.evaluate(() => document.querySelector('.tab[data-tab="grades"]').classList.contains('on'));
+    hl ? pass('الكشف الشامل يُبقي «التقارير والكشوف» مضاءً') : fail('دمج التقارير', 'القائمة لا تضيء الصفحة الحالية');
+    // الإعدادات: الطيّ والفتح
+    await page.evaluate(() => goTab('data')); await page.waitForTimeout(300);
+    const st = await page.evaluate(() => { const sh = document.querySelector('#official-names-sheet'); const was = sh.classList.contains('ds-collapsed');
+      sh.querySelector(':scope > .sheet-head').click(); const now = sh.classList.contains('ds-collapsed'); sh.querySelector(':scope > .sheet-head').click();
+      return { n: document.querySelectorAll('#p-data > .ds-collapsible').length, toggled: was !== now }; });
+    st.n >= 8 && st.toggled ? pass(`الإعدادات: ${st.n} أقسام قابلة للطيّ`) : fail('الإعدادات', JSON.stringify(st));
     flush(errs, 'ميزات التصميم');
     console.log('\n[4ب] التقارير والنوافذ');
     const steps = [
@@ -217,6 +232,9 @@ async function dashboard(browser, base, viewport, label) {
       for (const t of tabs) {
         const collect = () => page.evaluate(t => {
           document.querySelector(`.tab[data-tab="${t}"]`).click();
+          // الأقسام المطويّة والتبويبات الداخلية تُفتح كلها حتى تُختبر أزرارها أيضًا
+          document.querySelectorAll('.panel.on .ds-collapsed').forEach(x => x.classList.remove('ds-collapsed'));
+          document.querySelectorAll('.panel.on .ds-pane[hidden]').forEach(x => { x.hidden = false; });
           window.__btns = [...document.querySelectorAll('.panel.on button')].filter(b => b.offsetParent);
           return window.__btns.length;
         }, t);

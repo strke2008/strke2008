@@ -458,6 +458,52 @@ html body #hw-list>.sheet:hover{border-color:var(--ds-border-strong);box-shadow:
 html body .msg-hidden-control{position:absolute !important;width:1px !important;height:1px !important;min-height:0 !important;max-width:1px !important;
   padding:0 !important;border:0 !important;margin:0 !important;overflow:hidden !important;clip:rect(0 0 0 0);clip-path:inset(50%);inset-inline-start:0;white-space:nowrap}
 
+
+/* ── 21) دمج العناصر المتكررة ── */
+/* تنبيهات الأنشطة: شريط واحد مضغوط بدل ثلاثة صناديق */
+.ds-hw-notices{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:.6rem;margin-bottom:.75rem}
+.ds-hw-notices:not(:has(.ds-notice)){display:none}
+.ds-hw-notices>div:empty{display:none}
+html body .ds-notice{display:flex;align-items:center;flex-wrap:wrap;gap:.4rem .7rem;min-height:48px;padding:.5rem .85rem;margin:0 !important;
+  border-radius:12px;border:1px solid var(--ds-border);background:var(--ds-surface);font-size:.86rem}
+html body .ds-notice.info{border-color:rgba(46,107,184,.35);background:rgba(46,107,184,.06)}
+html body .ds-notice.info>b{color:#2E6BB8}
+html body .ds-notice.danger{border-color:rgba(214,69,91,.4);background:rgba(214,69,91,.05)}
+html body .ds-notice .ds-notice-actions{display:inline-flex;gap:.4rem;margin-inline-start:auto}
+html body details.ds-notice{display:block}
+html body details.ds-notice>summary{min-height:30px;align-items:center}
+:root[data-ui-theme="dark"] body .ds-notice.info>b{color:var(--ds-info)}
+/* شريط التحديد الجماعي: سطر خفيف، والأزرار تظهر عند التحديد فقط */
+html body .ds-bulk{padding:.35rem .25rem .6rem;font-size:.86rem;color:var(--ds-muted)}
+html body .ds-bulk.on{padding:.55rem .8rem;margin-bottom:.6rem;border-radius:12px;background:var(--ds-brand-50);border:1px solid var(--ds-brand-100);color:var(--ds-ink)}
+/* بطاقة الرئيسية الموحّدة بتبويبات */
+.ds-seg{display:flex;gap:4px;padding:4px;margin-bottom:.9rem;background:var(--ds-surface-3);border-radius:12px;overflow-x:auto;scrollbar-width:none}
+.ds-seg::-webkit-scrollbar{display:none}
+.ds-seg button{flex:1 0 auto;border:0;background:transparent;color:var(--ds-muted);font:700 .86rem var(--ds-font);padding:.55rem .9rem;border-radius:9px;cursor:pointer;white-space:nowrap}
+.ds-seg button:hover{color:var(--ds-ink)}
+.ds-seg button.on{background:var(--ds-surface);color:var(--ds-ink);box-shadow:var(--ds-shadow-1)}
+.ds-seg button small{font-weight:600;color:var(--ds-faint);margin-inline-start:.25rem}
+.ds-pane-note{margin:0 0 .6rem;font-size:.78rem;color:var(--ds-muted)}
+html body .ds-pane.followup-students-sheet{background:transparent;border:0;box-shadow:none;padding:0}
+/* صفحة التقارير والكشوف */
+.ds-hub-title{display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap;margin:1.1rem 0 .6rem}
+.ds-hub-title h3{margin:0;font-size:1.02rem;font-weight:800;color:var(--ds-ink)}
+.ds-hub-title span{font-size:.78rem;color:var(--ds-muted)}
+.ds-hub-title:first-of-type{margin-top:0}
+/* «الكشوف» دُمجت في «التقارير والكشوف»: زرها القديم يبقى مخفيًا في كل مكان */
+html body .tab[data-tab="reports"],html body #mobile-nav button[data-tab="reports"],html body .mobile-nav button[data-tab="reports"]{display:none !important}
+/* الإعدادات: بطاقات مدموجة وقابلة للطيّ */
+html body .ds-subhead{margin:.2rem 0 .5rem;font-size:.95rem;font-weight:800;color:var(--ds-ink)}
+html body .ds-sep{border:0;border-top:1px dashed var(--ds-border-strong);margin:1.1rem 0}
+html body .ds-collapsible>.sheet-head{cursor:pointer;user-select:none;margin-bottom:.9rem;border-radius:10px;position:relative;padding-inline-end:2rem}
+html body .ds-collapsible>.sheet-head::after{content:'▾';position:absolute;inset-inline-end:.4rem;top:50%;transform:translateY(-50%);color:var(--ds-muted);font-size:1rem;transition:transform .2s}
+html body .ds-collapsible.ds-collapsed>.sheet-head{margin-bottom:0}
+html body .ds-collapsible.ds-collapsed>.sheet-head::after{transform:translateY(-50%) rotate(90deg)}
+html body .ds-collapsible.ds-collapsed>:not(.sheet-head){display:none !important}
+html body #p-data .ds-collapsible{padding-block:.85rem}
+html body #p-data .ds-collapsible>.sheet-head h2{font-size:1.05rem}
+html body .ds-collapsible>.sheet-head:hover h2{color:var(--ds-brand)}
+
 /* ── 16) الجوال ── */
 @media (max-width:700px){
   html body .masthead-in{padding:8px 12px !important;min-height:56px !important}
@@ -481,6 +527,7 @@ html body .msg-hidden-control{position:absolute !important;width:1px !important;
   @keyframes ds-sheet{from{transform:translateY(40px);opacity:.6}to{transform:none;opacity:1}}
   html body .mobile-nav{background:color-mix(in srgb,var(--ds-surface) 94%,transparent) !important;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
     border-top:1px solid var(--ds-border) !important;box-shadow:0 -4px 20px rgba(15,27,45,.06) !important}
+  html body .mobile-nav{grid-template-columns:repeat(6,minmax(0,1fr)) !important}
   html body #mobile-nav button,html body #mobile-nav button:not(.on){color:var(--ds-ink-2) !important;-webkit-text-fill-color:var(--ds-ink-2) !important;
     background:transparent !important;border-radius:12px !important;opacity:1 !important}
   html body #mobile-nav button.on,html body #mobile-nav button.on:active{color:var(--ds-brand) !important;-webkit-text-fill-color:var(--ds-brand) !important;

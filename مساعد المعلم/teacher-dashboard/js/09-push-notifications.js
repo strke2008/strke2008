@@ -169,7 +169,7 @@ function pushRenderCard(message){
 /* فتح التسليم الذي أرسل الإشعار: «آخر التسليمات» ثم إبراز الصف */
 async function openSubmissionFromPush(data){
   if(!data) return;
-  if(data.type==='test' || data.open==='notifications'){ goTab('data'); setTimeout(()=>document.getElementById('push-settings-sheet')?.scrollIntoView({block:'start',behavior:'smooth'}),150); return; }
+  if(data.type==='test' || data.open==='notifications'){ goTab('data'); setTimeout(()=>{ const el=document.getElementById('push-settings-sheet'); el?.classList.remove('ds-collapsed'); el?.scrollIntoView({block:'start',behavior:'smooth'}); },150); return; }
   goTab('dashboard');
   // عند الفتح البارد تكون اللوحة في منتصف مزامنتها الأولى: ننتظرها ثم نجلب التسليمات
   try{

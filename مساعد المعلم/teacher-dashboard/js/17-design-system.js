@@ -22,14 +22,14 @@
     hw:{t:'الأنشطة',g:'التعلم',ic:'📋'}, projects:{t:'المشاريع',g:'التعلم',ic:'📁'}, madrasati:{t:'مدرستي',g:'التعلم',ic:'📚'},
     live:{t:'المسابقات المباشرة',g:'التعلم',ic:'🎮'}, plans:{t:'الخطط العلاجية',g:'التعلم',ic:'🩺'},
     students:{t:'الطلاب',g:'إدارة الطلاب',ic:'👥'}, 'exam-shop':{t:'تحكم درجات المتجر',g:'إدارة الطلاب',ic:'🎓'}, messages:{t:'رسائل الطلاب',g:'إدارة الطلاب',ic:'💬'},
-    grades:{t:'التقارير',g:'التقييم والكشوف',ic:'📊'}, reports:{t:'الكشوف',g:'التقييم والكشوف',ic:'🗂️'}, exam:{t:'اختبار ورقي',g:'التقييم والكشوف',ic:'🖨️'},
+    grades:{t:'التقارير والكشوف',g:'التقييم والكشوف',ic:'📊'}, exam:{t:'اختبار ورقي',g:'التقييم والكشوف',ic:'🖨️'},
     data:{t:'الإعدادات',g:'الأدوات',ic:'⚙️'}
   };
   const SUBPAGES={ // لوحات فرعية داخل التقارير والكشوف
     'p-grades':['grades','درجات الأنشطة','grades'], 'p-analysis':['grades','تحليل الأنشطة','analysis'],
     'p-diag':['grades','التشخيصي','diag'], 'p-styles':['grades','أنماط التعلّم','styles'],
-    'p-comprehensive':['reports','الكشف الشامل','comprehensive'], 'p-weekly':['reports','الكشف الأسبوعي','weekly'],
-    'p-compan':['reports','تحليل الكشف الشامل','compan']
+    'p-comprehensive':['grades','الكشف الشامل','comprehensive'], 'p-weekly':['grades','الكشف الأسبوعي','weekly'],
+    'p-compan':['grades','تحليل الكشف الشامل','compan']
   };
 
   /* ═══ 1) الشريط العلوي ═══ */
@@ -86,7 +86,7 @@
   function currentPage(){
     const p=document.querySelector('main .panel.on'); if(!p) return null;
     if(SUBPAGES[p.id]){ const [tab,name]=SUBPAGES[p.id]; return {g:PAGES[tab].t,t:name,tab}; }
-    const tab=p.id.replace(/^p-/,'').replace(/^reports-main$/,'grades');
+    const tab=p.id.replace(/^p-/,'').replace(/^(reports-main|reports)$/,'grades');
     const meta=PAGES[tab]; return meta?{g:meta.g,t:meta.t,tab}:null;
   }
   function syncTitle(){
@@ -145,6 +145,8 @@
     for(const [id,[tab,name,code]] of Object.entries(SUBPAGES)) out.push({grp:'الصفحات',ic:PAGES[tab].ic,t:name,s:PAGES[tab].t,run:()=>{ call('goTab',tab); setTimeout(()=>call('switchReportView',code),80); }});
     NEW_ITEMS.forEach(([ic,label,act])=>out.push({grp:'إجراءات',ic,t:label,s:'إنشاء',run:act}));
     out.push({grp:'إجراءات',ic:'🌓',t:'تبديل الوضع الليلي',s:'المظهر',run:()=>{ call('toggleUiTheme'); syncThemeBtn(); }});
+    if(fn('openStudentSearch')) out.push({grp:'إجراءات',ic:'🔎',t:'بحث طالب حسب الفصل',s:'الطلاب',run:()=>call('openStudentSearch')});
+    if(fn('openNotifications')) out.push({grp:'إجراءات',ic:'🔔',t:'كل التنبيهات',s:'الرئيسية',run:()=>call('openNotifications')});
     if(fn('backupDownloadFull')) out.push({grp:'إجراءات',ic:'⬇️',t:'تنزيل نسخة احتياطية كاملة',s:'الإعدادات',run:()=>call('backupDownloadFull')});
     if(fn('exportAll')) out.push({grp:'إجراءات',ic:'📤',t:'تصدير الطلاب والأنشطة',s:'الإعدادات',run:()=>call('exportAll')});
     try{ (typeof STUDENTS!=='undefined'?STUDENTS:[]).forEach(s=>out.push({grp:'الطلاب',ic:'👤',t:s.name,s:s.cls||'',run:()=>{ call('goTab','students'); setTimeout(()=>call('openStudentProfile',s.id),80); }})); }catch(_){}
@@ -216,7 +218,7 @@
       acts.querySelectorAll('.btn').forEach(b=>b.classList.add('ds-quick-btn'));
       add('📋','نشاط جديد',()=>{ call('goTab','hw'); setTimeout(()=>call('openHwForm'),60); },!!fn('openHwForm'));
       add('📢','رسالة للطلاب',()=>call('goTab','messages'));
-      add('🗂️','الكشف الشامل',()=>{ call('goTab','reports'); setTimeout(()=>call('switchReportView','comprehensive'),80); },!!fn('switchReportView'));
+      add('🗂️','الكشف الشامل',()=>{ call('goTab','grades'); setTimeout(()=>call('switchReportView','comprehensive'),80); },!!fn('switchReportView'));
       add('🔎','بحث شامل',openPal);
     }
   }
@@ -233,6 +235,61 @@
     if(hwHead) hwHead.after(chips);
     hwSel.classList.add('ds-visually-hidden-sm');
     syncChips();
+  }
+
+
+  /* ═══ 6) «التقارير» و«الكشوف» صفحة واحدة ═══
+     زر «الكشوف» القديم مخفي ويحوَّل إلى الصفحة الموحّدة (روابط «العودة للكشوف» وغيرها تبقى تعمل)،
+     وعند فتح أي كشف يبقى «التقارير والكشوف» مضاءً في القائمة. */
+  const gradesTab=$('.tab[data-tab="grades"]');
+  document.querySelectorAll('.tab[data-tab="reports"], .mobile-nav button[data-tab="reports"]').forEach(b=>{
+    b.onclick=()=>{ if(gradesTab) gradesTab.click(); };
+  });
+  const REPORT_PANELS=new Set(['p-reports','p-reports-main','p-comprehensive','p-weekly','p-compan','p-grades','p-analysis','p-diag','p-styles']);
+  function syncReportsHighlight(){
+    const p=document.querySelector('main .panel.on'); if(!p || !REPORT_PANELS.has(p.id)) return;
+    document.querySelectorAll('.tab[data-tab="grades"], .mobile-nav button[data-tab="grades"]').forEach(b=>b.classList.add('on'));
+  }
+  const hlObs=new MutationObserver(()=>{ clearTimeout(hlObs.t); hlObs.t=setTimeout(syncReportsHighlight,0); });
+  document.querySelectorAll('main .panel').forEach(p=>hlObs.observe(p,{attributes:true,attributeFilter:['class']}));
+
+  /* ═══ 7) الرئيسية: «ماذا أفعل الآن» و«طلاب يحتاجون متابعتك» و«حالة الأنشطة» في بطاقة واحدة ═══ */
+  const tabcard=$('#dash-more');
+  if(tabcard){
+    const KEY='hwapp_ui_dash_pane_v1';
+    const show=name=>{
+      tabcard.querySelectorAll('.ds-seg [data-pane]').forEach(b=>{ const on=b.dataset.pane===name; b.classList.toggle('on',on); b.setAttribute('aria-selected',String(on)); b.tabIndex=on?0:-1; });
+      tabcard.querySelectorAll('.ds-pane').forEach(p=>p.hidden=p.dataset.pane!==name);
+      store.set(KEY,name);
+    };
+    tabcard.querySelector('.ds-seg').addEventListener('click',e=>{ const b=e.target.closest('[data-pane]'); if(b) show(b.dataset.pane); });
+    tabcard.querySelector('.ds-seg').addEventListener('keydown',e=>{
+      if(e.key!=='ArrowLeft'&&e.key!=='ArrowRight') return;
+      const bs=[...tabcard.querySelectorAll('.ds-seg [data-pane]')], i=bs.findIndex(b=>b.classList.contains('on'));
+      const n=bs[(i+(e.key==='ArrowLeft'?1:-1)+bs.length)%bs.length]; show(n.dataset.pane); n.focus(); e.preventDefault();
+    });
+    show(['next','follow','hw'].includes(store.get(KEY))?store.get(KEY):'next');
+  }
+
+  /* ═══ 8) الإعدادات: كل بطاقة تُطوى إلى عنوانها (الشارات تبقى ظاهرة) ═══ */
+  const dataPanel=$('#p-data');
+  if(dataPanel){
+    const KEY='hwapp_ui_settings_open_v1';
+    let open={}; try{ open=JSON.parse(store.get(KEY)||'{}')||{}; }catch(_){}
+    const keyOf=sh=>sh.id||((sh.querySelector('.sheet-head h2')||{}).textContent||'').trim();
+    const prep=sh=>{
+      if(sh.dataset.dsCollapsible) return;
+      const head=sh.querySelector(':scope > .sheet-head'); if(!head) return;
+      sh.dataset.dsCollapsible='1'; sh.classList.add('ds-collapsible');
+      head.setAttribute('role','button'); head.tabIndex=0;
+      const k=keyOf(sh);
+      const set=on=>{ sh.classList.toggle('ds-collapsed',!on); head.setAttribute('aria-expanded',String(on)); open[k]=on; store.set(KEY,JSON.stringify(open)); };
+      set(!!open[k]);
+      head.addEventListener('click',e=>{ if(e.target.closest('button,a,input,select,label')) return; set(sh.classList.contains('ds-collapsed')); });
+      head.addEventListener('keydown',e=>{ if((e.key==='Enter'||e.key===' ') && e.target===head){ e.preventDefault(); set(sh.classList.contains('ds-collapsed')); } });
+    };
+    const scan=()=>dataPanel.querySelectorAll(':scope > .sheet').forEach(prep);
+    scan(); new MutationObserver(scan).observe(dataPanel,{childList:true});
   }
 
   syncTitle();

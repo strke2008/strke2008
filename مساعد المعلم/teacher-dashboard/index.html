@@ -34,7 +34,7 @@
 <link rel="preload" as="style" href="css/13-student-health-style.css?v=f7acc75ae4">
 <link rel="preload" as="style" href="css/14-student-report-style.css?v=ed0eec3595">
 <link rel="preload" as="style" href="css/15-ux-polish-final.css?v=cf69190538">
-<link rel="preload" as="style" href="css/16-design-system.css?v=a651988a57">
+<link rel="preload" as="style" href="css/16-design-system.css?v=68ef84294b">
 <style id="ds-boot">html:not(.ds-on) body>*{visibility:hidden}</style>
 <script>setTimeout(function(){document.documentElement.classList.add("ds-on")},4000)</script>
 </head>
@@ -75,8 +75,8 @@
 </section>
 <section class="app-nav-group">
 <div class="app-nav-title">التقييم والكشوف</div>
-<button class="tab" data-tab="grades" type="button"><span class="app-nav-icon">📊</span><span>التقارير</span></button>
-<button class="tab" data-tab="reports" type="button"><span class="app-nav-icon">🗂️</span><span>الكشوف</span></button>
+<button class="tab" data-tab="grades" type="button"><span class="app-nav-icon">📊</span><span>التقارير والكشوف</span></button>
+<button class="tab" data-tab="reports" type="button" hidden style="display:none" aria-hidden="true" tabindex="-1"><span class="app-nav-icon">🗂️</span><span>الكشوف</span></button>
 <button class="tab" data-tab="exam" type="button"><span class="app-nav-icon">🖨️</span><span>اختبار ورقي</span></button>
 </section>
 <section class="app-nav-group">
@@ -94,14 +94,9 @@
 <h2>لوحة التحكم</h2>
 <span class="sub">ملخص سريع لحالة كراسة النشاط</span>
 </div>
-<span class="spacer"></span>
-<button class="btn sm" onclick="openQuickStudent()">+ طالب</button>
 </div>
 <div class="feature-grid" id="dash-stats"></div>
-<div class="dashboard-actions">
-<button class="btn ghost sm" onclick="openStudentSearch()">بحث طالب</button>
-<button class="btn ghost sm" onclick="openNotifications()">التنبيهات</button>
-</div>
+<div class="dashboard-actions"></div>
 <div class="feature-cols">
 <div class="sheet alerts-sheet" style="margin:0">
 <div class="alert-section-head">
@@ -123,20 +118,15 @@
 <div class="feature-list" id="dash-recent"></div>
 </div>
 </div>
-<div class="sheet" style="margin-top:1rem">
-<div class="section-title"><h3>🧭 ماذا أفعل الآن؟</h3><span>اقتراحات مبنية على بياناتك</span></div>
-<div class="feature-list" id="dash-next-actions"></div>
+<div class="sheet ds-tabcard" id="dash-more" style="margin-top:1rem">
+<div class="ds-seg" role="tablist" aria-label="متابعة">
+<button type="button" role="tab" data-pane="next">🧭 ماذا أفعل الآن؟</button>
+<button type="button" role="tab" data-pane="follow">👥 طلاب يحتاجون متابعتك</button>
+<button type="button" role="tab" data-pane="hw">📚 حالة الأنشطة <small id="dash-hw-summary"></small></button>
 </div>
-<div class="sheet followup-students-sheet" style="margin-top:1rem">
-<div class="section-title">
-<h3>👥 طلاب يحتاجون متابعتك</h3>
-<span>حسب الأنشطة المنتهية</span>
-</div>
-<div class="feature-list" id="dash-followup-students"></div>
-</div>
-<div class="sheet" style="margin-top:1rem">
-<div class="section-title"><h3>📚 حالة الأنشطة</h3><span id="dash-hw-summary"></span></div>
-<div id="dash-hw"></div>
+<div class="ds-pane" data-pane="next" role="tabpanel"><p class="ds-pane-note">اقتراحات مبنية على بياناتك</p><div class="feature-list" id="dash-next-actions"></div></div>
+<div class="ds-pane followup-students-sheet" data-pane="follow" role="tabpanel"><p class="ds-pane-note">حسب الأنشطة المنتهية</p><div class="feature-list" id="dash-followup-students"></div></div>
+<div class="ds-pane" data-pane="hw" role="tabpanel"><div id="dash-hw"></div></div>
 </div>
 </section>
 <!-- ═══ رسائل الطلاب ═══ -->
@@ -297,8 +287,7 @@
 </select>
 <button class="btn" onclick="openHwForm()">نشاط جديد</button>
 </div>
-<div id="pub-warn"></div>
-<div id="backup-warn"></div>
+<div class="ds-hw-notices"><div id="pub-warn"></div><div id="backup-warn"></div></div>
 <div id="hw-list"></div>
 </section>
 <!-- ═══ الطلاب ═══ -->
@@ -746,14 +735,26 @@
 </section>
 <section class="panel" id="p-reports-main">
 <div class="sheet-head">
-  <div><h2>📊 التقارير</h2><span class="sub">التقارير التحليلية ودرجات الأنشطة، منفصلة عن الكشوف.</span></div>
+  <div><h2>📊 التقارير والكشوف</h2><span class="sub">كل التقارير التحليلية والكشوف الرسمية في مكان واحد.</span></div>
 </div>
+<div class="ds-hub-title"><h3>📈 التقارير التحليلية</h3><span>درجات الأنشطة وتحليل الأداء</span></div>
 <div class="reports-hub-grid reports-main-grid">
   <button class="report-hub-card" onclick="switchReportView('grades')" type="button"><span class="report-hub-icon">📋</span><span><b>درجات الأنشطة</b><small>عرض درجات الطلاب في الأنشطة والتسليمات.</small></span><span class="report-hub-arrow">←</span></button>
   <button class="report-hub-card" onclick="switchReportView('analysis')" type="button"><span class="report-hub-icon">📈</span><span><b>تحليل الأنشطة</b><small>تحليل أداء الطلاب والأنشطة ومؤشرات الإنجاز.</small></span><span class="report-hub-arrow">←</span></button>
   <button class="report-hub-card" onclick="switchReportView('diag')" type="button"><span class="report-hub-icon">🔍</span><span><b>التشخيصي</b><small>عرض نتائج الاختبارات التشخيصية وتحليلها.</small></span><span class="report-hub-arrow">←</span></button>
   <button class="report-hub-card" onclick="switchReportView('styles')" type="button"><span class="report-hub-icon">🧠</span><span><b>أنماط التعلّم</b><small>تحليل مؤشرات وأنماط تعلم الطلاب.</small></span><span class="report-hub-arrow">←</span></button>
 </div>
+<div class="ds-hub-title"><h3>🗂️ الكشوف الرسمية</h3><span>للطباعة A4 بترويسة الوزارة</span></div>
+<div class="reports-hub-grid">
+  <button class="report-hub-card" onclick="openDedicatedReport('comprehensive')" type="button"><span class="report-hub-icon">📒</span><span><b>الكشف الشامل</b><small>أعمال السنة والدرجات والاختبارات حسب الفصل والفترة والصف.</small></span><span class="report-hub-arrow">←</span></button>
+  <button class="report-hub-card" onclick="openDedicatedReport('compan')" type="button"><span class="report-hub-icon">📊</span><span><b>تحليل الكشف الشامل</b><small>تحليل متوسطات الكشف وتوزيع مستويات الطلاب والعناصر الأضعف.</small></span><span class="report-hub-arrow">←</span></button>
+  <button class="report-hub-card" onclick="openDedicatedReport('weekly')" type="button"><span class="report-hub-icon">🗓️</span><span><b>الكشف الأسبوعي</b><small>متابعة المشاركة والواجبات والسلوك خلال أسبوع محدد.</small></span><span class="report-hub-arrow">←</span></button>
+</div>
+<div class="reports-hub-help" style="margin-top:1rem">
+<div><b>📒 الشامل</b><span>اختر الفصل الدراسي والفترة والصف، ثم راجع الكشف أو اطبعه A4.</span></div>
+<div><b>🗓️ الأسبوعي</b><span>اختر الصف والأسبوع، ثم راجع مؤشرات المتابعة أو اطبع الكشف.</span></div>
+</div>
+
 </section>
 <section class="panel" id="p-grades">
 <div class="report-topbar no-print">
@@ -1064,8 +1065,10 @@
 </div>
 <div class="muted" id="ai-settings-message" style="margin-top:.65rem;min-height:1.2rem"></div>
 </div>
-<div class="sheet">
-<div class="sheet-head"><h2>📁 نقل الطلاب والأنشطة (ملف جزئي)</h2></div>
+<div class="sheet ds-merged">
+<div class="sheet-head"><h2>📥 استيراد الطلاب ونقل البيانات</h2></div>
+
+<h3 class="ds-subhead">📁 نقل الطلاب والأنشطة (ملف جزئي)</h3>
 <p style="margin:0 0 .9rem;color:var(--ink-soft);font-size:.88rem">
         ملف بالطلاب والأنشطة ونقاطها فقط — لنقلها بين أجهزة أو منصات. <b>ليس نسخة احتياطية كاملة</b>: للنسخة الكاملة استخدم «💾 النسخ الاحتياطية» بالأسفل.
       </p>
@@ -1074,9 +1077,10 @@
 <button class="btn ghost" onclick="document.getElementById('imp').click()">استيراد ملف</button>
 <input accept=".json" id="imp" onchange="importAll(event)" style="display:none" type="file"/>
 </div>
-</div>
-<div class="sheet" id="imp-methods">
-<div class="sheet-head"><h2>👥 طرق استيراد أسماء الطلاب</h2></div>
+
+<hr class="ds-sep">
+<div id="imp-methods">
+<h3 class="ds-subhead">👥 طرق استيراد أسماء الطلاب</h3>
 <p style="margin:0 0 .9rem;color:var(--ink-soft);font-size:.88rem">اختر المصدر. كل الطرق تعرض القائمة للمراجعة قبل الإضافة، ولا تكرر اسمًا موجودًا.</p>
 <div class="imp-grid">
 <div class="imp-card rec">
@@ -1105,6 +1109,9 @@
 </div>
 </div>
 </div>
+</div>
+
+
 <div class="sheet" id="backup-sheet">
 <div class="sheet-head"><h2>💾 النسخ الاحتياطية</h2></div>
 <p style="margin:0 0 .8rem;color:var(--ink-soft);font-size:.86rem;line-height:1.8">يأخذ الخادم نسخة كاملة تلقائيًا <b>كل جمعة فجرًا</b> ويحفظ آخر 5: الطلاب والأنشطة ونتائجها، والمشاركة والواجبات والسلوك والغياب، ودرجات الاختبارات، والجدول والتذكيرات. الاستعادة تأخذ نسخة من الحال قبلها، فيمكن التراجع عنها.</p>
@@ -1116,26 +1123,30 @@
 </div>
 <div id="backup-list"><p class="muted">جارٍ التحميل…</p></div>
 </div>
-<div class="sheet">
-<div class="sheet-head"><h2>رابط صفحة الطالب</h2></div>
+<div class="sheet ds-merged">
+<div class="sheet-head"><h2>🔗 الروابط والاتصال بالخادم</h2></div>
+
+<h3 class="ds-subhead">رابط صفحة الطالب</h3>
 <p style="margin:0 0 .9rem;color:var(--ink-soft);font-size:.88rem">
         عنوان الصفحة التي رفعتها على Cloudflare. تُبنى عليه روابط الأنشطة.
       </p>
 <div class="field" style="margin:0">
 <input class="inp" id="site-url" oninput="saveSite()" placeholder="https://homwork.pages.dev/"/>
 </div>
-</div>
-<div class="sheet">
-<div class="sheet-head"><h2>رابط بوابة المعلم</h2></div>
+
+<hr class="ds-sep">
+
+<h3 class="ds-subhead">رابط بوابة المعلم</h3>
 <p style="margin:0 0 .9rem;color:var(--ink-soft);font-size:.88rem">
         عنوان بوابة الرصد التي رفعتها. يُستعمل لزر الاختصار في الأعلى — ولا يُرفَق به رمزك أبدًا.
       </p>
 <div class="field" style="margin:0">
 <input class="inp" id="portal-url" oninput="savePortal()" placeholder="https://…pages.dev/"/>
 </div>
-</div>
-<div class="sheet">
-<div class="sheet-head"><h2>الخادم — استقبال النتائج تلقائياً</h2></div>
+
+<hr class="ds-sep">
+
+<h3 class="ds-subhead">الخادم — استقبال النتائج تلقائياً</h3>
 <p style="margin:0 0 .9rem;color:var(--ink-soft);font-size:.88rem">
         بعد إنشاء الـ Worker في Cloudflare، ضع عنوانه وكلمة السر هنا.
         عندها تصل نتائج الطلاب مباشرة بلا رموز.
@@ -1144,17 +1155,24 @@
 <input class="inp" id="api-url" oninput="saveApi()" placeholder="https://homework.ahmadalmarzooq2009.workers.dev"/></div>
 <div class="field" style="margin:0"><label>كلمة السر (TEACHER_TOKEN)</label>
 <input class="inp" id="api-tok" oninput="saveApi()" placeholder="نفس التي وضعتها في Cloudflare"/></div>
+
 </div>
-<div class="sheet">
-<div class="sheet-head"><h2>تنظيف البيانات القديمة</h2></div>
+
+
+
+<div class="sheet ds-merged">
+<div class="sheet-head"><h2>🧹 صيانة البيانات</h2></div>
+
+<h3 class="ds-subhead">تنظيف البيانات القديمة</h3>
 <p style="margin:0 0 .9rem;color:var(--ink-soft);font-size:.88rem">
         يبحث الخادم عن بقايا الطلاب والأنشطة المحذوفة من الإصدارات السابقة ويحذف البيانات اليتيمة فقط.
         <b style="color:var(--tick)">لا يحذف الطلاب أو الأنشطة الحالية.</b>
 </p>
 <div style="margin-top:.6rem"><button class="btn ghost" onclick="cleanupServer()">تنظيف الخادم الآن</button></div>
-</div>
-<div class="sheet">
-<div class="sheet-head"><h2>استعادة طالب محذوف</h2></div>
+
+<hr class="ds-sep">
+
+<h3 class="ds-subhead">استعادة طالب محذوف</h3>
 <p style="margin:0 0 .8rem;color:var(--ink-soft);font-size:.88rem">
         إذا حذفت طالبًا ثم أعدت إضافته بالاسم نفسه وما زالت الأنشطة القديمة تظهر له، افحص سجلاته هنا.
         <b style="color:var(--tick)">التنظيف يحذف التسليمات القديمة فقط ولا يحذف الطالب الحالي من الكشف.</b>
@@ -1164,9 +1182,12 @@
 <button class="btn ghost" onclick="inspectDeletedStudent()" type="button">🔎 فحص البيانات</button>
 </div>
 <div id="deleted-student-result" style="margin-top:.7rem"></div>
+
 </div>
+
+
 <div class="sheet">
-<div class="sheet-head"><h2>منطقة الخطر</h2></div>
+<div class="sheet-head"><h2>⚠️ منطقة الخطر</h2></div>
 <p style="margin:0 0 .9rem;color:var(--ink-soft);font-size:.88rem">
         صدّر نسخة احتياطية قبل أي مسح — لا يمكن التراجع.
       </p>
@@ -1196,7 +1217,7 @@
 <button data-tab="students"><span class="mnav-icon">👥</span><b>الطلاب</b></button>
 <button data-tab="projects"><span class="mnav-icon">📁</span><b>المشاريع</b></button>
 <button data-tab="grades"><span class="mnav-icon">📊</span><b>التقارير</b></button>
-<button data-tab="reports"><span class="mnav-icon">🗂️</span><b>الكشوف</b></button>
+<button data-tab="reports" hidden style="display:none" aria-hidden="true" tabindex="-1"><span class="mnav-icon">🗂️</span><b>الكشوف</b></button>
 <button id="nav-more-btn" type="button"><span class="mnav-icon">•••</span><b>المزيد</b></button>
 </nav>
 <div id="toast"></div>
@@ -1207,7 +1228,7 @@
 </div>
 <script src="js/01-auth-header-fetch.js?v=9c9121e824" id="auth-header-fetch"></script>
 <script src="js/02-right-sidebar-navigation-js.js?v=41ea29b317" id="right-sidebar-navigation-js"></script>
-<script src="js/03-main.js?v=89db266507"></script>
+<script src="js/03-main.js?v=850ce5ecc5"></script>
 <script src="js/04-projects-students-logic-v13.js?v=e84414d4eb" id="projects-students-logic-v13"></script>
 <script src="js/05-student-messages.js?v=83260f9d90"></script>
 <script src="js/06-message-queue.js?v=5e4e4410c7"></script>
@@ -1225,7 +1246,7 @@
 <!-- Final A4 print alignment fix -->
 <link rel="stylesheet" href="css/07-final-exam-print-fix-2.css?v=67dbcca900">
 <!-- FINAL robust A4 exam print fix -->
-<link rel="stylesheet" href="css/08-final-robust-exam-print-fix.css?v=31a9895d2c"><script src="js/09-push-notifications.js?v=a4962ee523"></script>
+<link rel="stylesheet" href="css/08-final-robust-exam-print-fix.css?v=31a9895d2c"><script src="js/09-push-notifications.js?v=4b483b49d0"></script>
 <link rel="stylesheet" href="css/09-ios-pwa-layout-fix.css?v=800b3a6b27"><script src="js/10-madrasati-assignments.js?v=96990fc0ce"></script>
 <link rel="stylesheet" href="css/10-madrasati-style.css?v=55498adac4"><script src="js/11-madrasati-results.js?v=c7a98530b0"></script>
 <link rel="stylesheet" href="css/11-madrasati-sync-sort-style.css?v=141c85a22b"><script src="js/12-madrasati-register.js?v=34876c38e0"></script>
@@ -1234,6 +1255,6 @@
 <link rel="stylesheet" href="css/14-student-report-style.css?v=ed0eec3595"><script src="js/15-student-report.js?v=d720212916"></script>
 
 <link rel="stylesheet" href="css/15-ux-polish-final.css?v=cf69190538"><script src="js/16-ux-polish-final-js.js?v=1d979efd4a" id="ux-polish-final-js"></script>
-<link rel="stylesheet" href="css/16-design-system.css?v=a651988a57">
-<script src="js/17-design-system.js?v=67aba2a272"></script>
+<link rel="stylesheet" href="css/16-design-system.css?v=68ef84294b">
+<script src="js/17-design-system.js?v=23c72dfd6c"></script>
 

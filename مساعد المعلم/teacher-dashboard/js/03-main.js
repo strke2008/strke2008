@@ -5045,17 +5045,17 @@ function renderHw() {
   const selectableVisible = list.filter(h => h);
   const selectedVisible = selectableVisible.filter(h => HW_REPUBLISH_SELECTED.has(h.id));
   const bulkBar = selectableVisible.length ? `
-    <div class="sheet" style="margin:.65rem 0">
+    <div class="ds-bulk${selectedVisible.length?' on':''}">
       <div class="row" style="gap:.55rem;flex-wrap:wrap">
         <label class="row" style="gap:.45rem;cursor:pointer;font-size:.86rem">
           <input type="checkbox" ${selectableVisible.length && selectedVisible.length===selectableVisible.length?'checked':''}
             onchange="toggleAllHwSelection(this.checked)">
           تحديد الأنشطة الظاهرة
         </label>
-        <span class="pill quiet" style="font-weight:700">☑ ${selectedVisible.length} ${selectedVisible.length===1 ? 'نشاط محدد' : 'أنشطة محددة'}</span>
+        ${selectedVisible.length ? `<span class="pill quiet" style="font-weight:700">☑ ${selectedVisible.length} ${selectedVisible.length===1 ? 'نشاط محدد' : 'أنشطة محددة'}</span>
         <span class="spacer"></span>
-        <button class="btn tick sm" onclick="republishSelectedHw()" ${selectedVisible.length?'':'disabled'}>🔄 إعادة نشر الرابط</button>
-        <button class="btn pen sm" onclick="deleteSelectedHw()" ${selectedVisible.length?'':'disabled'}>🗑️ حذف الأنشطة</button>
+        <button class="btn tick sm" onclick="republishSelectedHw()">🔄 إعادة نشر الرابط</button>
+        <button class="btn pen sm" onclick="deleteSelectedHw()">🗑️ حذف الأنشطة</button>` : ''}
       </div>
     </div>` : '';
   document.getElementById('hw-list').innerHTML = bulkBar + (list.length ? list.map(h => {
@@ -11352,7 +11352,7 @@ function renderPubWarn(){
   const all = [...ready, ...stale];
   // سطر واحد يُطوى: كان الصندوق الكبير يدفع قائمة الأنشطة للأسفل (خصوصًا على الجوال)
   box.innerHTML = `
-    <details class="pub-warn-bar"${all.length<=3?' open':''}>
+    <details class="pub-warn-bar ds-notice danger"${all.length<=3?' open':''}>
       <summary>
         <b>📤 ${
           ready.length && stale.length ? `${ready.length} نشاط لم يُنشر · ${stale.length} بحاجة إعادة نشر`
@@ -11376,13 +11376,12 @@ function renderBackupWarn(){
   const days = last ? Math.floor((Date.now()-last)/86400000) : 999;
   if(days < 30){ box.innerHTML=''; return; }   // الخادم ينسخ أسبوعيًا تلقائيًا؛ نسخة على الجهاز شهريًا تكفي
   box.innerHTML = `
-    <div class="sheet" style="background:rgba(46,107,184,.07);border:1.5px solid #2E6BB8;margin-bottom:.9rem">
-      <div class="row" style="gap:.6rem;flex-wrap:wrap">
-        <b style="color:#2E6BB8">💾 ${last ? `مرّ ${days} يوماً على آخر نسخة كاملة على جهازك` : 'لم تحفظ نسخة كاملة على جهازك بعد'}</b><small style="display:block;color:var(--ink-soft);font-size:.78rem">الخادم يأخذ نسخة كل جمعة تلقائيًا؛ هذه نسخة إضافية على جهازك للاحتياط.</small>
-        <span class="spacer"></span>
+    <div class="ds-notice info" title="الخادم يأخذ نسخة كل جمعة تلقائيًا؛ هذه نسخة إضافية على جهازك للاحتياط.">
+      <b>💾 ${last ? `مرّ ${days} يوماً على آخر نسخة كاملة على جهازك` : 'لم تحفظ نسخة كاملة على جهازك بعد'}</b>
+      <span class="ds-notice-actions">
         <button class="btn tick sm" onclick="backupDownloadFull()">⬇️ نسخة كاملة</button>
         <button class="btn ghost sm" onclick="snoozeBackup()">لاحقاً</button>
-      </div>
+      </span>
     </div>`;
 }
 /* 💾 النسخ الاحتياطية (الخادم) */
